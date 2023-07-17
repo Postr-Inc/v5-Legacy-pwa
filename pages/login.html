@@ -1,0 +1,32 @@
+<login>
+    
+    <div class="hero w-screen  mt-16">
+        <div class="hero-content   max-w-screen-md">
+          <div class="max-w-md">
+            <h1 class="flex justify-center mx-auto text-2xl">Welcome Back</h1>
+            <input type="text" class="input input-bordered mt-5 border border-slate-500 w-full " placeholder="username"
+            onchange="setState('username', this.value)"
+            />
+            <input type="password" class="input input-bordered border border-slate-500 mt-5 mb-5 w-full" placeholder="password"
+            onchange="setState('password', this.value)"
+
+            />
+            <a href="#/forgot-password" class="text-slate-500 text-sm mt-8 text-start text-sky-700 ">
+                Forgot Password?
+            </a>
+            #if (localStorage.getItem('pocketbase_auth'));
+            return
+            <a href="#/" class="btn btn-ghost btn-md border border-green-400 mb-2 mt-5 w-full ">
+                Already Logged In
+            </a>
+            #else
+            return <button id="loginbtn" class="btn btn-ghost btn-md border border-slate-500 mb-2 mt-5 w-full ">Login</button>
+            #endif
+            <a href="#/signup" class=" text-sm mt-8 text-start  ">
+                Don't have an account? Register
+            </a>
+          </div>
+        </div>
+      </div>
+     
+</login>

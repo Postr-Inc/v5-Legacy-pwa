@@ -1,0 +1,44 @@
+<download>
+    <script execute="beforeRender">
+        let deferredPrompt;
+
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            window.deferredPrompt = deferredPrompt;
+           
+            // Optionally, send analytics event that PWA install promo was shown.
+            console.log(`'beforeinstallprompt' event was fired.`);
+        });
+    </script>
+    
+    #if(window.screen.width > 768); return 
+     <div class="justify-center flex flex-col mx-auto h-[45vw] items-center">
+        <div
+            class=" bg-base-900 p-5 rounded-lg flex flex-col items-center border border-slate-300 shadow-xl rounded-lg p-2">
+            <img src="/public/assets/images/download_qr.png" class="w-40">
+            <div class="divider font-bold">Get The App</div>
+
+        </div>
+        </div>
+        #else 
+        return 
+        <div class="mx-auto justify-center   h-[45vw] items-center">
+            
+           <div class=" bg-base-900 p-2 w-3/4 mx-auto mt-8 rounded-lg flex flex-col items-center border border-slate-300 shadow-xl rounded-lg ">
+            <img src="/public/assets/images/download_qr.png" class="w-40">
+            <div class="divider font-bold">
+                
+                 Get The App
+            </div>
+            <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="deferredPrompt.prompt();">
+                Install
+            </button>
+      
+        </div>
+      
+        </div>
+    #endif </download>

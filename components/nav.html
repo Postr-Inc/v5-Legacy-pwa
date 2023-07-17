@@ -1,0 +1,117 @@
+<nav class="fixed bottom-0 flex flex-row justify-around w-full h-16 z-[999] bg-white ">
+  <script>
+    let id = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.id : null;
+    let username = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.username : null;
+    let avatar = localStorage.getItem('pocketbase_auth') ? 'https://postr.pockethost.io/api/files/_pb_users_auth_/' + id + '/' + JSON.parse(localStorage.getItem('pocketbase_auth')).model.avatar : null;
+  </script>
+  
+  <button>
+    <a href="#/">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    </a>
+  </button>
+  <button aria-label="notification">
+    #if (localStorage.getItem('notifcations') !== null);
+    return
+    <div class="indicator">
+      <span class="indicator-item badge border border-slate-500  w-2"></span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+      alt="notification"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+      </svg>
+    </div>
+
+    #else
+    return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+      alt="notification"
+      stroke="currentColor" class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M10.5 8.25h3l-3 4.5h3" />
+    </svg>
+    #endif
+  </button>
+  <button>
+    <a href="${{JSON.parse(localStorage.getItem('pocketbase_auth')) ? '#/profile/' + JSON.parse(localStorage.getItem('pocketbase_auth')).model.id : '#/login'}}">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        alt="account"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    </a>
+
+  </button>
+  <button>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+      alt="link"
+      class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+    </svg>
+
+  </button>
+  #if (localStorage.getItem('pocketbase_auth'));
+  return
+   
+    <button  >
+      <label for="my_modal_6" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        alt="make post"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+      </svg>
+      </label>
+       
+    </button>
+ 
+   
+
+  #else
+  return
+  <button onclick="window.location.hash='#/login'">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+      alt="login"
+      class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+    </svg>
+  </button>
+
+  #endif
+
+  <input type="checkbox" id="my_modal_6" class="modal-toggle hidden" />
+<div class="modal">
+  <div class="modal-box">
+    <div class="flex inline">
+      <img src="{{avatar}}" class="rounded-full w-8 h-8" />
+      <p class="mx-5">{{username}}</p>
+     
+      <label for="my_modal_6" class="  fixed end-5 top-5 text-lg rounded-full w-8 h-8 flex justify-center items-center">
+        x
+      </label>
+    </div>
+    <textarea class="w-full h-32 p-2 mt-5 border border-slate-500 rounded" placeholder="What's on your mind?"
+      onchange="setState('postContent', this.value)"></textarea>
+    </p>
+    <div class="modal-action">
+      <!-- do not close the dialog -->
+      <button class="btn btn-ghost border border-slate-500 w-full" id="post"
+        onclick="setState('post_click', 'true')">Post</button>
+       
+     
+    </div>
+     
+
+  </div>
+</div>
+ 
+ 
+
+
+</nav>

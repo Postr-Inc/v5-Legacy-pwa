@@ -1,0 +1,14 @@
+{
+    "name": "Postr",
+    "display": "standalone",
+    "start_url": "/",
+    "background_color":"#121212",
+    "theme_color": "#121212",
+    "icons": [
+      {
+        "src": "/public/assets/images/logo.png",
+        "type": "image/png",
+        "sizes": "238x238"
+      }
+    ]
+  }

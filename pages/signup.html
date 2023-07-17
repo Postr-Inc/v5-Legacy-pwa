@@ -1,0 +1,38 @@
+<signup>
+
+  <div class="hero w-screen  mt-16">
+    <div class="hero-content   max-w-screen-md">
+      <div class="max-w-md">
+        <h1 class="flex justify-center mx-auto text-2xl">Signup To Explore!</h1>
+        <input type="email" 
+            onchange="setState('email', this.value)"
+            
+            class="input input-bordered mt-5 border border-slate-500 w-full "
+             id="email"
+          placeholder="email"
+            /> 
+          <input type="text" class="input input-bordered mt-5 border border-slate-500 w-full "
+          placeholder="username" onchange="setState('username', this.value)" 
+          id="username"
+          />
+        <input type="password" class="input input-bordered border border-slate-500 mt-5 mb-5 w-full"
+         id="password"
+          placeholder="password" onchange="setState('password', this.value)" />
+
+        #if (localStorage.getItem('pocketbase_auth'));
+        return
+        <a href="#/" class="btn btn-ghost btn-md border border-green-400 mb-2 mt-5 w-full ">
+          Login
+        </a>
+        #else
+        return <button id="signupbtn"
+          class="btn btn-ghost btn-md border border-slate-500 mb-2 mt-5 w-full ">Signup</button>
+        #endif
+        <a href="#/signup" class=" text-sm mt-8 text-start  ">
+          Have A Account? Login
+        </a>
+      </div>
+    </div>
+  </div>
+
+</signup>
