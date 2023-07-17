@@ -2126,6 +2126,9 @@ html {
 .bottom-0 {
   bottom: 0px;
 }
+.bottom-5 {
+  bottom: 1.25rem;
+}
 .end-0 {
   inset-inline-end: 0px;
 }
