@@ -17,11 +17,21 @@ app.bindRoot('app')
 
 // renders
 // either > than 768 or not a pwa  environment
+if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
+    console.log('desktop')
+    window.location.hash = '#/download'
+}else if( window.matchMedia('(display-mode: standalone)').matches){
+    console.log('mobile')
+    window.location.hash = '#/'
+
+}
+
+
  
 window.onresize = () => {
     if(window.screen.width > 768){
         console.log('desktop')
-        window.location.hash = '#/pc'
+        window.location.hash = '#/download'
     } 
 }  
 app.get('/', (req, res) =>  {
@@ -39,25 +49,10 @@ app.on('/', (req, res) =>  {
     res.return()
     makePost()
     loadFeed()
-     if(!pb.authStore.isValid){
+    if(!pb.authStore.isValid){
         res.redirect('/login')
     }
-
-    
-})
-app.get('/login', (req, res) =>  {
-    res.return()
-    res.render('login')
-    res.return()
-    login()
-    
-})
-app.on('/login', (req, res) =>  {
-    res.return()
-    res.render('login')
-    res.return()
-    login()
-  
+      
 })
 app.root('/', (req, res) =>{
     res.render('app')
@@ -66,6 +61,7 @@ app.root('/', (req, res) =>{
     if(!pb.authStore.isValid){
         res.redirect('/login')
     }
+     
 })
 app.on('/download', (req, res) =>{
     res.render('download')
@@ -76,16 +72,34 @@ app.get('/download', (req, res) =>{
     res.return()
 })
 app.get('/signup', (req, res) =>  {
+    res.return()
     res.render('signup')
     res.return()
     signup()
 })
 app.on('/signup', (req, res) =>  {
+    res.return()
     res.render('signup')
     res.return()
     signup()
+    
 })
- 
+app.get('/login', (req, res) =>  {
+    res.return()
+    res.render('login')
+    res.return()
+    login()
+    
+     
+})
+app.on('/login', (req, res) =>  {
+    res.return()
+    res.render('login')
+    res.return()
+    login()
+   
+  
+})
  
 app.on('/profile/:id', (req, res) =>  {
     res.render('profile')
@@ -95,22 +109,43 @@ app.on('/profile/:id', (req, res) =>  {
     if(!pb.authStore.isValid){
         res.redirect('/login')
     }
+     
 })
 app.get('/profile/:id', (req, res) =>  {
     res.render('profile')
     res.return()
     loadProfile(req.params.id)
     makePost()
+    if(!pb.authStore.isValid){
+        res.redirect('/login')
+    }
 })
 app.get('/post/:id', (req, res) =>  {
     res.render('post')
     res.return()
     makePost()
     viewPost(req.params.id)
+    if(!pb.authStore.isValid){
+        res.redirect('/login')
+    }
 })
 app.on('/post/:id', (req, res) =>  {
     res.render('post')
     res.return()
     makePost()
     viewPost(req.params.id)
+    if(!pb.authStore.isValid){
+        res.redirect('/login')
+    }
 })
+
+ 
+
+window.onhashchange = () => {
+    if(!pb.authStore.isValid){
+        res.redirect('/login')
+    }
+}
+if(!pb.authStore.isValid){
+    res.redirect('/login')
+}
