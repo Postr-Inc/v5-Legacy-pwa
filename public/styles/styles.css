@@ -2129,9 +2129,6 @@ html {
 .bottom-5 {
   bottom: 1.25rem;
 }
-.end-0 {
-  inset-inline-end: 0px;
-}
 .end-5 {
   inset-inline-end: 1.25rem;
 }
@@ -2218,9 +2215,6 @@ html {
 .w-12 {
   width: 3rem;
 }
-.w-16 {
-  width: 4rem;
-}
 .w-2 {
   width: 0.5rem;
 }
@@ -2241,6 +2235,9 @@ html {
 }
 .w-8 {
   width: 2rem;
+}
+.w-\[15\%\] {
+  width: 15%;
 }
 .w-full {
   width: 100%;
