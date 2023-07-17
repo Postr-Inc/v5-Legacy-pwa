@@ -4,8 +4,7 @@ export function login(){
         let username = getState('username')
         let password = getState('password')
         pb.collection('users').authWithPassword(username, password).then((res) => {
-            window.location.reload()
-            window.location.href = '#/login'
+            window.location.href = '#/'
         })
     })
   }
