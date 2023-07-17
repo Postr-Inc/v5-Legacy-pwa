@@ -49,12 +49,15 @@ app.on('/', (req, res) =>  {
      if(!pb.authStore.isValid){
         res.redirect('/login')
     }
+    
 })
 app.root('/', (req, res) =>{
     res.render('app')
     res.return()
     makePost()
-   
+    if(!pb.authStore.isValid){
+        res.redirect('/login')
+    }
 })
 app.on('/download', (req, res) =>{
     res.render('download')
