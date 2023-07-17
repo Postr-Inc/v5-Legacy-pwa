@@ -1,10 +1,11 @@
 export function login(){
-  if(dox.getId('loginbtn')){
+  if(document.getElementById('loginbtn')){
     dox.getId('loginbtn').on('click', () => {
         let username = getState('username')
         let password = getState('password')
         pb.collection('users').authWithPassword(username, password).then((res) => {
-            window.location.href = '#/'
+            window.location.reload()
+            window.location.href = '#/login'
         })
     })
   }
