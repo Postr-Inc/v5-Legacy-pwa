@@ -24,7 +24,6 @@ app.bindRoot('app')
 
 }
 
- 
 window.onresize = () => {
     if(window.screen.width > 768){
         console.log('desktop')
@@ -136,9 +135,6 @@ app.on('/post/:id', (req, res) =>  {
     }
 })
 
- 
-
- 
 if(!pb.authStore.isValid && window.location.hash !== '#/download'){
     window.location.hash = '#/login'
 }
