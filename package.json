@@ -6,9 +6,9 @@
     "postcss-cli": "^10.1.0",
     "tailwindcss": "^3.3.3"
   },
-  "name": "cc.chat",
+  "name": "Postr",
   "version": "1.0.0",
-  "description": "cc.chat is a chat app aimed to be an alternative to discord",
+  "description":"User first social media app",
   "main": "postcss.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
