@@ -139,6 +139,6 @@ app.on('/post/:id', (req, res) =>  {
  
 
  
-if(!pb.authStore.isValid && window.location.hash == '#/download'){
-    res.redirect('/login')
+if(!pb.authStore.isValid && window.location.hash !== '#/download'){
+    window.location.hash = '#/login'
 }
