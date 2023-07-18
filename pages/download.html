@@ -4,19 +4,17 @@
 
         
         window.addEventListener('beforeinstallprompt', (e) => {
-          
+            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-           
+            // Stash the event so it can be triggered later.
             deferredPrompt = e;
             window.deferredPrompt = deferredPrompt;
            
-             
+            // Optionally, send analytics event that PWA install promo was shown.
             console.log(`'beforeinstallprompt' event was fired.`);
         });
-         window.isIos = () => {
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test( userAgent );
-} 
+       
+        
     </script>
     
     #if(window.screen.width > 768); return 
@@ -35,15 +33,35 @@
            <div class=" bg-base-900 p-2 w-3/4 mx-auto mt-8 rounded-lg flex flex-col items-center border border-slate-300 shadow-xl rounded-lg ">
             <img src="/public/assets/images/download_qr.png" class="w-40">
             <div class="divider font-bold">
+                
                  Get The App
             </div>
-            #if(isIos);
-             return <p>Click share - Add to HomeScreen!</p>
-            #else
-            return  <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="deferredPrompt.prompt();">
-                Install
-            </button>
-            #endif
+          ${{window.navigator.userAgent.toLowerCase().includes("android") ? 
+          `<button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="deferredPrompt.prompt();">Download</button>` :
+          `
+          <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="my_modal_1.showModal();">Download</button>
+          <dialog id="my_modal_1" class="modal">
+            <form method="dialog" class="modal-box">
+              <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              <h3 class="font-bold text-lg flex inline gap-5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15M9 12l3 3m0 0l3-3m-3 3V2.25" />
+                  </svg>
+
+                  Install Postr
+                </h3>
+                <div class="divider"></div>
+                <p class="text-sm">Install postr by following these steps!</p>
+                <div class="mt-5 gap-5 flex-col">
+                    <p class="flex inline gap-2">1. Tap   <img src="./public/assets/images/ioshareicon.png" width="20" height="20"/></p>
+                  
+                    <p>  </p>
+                    <p>2. Tap "Add to Home Screen"</p>
+                </div>
+            </form>
+          </dialog>
+          `}}
+
       
         </div>
       
