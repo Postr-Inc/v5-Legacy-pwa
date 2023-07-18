@@ -36,7 +36,7 @@
                 
                  Get The App
             </div>
-               <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="window.navigator.userAgent.toLowerCase().includes("android") ? deferredPrompt.prompt() : my_modal_1.showModal();">
+               <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="${{window.navigator.userAgent.toLowerCase().includes("android") ? deferredPrompt.prompt() : my_modal_1.showModal()}}">
                    Install
                </button>
           <dialog id="my_modal_1" class="modal">
