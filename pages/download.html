@@ -36,10 +36,9 @@
                 
                  Get The App
             </div>
-          ${{window.navigator.userAgent.toLowerCase().includes("android") ? 
-          `<button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="deferredPrompt.prompt();">Download</button>` :
-          `
-          <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="my_modal_1.showModal();">Download</button>
+               <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="window.navigator.userAgent.toLowerCase().includes("android") ? deferredPrompt.prompt() : my_modal_1.showModal();">
+                   Install
+               </button>
           <dialog id="my_modal_1" class="modal">
             <form method="dialog" class="modal-box">
               <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -60,7 +59,6 @@
                 </div>
             </form>
           </dialog>
-          `}}
 
       
         </div>
