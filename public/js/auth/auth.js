@@ -3,6 +3,7 @@ export function login(){
     dox.getId('loginbtn').on('click', () => {
         let username = getState('username')
         let password = getState('password')
+        dox.getId('loginbtn').html('<span class="loading loading-lg  justify-center flex mx-auto loading-infinity"></span>
         pb.collection('users').authWithPassword(username, password).then((res) => {
            window.location.href = '#/'
         })
