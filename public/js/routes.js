@@ -15,11 +15,7 @@ app.use('/post')
 
 app.bindRoot('app')
 
-// renders
-// either > than 768 or not a pwa  environment
-/***
- * 
- * if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
+ if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
     console.log('desktop')
     window.location.hash = '#/download'
 }else if( window.matchMedia('(display-mode: standalone)').matches){
@@ -27,8 +23,6 @@ app.bindRoot('app')
     window.location.hash = '#/'
 
 }
-
- */
 
  
 window.onresize = () => {
