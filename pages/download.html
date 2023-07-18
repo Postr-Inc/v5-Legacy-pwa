@@ -36,10 +36,13 @@
                 
                  Get The App
             </div>
-               <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " onclick="${{window.navigator.userAgent.toLowerCase().includes("android") ? deferredPrompt.prompt() : my_modal_1.showModal()}}">
-                   Install
-               </button>
-          <dialog id="my_modal_1" class="modal">
+            <button class="btn btn-ghost btn-sm border border-slate-500  mt-2 w-full " 
+            onclick="window.navigator.userAgent.toLowerCase().includes('android') ?  deferredPrompt.prompt() : iosmodal.showModal();">
+                Install
+            </button>
+        
+        
+          <dialog id="iosmodal" class="modal">
             <form method="dialog" class="modal-box">
               <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
               <h3 class="font-bold text-lg flex inline gap-5">
@@ -59,6 +62,7 @@
                 </div>
             </form>
           </dialog>
+        
 
       
         </div>
