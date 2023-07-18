@@ -102,6 +102,7 @@ function parseDate(data){
 }
 
 async function follow(data) {
+     
     const followBtn = dox.getId('followbtn');
   
     var isFollowing = data.followers.includes(pb.authStore.model.id);
@@ -109,33 +110,38 @@ async function follow(data) {
     followBtn.html(isFollowing ? 'Unfollow' : 'Follow');
     dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' : '#121212';
   
-    effect('follow', async (e) => {
-      if (e === data.id) {
-         
-        try {
-          const updatedFollowers = isFollowing
-            ? data.followers.filter((id) => id !== pb.authStore.model.id)
-            : [...data.followers, pb.authStore.model.id];
-  
-          // Update the local data immediately
-          data.followers = updatedFollowers;
-  
-          const updatedData = await pb.collection('users').update(data.id, {
-            followers: JSON.stringify(updatedFollowers),
-          });
-  
-          const newFollowersCount = updatedData.followers.length;
-          dox.getId('followers').html('Followers: ' + newFollowersCount);
-  
-          // Update the follow button text and toggle isFollowing state
-          isFollowing = !isFollowing;
-          dox.getId('followbtn').html(isFollowing ? 'Unfollow' : 'Follow');
-          dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' :  '#121212';
-          setState('follow', null);
-        } catch (error) {
-          console.error('Error occurred:', error);
+    dox.getId('followbtn').on('click', async  (e) => {
+        console.log('clicked')
+        if(pb.authStore.isValid){
+            try {
+                const updatedFollowers = isFollowing
+                  ? data.followers.filter((id) => id !== pb.authStore.model.id)
+                  : [...data.followers, pb.authStore.model.id];
+        
+                // Update the local data immediately
+                data.followers = updatedFollowers;
+        
+                const updatedData = await pb.collection('users').update(data.id, {
+                  followers: JSON.stringify(updatedFollowers),
+                });
+        
+                const newFollowersCount = updatedData.followers.length;
+                dox.getId('followers').html('Followers: ' + newFollowersCount);
+        
+                // Update the follow button text and toggle isFollowing state
+                isFollowing = !isFollowing;
+                dox.getId('followbtn').html(isFollowing ? 'Unfollow' : 'Follow');
+                dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' :  '#121212';
+                setState('follow', null);
+              } catch (error) {
+                console.error('Error occurred:', error);
+              }
+        }else{
+            window.location.href = '#/login'
         }
-      }
-      
     });
+        
+  
   } 
+
+ 

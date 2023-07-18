@@ -825,26 +825,17 @@ function handleProps(html) {
 }
 function doxMethods(element) {
 
+ 
   element.on = function (event, callback) {
-
-    // check if document registered the event
-    if (element) {
-      element.addEventListener(event, callback);
-    }
-
-
-    // if not keep checking until it is
-    let timer = setInterval(function () {
-      if (document.querySelector(element.tagName)) {
-
-        document.querySelector(element.tagName).addEventListener(event, callback);
-        clearInterval(timer);
+    document.addEventListener(event, function (e) {
+      if(element.id && e.target.id == element.id) {
+        callback(e);
+      }else{
+        throw new Error("Element must have an id to use this method!");
       }
-    }, 1000);
-
-
-    return element;
-  }
+    })
+  };
+  
   element.toggleClass = function (className) {
     if (element.classList.contains(className)) {
       element.classList.remove(className);
@@ -963,6 +954,7 @@ function setDox(html) {
     },
 
     awaitElement: async function (selector) {
+      console.log("awaiting element")
       let element = document.querySelector(selector);
     
       if (element) {
@@ -1366,14 +1358,19 @@ function handleScripts(html) {
 
       }
     }
+    
 
     if (html.body.outerHTML.includes('${{')) {
       let matches = html.body.outerHTML.match(/\${{([\s\S]*?)}}/g);
       if (matches) {
         matches.forEach(function (match) {
+          
           let js = match.replace('${{', '').replace('}}', '');
-          let value = eval(js);
-          html.body.outerHTML = html.body.outerHTML.replaceAll(match, value);
+   
+          // update the html
+          html.body.outerHTML = html.body.outerHTML.replace(match, eval(js));
+ 
+           
         });
       }
     }

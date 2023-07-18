@@ -2,7 +2,7 @@ export async function loadFeed(){
     dox.getId('postfeed').style.display = 'none'
     pb.collection('posts').getList(1,10, {
         expand: 'author',
-        filter: `author.id != '${pb.authStore.model.id}'`,
+        filter: `author.id != '${pb.authStore.isValid ? pb.authStore.model.id : ''}'`,
         sort: `-created`
     }).then((res) => {
         res.items.forEach(async (post) => {
@@ -17,13 +17,19 @@ export async function loadFeed(){
                 likes: JSON.parse(JSON.stringify(post.likes)).length,
                 shares: post.shares
             })
-            dox.getId('postfeed').prepend(poster)
-            dox.getId('postfeed').style.display = 'block'
-            dox.querySelector('.loading-infinity').style.display = 'none'
+            if(dox.getId('postfeed')){
+              dox.getId('postfeed').prepend(poster)
+              dox.getId('postfeed').style.display = 'block'
+              dox.querySelector('.loading-infinity').style.display = 'none'
+              handlevents(post)
+            }
+           
+            
+            
            
             
 
-            handlevents(post)
+           
            
              
             
@@ -80,7 +86,7 @@ export function debounce(func, wait) {
     const tipElement = dox.querySelector('[data-tip]');
   
     function updateLikeStatus() {
-      if (likes.includes(pb.authStore.model.id)) {
+      if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
         btn.classList.toggle('text-red-500', true);
         tipElement.setAttribute('data-tip', 'Unheart');
         dox.getId(`likes-${post.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
@@ -98,7 +104,7 @@ export function debounce(func, wait) {
     updateLikeStatus();
   
     const debouncedLikeHandler = debounce(() => {
-      if (likes.includes(pb.authStore.model.id)) {
+      if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
         likes.splice(likes.indexOf(pb.authStore.model.id), 1);
       } else {
         likes.push(pb.authStore.model.id);
@@ -134,4 +140,5 @@ export function debounce(func, wait) {
     sharebtn.onclick = debouncedShareHandler;
   }
   
-  
+ 
+   

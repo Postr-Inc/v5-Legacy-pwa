@@ -2,12 +2,12 @@
 <import src="./components/poster.html"></import>
 <profile>
     <script>
-        let uuid = window.location.hash.split('/')[2] 
+        let uuid = window.location.hash.split('/')[2];
         let hasId = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.id : null;
-        let currentProfile = localStorage.getItem('pocketbase_auth') ?   'https://postr.pockethost.io/api/files/_pb_users_auth_/' + JSON.parse(localStorage.getItem('pocketbase_auth')).model.id + '/' + JSON.parse(localStorage.getItem('pocketbase_auth')).model.avatar : 'https://i.pravatar.cc/600';
+        let currentProfile = localStorage.getItem('pocketbase_auth') ? 'https://postr.pockethost.io/api/files/_pb_users_auth_/' + JSON.parse(localStorage.getItem('pocketbase_auth')).model.id + '/' + JSON.parse(localStorage.getItem('pocketbase_auth')).model.avatar : 'https://i.pravatar.cc/600';
         let bio = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.bio.substring(0, 50) : 'No bio yet';
     </script>
-     
+
     <div class="flex inline   ">
         <div class="flex-col p-2   flex">
             <h1 class="font-bold text-2xl" id="username">
@@ -16,29 +16,25 @@
             <p class="text-slate-500" id="tag"></p>
             <p class="text-slate-500 mt-8" id="bio"></p>
             <p class="text-slate-500 mt-8" id="followers"></p>
-          
+
         </div>
 
 
 
         <img id="profilepic" class="rounded-full w-[15%]  mt-2 absolute end-5 " />
     </div>
-    <div class="flex-row flex gap-5   mt-5 ">
-        <button class="btn btn-ghost bg-black text-white  btn-sm z-[999] w-screen"
-        id="followbtn"
-        onclick="setState('follow', '{{uuid}}')"
-        >Follow</button>
-        <button class="btn btn-ghost border-slate-500 btn-sm  "
-        onclick="window.editProfile.showModal()"
-        id="editbtn"
-        >Edit Profile</button>
-        <button class="btn btn-ghost border-slate-500 btn-sm  "
-        onclick="window.shareProfile.showModal()"
-        id="sharebtn"
-        >Share Profile</button>
-        
-         
-        
+    <div class="flex-row flex gap-5  mt-5 ">
+        <button class="btn btn-ghost bg-black text-white  btn-sm z-[999] w-[100vw] mx-auto justify-center flex"
+            id="followbtn" >Follow</button>
+        <div class="flex inline gap-5 mx-2">
+            <button class="btn btn-ghost border-slate-500 btn-sm  " onclick="window.editProfile.showModal()"
+                id="editbtn">Edit Profile</button>
+            <button class="btn btn-ghost border-slate-500 btn-sm  " onclick="window.shareProfile.showModal()"
+                id="sharebtn">Share Profile</button>
+        </div>
+
+
+
     </div>
 
     <div class="divider mt-8">Posters</div>
@@ -46,42 +42,38 @@
 
     </div>
     <span class="loading loading-lg text-xl w-24 text-sky-500 justify-center flex mx-auto loading-infinity"></span>
-   
-    
+
+
     <dialog id="editProfile" class="modal">
         <form method="dialog" class="modal-box">
             <div class="flex text-lg flex-row justify-between">
-             <button>Cancel</button>
-             <p class="font-bold">Edit Profile</p>
-             <a  class="text-sky-600" id="saveprofile"
-             onclick="setState('click', 'true')"
-             >Done</a>
+                <button>Cancel</button>
+                <p class="font-bold">Edit Profile</p>
+                <a class="text-sky-600" id="saveprofile" onclick="setState('click', 'true')">Done</a>
             </div>
             <div class="divider"></div>
             <div class="flex-col mt-8 flex">
                 <div class="form-control w-full ">
                     <label class="label flex flex-row">
-                      
+
                         <span class="label-text font-bold text-sm">Name</span>
                         <label for="profileinput">
-                            <img src="{{currentProfile}}" id="profilepicin" class="rounded-full w-12 h-12 absolute end-5 " />
+                            <img src="{{currentProfile}}" id="profilepicin"
+                                class="rounded-full w-12 h-12 absolute end-5 " />
                         </label>
-                        
-                        <input type="file" class="hidden" id="profileinput" 
-                        onchange="setState('pfp', this.files[0])"
-                       
-                        />
+
+                        <input type="file" class="hidden" id="profileinput" onchange="setState('pfp', this.files[0])" />
                     </label>
-                   <input type="text" placeholder="{{username}}" class="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
-                    onchange="setState('username', this.value)"
-                   />
-                   <label class="label mt-5">
-                    <span class="label-text font-bold text-sm">Bio</span>
-                 
-                  </label>
-                  <input type="text" placeholder="{{bio}}" class="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0" 
-                  onchange="setState('bio', this.value)"
-                  />
+                    <input type="text" placeholder="{{username}}"
+                        class="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
+                        onchange="setState('username', this.value)" />
+                    <label class="label mt-5">
+                        <span class="label-text font-bold text-sm">Bio</span>
+
+                    </label>
+                    <input type="text" placeholder="{{bio}}"
+                        class="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
+                        onchange="setState('bio', this.value)" />
                 </div>
             </div>
         </form>
@@ -89,17 +81,15 @@
     <dialog id="shareProfile" class="modal">
         <form method="dialog" class="modal-box">
             <div class="flex text-lg flex-row justify-between">
-             <button>Cancel</button>
-             <p class="font-bold">Share Profile</p>
-              
+                <button>Cancel</button>
+                <p class="font-bold">Share Profile</p>
+
             </div>
             <div class="divider"></div>
-            <input type="text"
-            value="${{window.location.origin}}/#/profile/{{hasId}}"
-            class="input input-bordered w-full disbled:opacity-50"
-            onclick="this.select(), document.execCommand('copy')"
-            />
-            
+            <input type="text" value="${{window.location.origin}}/#/profile/{{hasId}}"
+                class="input input-bordered w-full disbled:opacity-50"
+                onclick="this.select(), document.execCommand('copy')" />
+
         </form>
     </dialog>
     <nav class="mt-16"></nav>
