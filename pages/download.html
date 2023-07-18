@@ -4,15 +4,26 @@
 
         
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
+          
             e.preventDefault();
-            // Stash the event so it can be triggered later.
+           
             deferredPrompt = e;
             window.deferredPrompt = deferredPrompt;
            
-            // Optionally, send analytics event that PWA install promo was shown.
+             
             console.log(`'beforeinstallprompt' event was fired.`);
         });
+         const isIos = () => {
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  return /iphone|ipad|ipod/.test( userAgent );
+}
+ 
+const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+ 
+if (isIos() && !isInStandaloneMode()) {
+  this.setState({ showInstallMessage: true });
+}
     </script>
     
     #if(window.screen.width > 768); return 
