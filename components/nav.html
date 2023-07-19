@@ -1,4 +1,13 @@
-<nav class="fixed bottom-0 flex flex-row justify-around w-full h-16 z-[999] bg-white ">
+<nav class="fixed bottom-0 flex flex-row justify-around w-full  z-[999] bg-white
+${{
+  if(window.screen.height > 667){
+   'h-24'
+  }else{
+     'h-16'
+  }
+}}
+
+">
   <script>
     let id = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.id : null;
     let username = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.username : null;
@@ -14,7 +23,7 @@
     </a>
   </button>
   <button aria-label="notification">
-    #if (localStorage.getItem('notifcations') !== null);
+    #if (localStorage.getItem('notifcations') && JSON.parse(localStorage.getItem('notifcations')).length > 0);
     return
     <div class="indicator">
       <span class="indicator-item badge border border-slate-500  w-2"></span>
@@ -74,7 +83,7 @@
  
 
   <input type="checkbox" id="my_modal_6" class="modal-toggle hidden" />
-<div class="modal">
+<div class="modal text-mono">
   <div class="modal-box">
     <div class="flex inline">
       <img src="{{avatar}}" class="rounded-full w-8 h-8" />
@@ -84,12 +93,12 @@
         x
       </label>
     </div>
-    <textarea class="w-full h-32 p-2 mt-5 border border-slate-500 rounded" placeholder="What's on your mind?"
+    <textarea class="textarea textarea-ghost w-full h-32 p-2 mt-5 textarea-bordered rounded" placeholder="What's on your mind?"
       onchange="setState('postContent', this.value)"></textarea>
     </p>
     <div class="modal-action">
       <!-- do not close the dialog -->
-      <button class="btn btn-ghost border border-slate-500 w-full" id="post"
+      <button class="btn btn-ghost border border-slate-500 w-full rounded btn-sm" id="post"
         onclick="setState('post_click', 'true')">Post</button>
        
      

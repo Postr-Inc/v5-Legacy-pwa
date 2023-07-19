@@ -1,4 +1,4 @@
-import { login, signup} from "./public/js/auth/auth.js"
+import { login, signup, forgotPassword, verifyToken} from "./public/js/auth/auth.js"
 import { loadProfile } from "./public/js/user/profile.js"
 import { makePost } from "./public/js/user/createPosts.js"
 import { loadFeed } from "./public/js/feed/feed.js"
@@ -15,7 +15,9 @@ app.use('/post')
 
 app.bindRoot('app')
 
- if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
+ 
+ 
+if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
     console.log('desktop')
     window.location.hash = '#/download'
 }else if( window.matchMedia('(display-mode: standalone)').matches){
@@ -30,6 +32,7 @@ window.onresize = () => {
         window.location.hash = '#/download'
     } 
 }  
+ 
 app.get('/', (req, res) =>  {
  res.render('app')
  res.return()
@@ -135,6 +138,33 @@ app.on('/post/:id', (req, res) =>  {
     }
 })
 
-if(!pb.authStore.isValid && window.location.hash !== '#/download'){
+app.get('/forgot-password', (req, res) =>  {
+    res.return()
+    res.render('forgot-password')
+    res.return()
+    forgotPassword()
+})
+app.on('/forgot-password', (req, res) =>  {
+    res.return()
+    res.render('forgot-password')
+    res.return()
+    forgotPassword()
+})
+app.get('/verify/:token', (req, res) => {
+ res.return()
+ res.render('verified')
+ res.return()
+ verifyToken(req.params.token)
+})
+ app.on('/verify/:token', (req, res) => {
+    res.return()
+    res.render('verified')
+    res.return()
+    verifyToken(req.params.token)
+ 
+ })
+if(!pb.authStore.isValid && window.location.hash != '#/download'
+&& window.location.hash != '#/signup' && window.location.hash != '#/login' && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'
+){
     window.location.hash = '#/login'
 }

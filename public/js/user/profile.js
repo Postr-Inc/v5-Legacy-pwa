@@ -111,7 +111,6 @@ async function follow(data) {
     dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' : '#121212';
   
     dox.getId('followbtn').on('click', async  (e) => {
-        console.log('clicked')
         if(pb.authStore.isValid){
             try {
                 const updatedFollowers = isFollowing

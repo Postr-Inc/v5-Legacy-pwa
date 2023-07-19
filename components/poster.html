@@ -11,7 +11,7 @@
         let pid = "";
     </script>
      
-    <div class="flex flex-col gap-5  p-2">
+    <div class="flex flex-col font-mono  gap-2 p-2 ">
         <div class="flex flex-row ">
             ```
 
@@ -29,8 +29,18 @@
                 >{{Uname}}</a>
             </p>
             <div class="flex flex-row gap-5  absolute end-6">
-                <p class="flex-none">{{posted}}</p>
-                <button class="flex-none ">•••</button>
+                <p class="flex-none text-slate-400">{{posted}}</p>
+                 
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" >•••</label>
+                    <ul tabindex="0" class="dropdown-content z-[1] border border-slate-600 menu p-2 shadow bg-base-100 rounded font-mono w-52">
+                      <li><a class="text-error"
+                        onclick="my_modal_1.showModal()"
+                        >Report</a></li>
+                      <li><a>Block</a></li>
+                    </ul>
+                  </div>
+               
             </div>
         </div>
 
@@ -88,7 +98,33 @@
 
 
 
-
+    <div class="divider w-full"></div>
     </div>
+
+ 
+<dialog id="my_modal_1" class="modal">
+  <form method="dialog" class="modal-box" id="modal-{{pid}}">
+    <h3 class="font-bold text-lg">Report {{Uname}}?</h3>
+    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    <div class="divider"></div>
+    <p>Your report will be reviewed and actioned accordingly. Nobody but you will know that you reported this post.</p>
+     <div class="divider mt-5">Please Select A Reason</div>
+     <select class="select select-ghost w-full select-sm"
+     onchange="setState('report', this.value)"
+     >
+       <option disabled="disabled" selected="selected">Select a reason</option>
+       <option value="Inappropriate">Inappropriate</option>
+       <option value="spam">Spam</option>
+       <option value="hate">Hate Speech</option>
+     </select>
+    <div class="modal-action">
+      <!-- do not close the dialog -->
+      <button class="btn btn-ghost border border-slate-500 btn-sm w-full"
+      id="reportbtn-{{pid}}"
+      >Report</button>
+      
+    </div>
+  </form>
+</dialog>
 
 </poster>

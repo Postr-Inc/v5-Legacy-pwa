@@ -1,9 +1,17 @@
 <signup>
 
-  <div class="hero w-screen  mt-16">
+  <div  class="hero w-5/6 font-mono mt-16 bg-base-200 p-5 rounded mx-auto shadow-2xl border border-slate-300 ">
     <div class="hero-content   max-w-screen-md">
       <div class="max-w-md">
         <h1 class="flex justify-center mx-auto text-2xl">Signup To Explore!</h1>
+        <button 
+        id="googleloginbtn"
+        class="btn btn-ghost btn-sm border mt-6 border-slate-500   rounded w-full
+        hover:bg-transparent hover:border-sky-500  hover:text-black
+        ">
+          <img src="/public/assets/images/googleicon.png" class="w-5 h-5 inline mr-2" /> Signup With Google
+        </button>
+        <div class="divider"></div>
         <input type="email" 
             onchange="setState('email', this.value)"
             
@@ -26,10 +34,15 @@
         </a>
         #else
         return <button id="signupbtn"
-          class="btn btn-ghost btn-md border border-slate-500 mb-2 mt-5 w-full ">Signup</button>
+        
+          class="btn btn-ghost btn-sm border rounded border-slate-500 mb-2 mt-5 w-full
+          hover:bg-transparent hover:border-sky-500  hover:text-black
+          "
+          
+          >Signup</button>
         #endif
-        <a href="#/signup" class=" text-sm mt-8 text-start  ">
-          Have A Account? Login
+        <a href="#/login" class=" text-sm mt-8 text-start  ">
+          Already have an account? <span class="text-orange-500 underline underline-offset-1">Login</span>
         </a>
       </div>
     </div>

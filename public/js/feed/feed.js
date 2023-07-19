@@ -23,6 +23,17 @@ export async function loadFeed() {
         dox.querySelector('.loading-infinity').style.display = 'none'
         handlevents(post)
       })
+
+
+
+
+
+
+
+
+
+
+
     })
   })
 }
@@ -52,6 +63,7 @@ function parseDate(data) {
   } else {
     return `${Math.floor(days / 365)}y`
   }
+
 
 }
 
@@ -89,6 +101,23 @@ export async function handlevents(post) {
   function updateShareStatus() {
     dox.querySelector('[data-tip="Copied!"]').setAttribute('data-tip', 'Share');
   }
+  dox.getId(`reportbtn-${post.id}`).on('click', async () => {
+    let report = getState(`report`)
+    if (!report) {
+      alert('Please enter a reason')
+      return
+    }
+     
+    const data = {
+      "reason":  report,
+      "postid": post.id,
+      "PostAuthor":  post.expand.author.id,
+      "ReportedBy": pb.authStore.model.id
+    };
+  
+   await pb.collection('reports').create(data)
+   alert('Reported!')
+  })
 
   updateLikeStatus();
 
@@ -128,3 +157,5 @@ export async function handlevents(post) {
 
   sharebtn.onclick = debouncedShareHandler;
 }
+
+

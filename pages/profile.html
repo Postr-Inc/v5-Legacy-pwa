@@ -8,7 +8,7 @@
         let bio = localStorage.getItem('pocketbase_auth') ? JSON.parse(localStorage.getItem('pocketbase_auth')).model.bio.substring(0, 50) : 'No bio yet';
     </script>
 
-    <div class="flex inline   ">
+    <div class="flex inline  font-mono ">
         <div class="flex-col p-2   flex">
             <h1 class="font-bold text-2xl" id="username">
                 Loading....
@@ -23,7 +23,7 @@
 
         <img id="profilepic" class="rounded-full w-[15%]  mt-2 absolute end-5 " />
     </div>
-    <div class="flex-row flex gap-5  mt-5 ">
+    <div class="flex-row flex gap-5 font-mono  mt-5 ">
         <button class="btn btn-ghost bg-black text-white  btn-sm z-[999] w-[100vw] mx-auto justify-center flex"
             id="followbtn" >Follow</button>
         <div class="flex inline gap-5 mx-2">
@@ -44,7 +44,7 @@
     <span class="loading loading-lg text-xl w-24 text-sky-500 justify-center flex mx-auto loading-infinity"></span>
 
 
-    <dialog id="editProfile" class="modal">
+    <dialog id="editProfile" class="modal font-mono">
         <form method="dialog" class="modal-box">
             <div class="flex text-lg flex-row justify-between">
                 <button>Cancel</button>
@@ -78,7 +78,7 @@
             </div>
         </form>
     </dialog>
-    <dialog id="shareProfile" class="modal">
+    <dialog id="shareProfile" class="modal font-mono">
         <form method="dialog" class="modal-box">
             <div class="flex text-lg flex-row justify-between">
                 <button>Cancel</button>

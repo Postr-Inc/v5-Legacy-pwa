@@ -127,7 +127,7 @@ let methods = {
 
    
 
-
+    
     document.getElementById(methods.rootElement).innerHTML = window[$elName];
     window.postMessage({ render: $elName }, "*");
     hooked = true;
@@ -830,9 +830,7 @@ function doxMethods(element) {
     document.addEventListener(event, function (e) {
       if(element.id && e.target.id == element.id) {
         callback(e);
-      }else{
-        throw new Error("Element must have an id to use this method!");
-      }
+      } 
     })
   };
   
@@ -954,7 +952,7 @@ function setDox(html) {
     },
 
     awaitElement: async function (selector) {
-      console.log("awaiting element")
+     
       let element = document.querySelector(selector);
     
       if (element) {
@@ -1132,7 +1130,7 @@ function handleLogic(html) {
   let match = content.match(ifRegex);
   while (match) {
     let [fullMatch, condition, ifStatement, elseStatement] = match;
-     condition = condition.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+     condition = condition.replaceAll('&gt;', '>').replaceAll('&lt;', '<').replaceAll('&amp;', '&');
     // replace &gt; with > && &lt; with <
     let processedStatement;
     
@@ -1143,6 +1141,7 @@ function handleLogic(html) {
     }
      
 
+    
     content = content.replace(fullMatch, processedStatement);
     match = content.match(ifRegex);
   }
@@ -1151,6 +1150,49 @@ function handleLogic(html) {
   html.body.innerHTML = content;
   return html;
 }
+
+function handleState(html) {
+  let content = html.body.innerHTML;
+  let stateRegex = /{{\s*state\.([\s\S]*?)\s*}}/g;
+  let matches = content.match(stateRegex);
+  if (matches) {
+    // Create a memory object to store the initial state and changes
+    let memory = {};
+
+    matches.forEach(function (m) {
+      
+      let stateName = m.replace('{{state.', '').replace('}}', '').trim();
+      console.log(stateName)
+      let stateValue = window.state[stateName] || 'no_value'
+      content = content.replaceAll(m, stateValue);
+      // Store the initial state and expression in the memory object
+      memory[stateName] = {
+        currentValue: stateValue,
+      };
+
+      // Replace the expression with the current state value
+      content = content.replace(m, stateValue);
+      html.body.innerHTML = content;
+    });
+
+    // Set up effects for each state to track changes
+    for (let stateName in memory) {
+      effect(stateName, function (value) {
+        // Get the current state value from the memory object
+        let currentState = memory[stateName].currentValue;
+        
+        document.body.outerHTML = document.body.outerHTML.replaceAll(currentState, value);
+        currentState = value;
+         
+      });
+    }
+  }
+
+  return html;
+}
+
+
+
 
 
 function executeStatement(statement) {
@@ -1366,11 +1408,8 @@ function handleScripts(html) {
         matches.forEach(function (match) {
           
           let js = match.replace('${{', '').replace('}}', '');
-   
-          // update the html
-          html.body.outerHTML = html.body.outerHTML.replace(match, eval(js));
- 
-           
+          js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+           html.body.innerHTML = html.body.innerHTML.replaceAll(match, eval(js));
         });
       }
     }
@@ -1405,7 +1444,8 @@ function handleImports(htm) {
 
           html = handleLogic(html);
           html = handleMarkdown(html);
-
+ 
+          html = handleState(html);
           // Execute the beforeRender scripts
           beforeRenderScripts.forEach(function (script) {
             if (script.includes('dox')) {
@@ -1495,7 +1535,7 @@ function processElement(el) {
 
       newel = handleVariables(newel);
       newel = handleMarkdown(newel);
-
+      newel = handleState(newel);
       // Find the corresponding element in the new HTML
       newel = newel.body.querySelector(tagName);
 
@@ -1599,6 +1639,7 @@ Promise.all(fetchPromises)
         let d = parser.parseFromString(template.data, 'text/html');
         let matches = d.body.outerHTML.match(/```([\s\S]*?)```/g);
 
+
         if (matches) {
           matches.forEach(function (match) {
             d.body.outerHTML = d.body.outerHTML.replaceAll(match, '<!-- ' + match + ' -->');
@@ -1622,7 +1663,7 @@ Promise.all(fetchPromises)
             if (!document.getElementById(id)) {
               s.innerHTML = script;
               s.type = 'module';
-              cons
+              
               s.id = id;
               document.head.appendChild(s);
             }
@@ -1684,10 +1725,11 @@ Promise.all(fetchPromises)
 
               html.body.innerHTML = html.body.innerHTML.replaceAll(regex, window.props[variable]);
             });
-            html = handleLogic(html);
+             
             html = handleMarkdown(html);
             html = handleVariables(html);
-
+            html = handleLogic(html);
+            html = handleState(html);
             template.data = html.body.innerHTML;
 
 
@@ -1731,8 +1773,6 @@ Promise.all(fetchPromises)
 
               document.head.appendChild(script);
             }
-
-
 
           })
 
