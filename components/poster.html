@@ -9,9 +9,11 @@
         let shares = "100";
         let Uid = "";
         let pid = "";
+        let isVerified = "";
+        let dividercontent = "";
     </script>
      
-    <div class="flex flex-col font-mono  gap-2 p-2 ">
+    <div class="flex flex-col font-mono  gap-2 p-5 ">
         <div class="flex flex-row ">
             ```
 
@@ -19,14 +21,29 @@
             
             <div class="w-12 rounded-full">
                 <img src="{{image}}" 
-                alt="{{Uname}}"
-                class="rounded-full w-12 h-12" />
+                alt="{{Uname}}" 
+                class="rounded-full w-8 h-8" />
             </div>
             
-            <p class="mx-5">
+            <p class="mx-2">
                 <a href="#/profile/{{Uid}}"  
                 aria-label="{{Uname}} profile"
                 >{{Uname}}</a>
+               
+                ${{
+                    if(isVerified == "true"){
+                        return `
+                         <div class="tooltip inline" data-tip="This User is verified">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline text-sky-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                              </svg>
+                        </div>
+                          `
+                    }else{
+                        return `<span></span>`
+                    }
+                }}
+
             </p>
             <div class="flex flex-row gap-5  absolute end-6">
                 <p class="flex-none text-slate-400">{{posted}}</p>
@@ -35,9 +52,12 @@
                     <label tabindex="0" >•••</label>
                     <ul tabindex="0" class="dropdown-content z-[1] border border-slate-600 menu p-2 shadow bg-base-100 rounded font-mono w-52">
                       <li><a class="text-error"
-                        onclick="my_modal_1.showModal()"
+                         onclick="options_Modal_{{pid}}.showModal()"
                         >Report</a></li>
                       <li><a>Block</a></li>
+                      <li><a  class="text-slate-500"
+                        onclick="navigator.clipboard.write(`{{pid}}`)"
+                        >ID: {{pid}}</a></li>
                     </ul>
                   </div>
                
@@ -47,17 +67,21 @@
        
         <a href="#/post/{{pid}}">
             <div>{{description}}</div>
-           #if (postimg != "");
-            return <img src="{{postimg}}" class="rounded w-full h-96" />
-            #endif
+             ${{
+                if(postimg != 'null'){
+                    return `<img src="${postimg}" class="rounded-lg w-full h-[50vw] object-cover mt-5"/>`
+                }else{
+                    return `<span></span>`
+                }
+            }}
         </a>
      
         
 
-        <div class="flex flex-row  gap-5">
+        <div class="flex flex-row   gap-5">
            
            
-            <div class="tooltip gap-2 flex inline" data-tip="heart"  
+            <div class="tooltip gap-2 flex inline" data-tip="Heart"  
             id="heart-{{pid}}"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -68,7 +92,18 @@
                 </svg>
 
             </div>
-             
+          
+                <div class="tooltip gap-2 flex inline" data-tip="comment"  
+                >
+                    <button
+                    onclick="window.commentModalContainer_{{pid}}.showModal()"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                      </svg>
+                    </button>
+                 </div>
+       
             <div class="tooltip flex inline gap-2" data-tip="share" id="share-{{pid}}"
             alt="share"
              
@@ -81,10 +116,17 @@
 
 
             </div>
+            <div class="tooltip flex inline gap-2" data-tip="repost" id="repost-{{pid}}"
+            alt="share"
+             
+            >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                 <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z" clip-rule="evenodd" />
               </svg>
-              
+
+            </div>
+            
+              <slot></slot>
 
 
         </div>
@@ -96,13 +138,51 @@
 
         
 
+        ${{
+            if(dividercontent != ""){
+                return `
+                <div class="divider w-full">
+                    <p class="text-slate-500">${dividercontent}</p>
+                </div>
+                `
+            }
+            else{
+                return `
+                <div class="divider w-full"></div>
+                `
+            }
+        }}
 
-
-    <div class="divider w-full"></div>
+    
     </div>
-
+    <dialog id="commentModalContainer_{{pid}}" class="modal">
+        <form method="dialog" class="modal-box font-mono text-lg" id="comment-modal-{{pid}}">
+          <div class="flex flex-row justify-between p-2    ">
+            <button class=" ">Cancel</button>
+            <p class="font-bold">Comment</p>
+            <span></span>
+          </div>
+           <div class="divider"></div>
+          <div class="flex flex-col  ">
+            
+            <textarea 
+            onchange="setState('comment-{{pid}}', this.value)"
+            class="
+            textarea textarea-ghost w-full h-32 p-2 mt-5 textarea-bordered rounded  cursor-text   focus:outline-none ring focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Reply to {{Uname}}
+         
+            "></textarea>
+           
+          <div class="modal-action">
+            <!-- do not close the dialog -->
+            <button class="btn btn-ghost border border-slate-500 btn-sm w-full"
+            id="comment-{{pid}}"
+            >Comment</button>
+            
+          </div>
+        </form>
+      </dialog>
  
-<dialog id="my_modal_1" class="modal">
+<dialog id="options_Modal_{{pid}}" class="modal">
   <form method="dialog" class="modal-box" id="modal-{{pid}}">
     <h3 class="font-bold text-lg">Report {{Uname}}?</h3>
     <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>

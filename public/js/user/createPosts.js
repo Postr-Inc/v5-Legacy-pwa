@@ -1,5 +1,5 @@
 export function makePost(){
-  dox.getId('post').on('click', () => {
+  dox.getId('post').on('click', async  () => {
      
       let content = getState('postContent')
      
@@ -14,9 +14,8 @@ export function makePost(){
           "likes": JSON.stringify([]),
           "shares": 0
       };
-      pb.collection('posts').create(data).then((res) => {
-        window.location.reload()
-      })
+      let recdata = await pb.collection('posts').create(data) 
+      window.location.hash = '#/post/' + recdata.id
     })
    
 }

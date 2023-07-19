@@ -1,26 +1,55 @@
 <import src="./components/nav.html"></import>
 <import src="./components/poster.html"></import>
- 
+<import src="./components/comment.html"></import>
 <post>
    
+    
+    <div class=" absolute mb-6 top-2  w-full ">
+        <div class="flex flex-row p-2 justify-evenly">
+            <div class="flex text-md">
+                <a  onclick="history.back()"
+                class="flex flex-row gap-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 ">
+                        <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
+                     </svg>
+                    <p>Back</p>
+                </a>
+             </div>
+             <div class="mx-auto justify-center font-bold text-lg">
+                Postr
+             </div>
+        </div>
+         
+    </div>
+    <span class="loading   h-screen text-xl w-24 text-sky-500 justify-center flex mx-auto loading-circle"></span>
+     <div class="p-2 mt-8" id="postcontainer">
+       
+    </div>
+   
+    <p class="text-slate-500 text-xl flex justify-center mx-auto
      
-    <div class="p-2" id="postcontainer">
+    "
+     id="nocomments"
+    >Be The First To Comment</p>
+     
+    <div class="  mb-6 w-full" id="commentcontainer">
         
     </div>
-    <div class="divider">
-        comments  
-    </div>
-    <div >
+     
         <!--ontop of nav at the bottom-->
-        <div class="flex flex-row gap-2 mb-5 w-full absolute  ">
-           
-            <input type="text" class="input input-bordered  disabled rounded input-sm mb-5 w-full"
+        <div class="flex flex-row gap-2  bg-white  fixed bottom-0 mb-[4rem] p-5 h-8   z-[9999]  w-full ">
+            <img src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}" 
+            class="rounded-full w-8 h-8" />
+            <input type="text" class="input input-bordered    input-sm disabled rounded   mb-5 w-full"
             placeholder="Reply to this post"
+            onclick="
+            let postid = $URL_PARAMS.id
+            let func = new  Function(`window.commentModalContainer_${postid}.showModal()`)
+            func()
+            "
             >
         </div>
-    </div>
-    <div class="p-5" id="commentcontainer">
-    </div>
+   
     <nav class="absolute"></nav>
  
 </post>

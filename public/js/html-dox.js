@@ -813,6 +813,7 @@ function handleProps(html) {
       if (element.getAttribute(prop)) {
          
         window[prop] = element.getAttribute(prop);
+         
         element.outerHTML = element.outerHTML.replaceAll(regex, window[prop]);
       }
     });
@@ -1413,6 +1414,7 @@ function handleScripts(html) {
 
 }
 
+let cached = {};
 
 function handleImports(htm) {
   let imports = htm.querySelectorAll('import');
@@ -1422,6 +1424,12 @@ function handleImports(htm) {
     let src = imports[i].getAttribute('src');
     let name = src.split('/').pop().split('.')[0].toLowerCase();
 
+    if (cached[name]) {
+      let element = document.createElement(name);
+      element.innerHTML = cached[name];
+      imports[i].replaceWith(element);
+      continue;
+    }
 
     let fetchPromise = fetch(src)
       .then(function (response) {
@@ -1434,8 +1442,8 @@ function handleImports(htm) {
 
           html = handleLogic(html);
           html = handleMarkdown(html);
- 
           html = handleState(html);
+
           // Execute the beforeRender scripts
           beforeRenderScripts.forEach(function (script) {
             if (script.includes('dox')) {
@@ -1451,14 +1459,17 @@ function handleImports(htm) {
               if (!document.getElementById(id)) {
                 document.head.appendChild(s);
               }
-
-
             }
-
-
-
           });
 
+          // check if element has slot for children
+          if (htm.querySelector(name) && htm.querySelector(name).querySelector('slot')) {
+            dox.awaitElement(name).then(function (element) {
+              let slot = element.querySelector('slot');
+              let children = document.querySelector(name).innerHTML;
+              slot.innerHTML = children;
+            });
+          }
 
           // remove ``` with <!-- -->
           let matches = html.body.outerHTML.match(/```([\s\S]*?)```/g);
@@ -1466,20 +1477,15 @@ function handleImports(htm) {
           if (matches) {
             matches.forEach(function (match) {
               html.body.outerHTML = html.body.outerHTML.replaceAll(match, '<!-- ' + match + ' -->');
-            })
+            });
           }
-
-
-
-
 
           // Replace the import with the html
           if (htm.querySelector(name)) {
-
             htm.querySelectorAll(name).forEach(function (el) {
               let element = document.createElement(el.tagName);
 
-              // setall attributes
+              // set all attributes
               let attributes = el.attributes;
               for (let i = 0; i < attributes.length; i++) {
                 element.setAttribute(attributes[i].name, attributes[i].value);
@@ -1487,18 +1493,17 @@ function handleImports(htm) {
 
               element.innerHTML = html.body.innerHTML;
               el.replaceWith(element);
-
             });
-
           }
+
           importedElements.push({
             name: name,
             element: html
-          })
+          });
 
+          // Cache the HTML content
+          cached[name] = html.body.innerHTML;
         });
-
-
       });
 
     fetchPromises.push(fetchPromise);
@@ -1508,6 +1513,7 @@ function handleImports(htm) {
     return htm;
   });
 }
+
 function processElement(el) {
   el = el.element;
 
@@ -1528,7 +1534,8 @@ function processElement(el) {
       newel = handleState(newel);
       // Find the corresponding element in the new HTML
       newel = newel.body.querySelector(tagName);
-
+      // awaitElement
+    
       // If the new element is empty, don't replace the original element
       if (!newel || newel.innerHTML.trim() === '') {
         return;
@@ -1562,7 +1569,9 @@ function processElement(el) {
           let { name, value } = e.attributes[i];
           duplicate.setAttribute(name, value);
         }
+        
         duplicate.innerHTML = ele.innerHTML;
+        
         e.replaceWith(duplicate);
       });
     }
@@ -1599,10 +1608,27 @@ function observeNewElements() {
                 parent: parent
               });
               // hndlelogic
-
+              
               document.body.innerHTML = handleProps(document).body.innerHTML;
-
-            }
+              if (document.body.innerHTML.includes('${{')) {
+                let matches =     document.body.innerHTML.match(/\${{([\s\S]*?)}}/gs);
+                if (matches) {
+                  matches.forEach(function (match) {
+                    
+                    let js = match.replace('${{', '').replace('}}', '');
+                    js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+                     // replace strings and check for null instance
+                    if(js.replaceAll('"', '').replaceAll("'", '').trim() == 'null') {
+                      throw new Error('Cannot use null in ${{}}');
+                    }
+                    let value = eval(js);
+                   
+                    document.body.innerHTML = document.body.innerHTML.replaceAll(match, value);
+                    return
+                  });
+                }
+              }
+            } 
 
           }
         });

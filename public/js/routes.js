@@ -15,8 +15,6 @@ app.use('/post')
 
 app.bindRoot('app')
 
- 
- 
 if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
     console.log('desktop')
     window.location.hash = '#/download'
@@ -32,15 +30,18 @@ window.onresize = () => {
         window.location.hash = '#/download'
     } 
 }  
+ try {
+    pb.collection('users').authRefresh()
+ } catch (error) {
+    window.location.href = '#/login'
+ }
  
 app.get('/', (req, res) =>  {
  res.render('app')
  res.return()
  makePost()
  loadFeed()
- if(!pb.authStore.isValid){
-    res.redirect('/login')
-}
+ 
 })
  
 app.on('/', (req, res) =>  {
@@ -48,19 +49,14 @@ app.on('/', (req, res) =>  {
     res.return()
     makePost()
     loadFeed()
-    if(!pb.authStore.isValid){
-        res.redirect('/login')
-    }
+    
       
 })
 app.root('/', (req, res) =>{
     res.render('app')
     res.return()
     makePost()
-    if(!pb.authStore.isValid){
-        res.redirect('/login')
-    }
-     
+   
 })
 app.on('/download', (req, res) =>{
     res.render('download')
@@ -105,9 +101,7 @@ app.on('/profile/:id', (req, res) =>  {
     res.return()
     loadProfile(req.params.id)
     makePost()
-    if(!pb.authStore.isValid){
-        res.redirect('/login')
-    }
+     
      
 })
 app.get('/profile/:id', (req, res) =>  {
@@ -115,27 +109,21 @@ app.get('/profile/:id', (req, res) =>  {
     res.return()
     loadProfile(req.params.id)
     makePost()
-    if(!pb.authStore.isValid){
-        res.redirect('/login')
-    }
+    
 })
 app.get('/post/:id', (req, res) =>  {
     res.render('post')
     res.return()
     makePost()
     viewPost(req.params.id)
-    if(!pb.authStore.isValid){
-        res.redirect('/login')
-    }
+     
 })
 app.on('/post/:id', (req, res) =>  {
     res.render('post')
     res.return()
     makePost()
     viewPost(req.params.id)
-    if(!pb.authStore.isValid){
-        res.redirect('/login')
-    }
+    
 })
 
 app.get('/forgot-password', (req, res) =>  {
@@ -168,3 +156,11 @@ if(!pb.authStore.isValid && window.location.hash != '#/download'
 ){
     window.location.hash = '#/login'
 }
+
+ 
+setInterval(() => {
+    if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'){
+        pb.authStore.clear()
+        window.location.hash = '#/login'
+    }
+}, 1000)

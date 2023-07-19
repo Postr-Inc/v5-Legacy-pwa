@@ -1,7 +1,7 @@
 import { handlevents } from "/public/js/feed/feed.js"
 
-export function viewPost(postid){
-  pb.collection('posts').getOne(postid, {
+export async  function viewPost(postid){
+  await pb.collection('posts').getOne(postid, {
     expand: 'author'
   }).then((res) => {
      let poster = dox.add('poster', {
@@ -14,14 +14,93 @@ export function viewPost(postid){
         Uid: res.expand.author.id,
         posted: parseDate(res.created),
         likes: JSON.parse(JSON.stringify(res.likes)).length,
-        shares: res.shares
-     })
-        dox.getId('postcontainer').prepend(poster)
+        shares: res.shares,
+        isVerified: res.expand.author.validVerified ? true : false,
+        dividercontent:'comments'
+     }) 
+     
+
+    dox.getId('postcontainer').prepend(poster)
         
-     handlevents(res)
+      
+     comment(res)
+     dox.querySelector('.loading-circle').style.display = 'none'
+     handlevents('posts', res)
   })
 }
 
+async function comment(data){
+  dox.awaitElement('#comment-' + data.id).then((res) => {
+     res.on('click', () => {
+         window.location.hash = `#/post/${data.id}`
+         let comment = getState('comment-' + data.id)
+         
+         if(!comment){
+              alert('Please enter some content')
+              return
+         }
+
+         const cdata = {
+            "text":  comment,
+            "user":  pb.authStore.model.id,
+            "post":  data.id,
+            likes: JSON.stringify([]),
+            "shares": 0
+        };
+        pb.collection('comments').create(cdata, {
+            expand: 'user',
+       
+        }).then((res) => {
+          
+              let comment = dox.add('comment', {
+                  description: res.text,
+                  Uname: res.expand.user.username,
+                  image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.expand.user.id}/${res.expand.user.avatar}`,
+                  cid: res.id,
+                  Uid: res.expand.user.id,
+                  posted: parseDate(res.created),
+                  likes: JSON.parse(JSON.stringify(res.likes)).length,
+                  isVerified: res.expand.user.validVerified ? true : false,
+              })
+               
+              dox.getId('commentcontainer').prepend(comment)
+              
+              dox.querySelector('#commentcontainer-' + data.id).value = ''
+        })
+     })
+  })
+
+  pb.collection('comments').getList(1, 10, {
+    sort: `created`,
+    filter: `post.id = '${data.id}'`,
+    expand: 'user'
+  }).then((res) => {
+    res.items.forEach((comment) => {
+      let commentt = dox.add('comment', {
+        description: comment.text,
+        Uname: comment.expand.user.username,
+        image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${comment.expand.user.id}/${comment.expand.user.avatar}`,
+        cid: comment.id,
+        Uid: comment.expand.user.id,
+        posted: parseDate(comment.created),
+        likes: JSON.parse(JSON.stringify(comment.likes)).length,
+        isVerified: comment.expand.user.validVerified ? true : false,
+      })
+       
+       
+      
+      dox.getId('commentcontainer').prepend(commentt)
+      handlevents('comments', comment)
+    })
+  })
+  if(dox.getId('nocomments')){
+    dox.getId('nocomments').remove()
+  }
+}
+ 
+  
+ 
+  
 function parseDate(data){
     // just now - 1m - 1h - 1d - 1w - 1m - 1y
     let date = new Date(data)

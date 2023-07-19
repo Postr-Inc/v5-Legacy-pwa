@@ -1,6 +1,6 @@
 import { handlevents, debounce } from "/public/js/feed/feed.js"
 export function loadProfile(id){
-    if(pb.authStore.model.id == id){
+    if(pb.authStore.isValid && pb.authStore.model.id == id){
         dox.getId('editbtn').style.display = 'block'
         dox.getId('sharebtn').style.display = 'block'
         dox.getId('followbtn').style.display = 'none'
@@ -12,6 +12,7 @@ export function loadProfile(id){
             getState('pfp') ? form.append('avatar', getState('pfp')) : null
             getState('bio') ? form.append('bio', getState('bio')) : null
             pb.collection('users').update(id, form).then((res) => {
+                pb.collection('users').authRefresh()
                 window.location.reload()
             })
         })
@@ -22,9 +23,9 @@ export function loadProfile(id){
     }
     pb.collection('users').getOne(id).then((res) => {
         dox.getId('profilepic').src =  `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.id}/${res.avatar}`
-        dox.getId('username').html(res.username)
-        dox.getId('tag').html(`@${res.username}`)
-        dox.getId('bio').html(res.bio)
+        dox.getId('username').html(res.username.charAt(0).toUpperCase() + res.username.slice(1))
+        dox.getId('tag').html(`@${res.username.toLowerCase()}`)
+        dox.getId('bio').html(res.bio.charAt(0).toUpperCase() + res.bio.slice(1))
         dox.getId('followers').html(`Followers: ${res.followers.length ? res.followers.length : 0}`)
         follow(res)
      })
@@ -37,13 +38,14 @@ export function loadProfile(id){
 
      pb.collection('posts').getList(1,10, {
         filter: `author.id = '${id}'`,
-        expand: 'author'
+        expand: 'author',
+        sort: `created`
         }).then((res) => {
            if(res.items.length > 0){
                 handlePosts(res.items)
            }else{
              dox.getId('postcontainer').html('<h1 class="justify-center mx-auto text-2xl flex mt-8">No posts yet</h1>')
-             dox.querySelector('.loading-infinity').style.display = 'none'
+             dox.querySelector('.loading-circle').style.display = 'none'
            }
      })
      
@@ -62,11 +64,12 @@ async function handlePosts(posts){
         Uid: post.expand.author.id,
         posted: parseDate(post.created),
         likes: JSON.parse(JSON.stringify(post.likes)).length,
-        shares: post.shares
+        shares: post.shares,
+        isVerified: post.expand.author.validVerified ? true : false,
      })
      dox.getId('postcontainer').prepend(poster)
-     dox.querySelector('.loading-infinity').style.display = 'none'
-     handlevents(post)
+     dox.querySelector('.loading-circle').style.display = 'none'
+     handlevents('posts',post)
      
    })
    

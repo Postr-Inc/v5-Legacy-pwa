@@ -1,0 +1,109 @@
+<comment>
+    <script props>
+        let description = "";
+        let text = "";
+        let posted = "";
+        let Uname = "";
+        let likes = "100";
+        let image = "";
+        let shares = "";
+        let Uid = "";
+        let cid = "";
+        let isVerified = "";
+    </script>
+     
+    <div class="flex flex-col font-mono  gap-2 p-5 ">
+        <div class="flex flex-row ">
+            ```
+
+            ```
+            
+            <div class="w-12 rounded-full">
+                <img src="{{image}}" 
+                alt="{{Uname}}" 
+                class="rounded-full w-8 h-8" />
+            </div>
+            
+            <p >
+                <a href="#/profile/{{Uid}}"
+                aria-label="{{Uname}} profile"
+                >{{Uname}}</a>
+               
+                ${{
+                    if(isVerified == "true"){
+                        return `
+                         <div class="tooltip inline mx-2" data-tip="This User is verified">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline text-sky-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                              </svg>
+                        </div>
+                          `
+                    }else{
+                        return `<span></span>`
+                    }
+                }}
+
+            </p>
+            <div class="flex flex-row gap-5  absolute end-6">
+                <p class="flex-none text-slate-400">{{posted}}</p>
+                 
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" >•••</label>
+                    <ul tabindex="0" class="dropdown-content z-[1] border border-slate-600 menu p-2 shadow bg-base-100 rounded font-mono w-52">
+                      <li><a class="text-error"
+                         onclick="options_Modal_{{cid}}.showModal()"
+                        >Report</a></li>
+                      <li><a>Block</a></li>
+                      <li><a  class="text-slate-500"
+                        onclick="navigator.clipboard.writeText(`{{cid}}`)"
+                        >ID: {{cid}}</a></li>
+                    </ul>
+                  </div>
+               
+            </div>
+        </div>
+
+       
+         
+            <div class="mx-2">{{description}}</div>
+             
+         
+     
+        
+
+          
+
+        
+
+
+
+    <div class="divider w-full"></div>
+    </div>
+    
+ 
+<dialog id="options_Modal_{{cid}}" class="modal">
+  <form method="dialog" class="modal-box" id="modal-{{cid}}">
+    <h3 class="font-bold text-lg">Report {{Uname}}?</h3>
+    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    <div class="divider"></div>
+    <p>Your report will be reviewed and actioned accordingly. Nobody but you will know that you reported this post.</p>
+     <div class="divider mt-5">Please Select A Reason</div>
+     <select class="select select-ghost w-full select-sm"
+     onchange="setState('report', this.value)"
+     >
+       <option disabled="disabled" selected="selected">Select a reason</option>
+       <option value="Inappropriate">Inappropriate</option>
+       <option value="spam">Spam</option>
+       <option value="hate">Hate Speech</option>
+     </select>
+    <div class="modal-action">
+      <!-- do not close the dialog -->
+      <button class="btn btn-ghost border border-slate-500 btn-sm w-full"
+      id="reportbtn-{{cid}}"
+      >Report</button>
+      
+    </div>
+  </form>
+</dialog>
+
+</comment>

@@ -15,13 +15,14 @@ export async function loadFeed() {
         Uid: post.expand.author.id,
         posted: parseDate(post.created),
         likes: JSON.parse(JSON.stringify(post.likes)).length,
-        shares: post.shares
+        shares: post.shares,
+        isVerified: post.expand.author.validVerified ? true : false,
       })
       dox.awaitElement('#postfeed').then((feed) => {
         feed.prepend(poster)
         feed.style.display = 'block'
         dox.querySelector('.loading-infinity').style.display = 'none'
-        handlevents(post)
+        handlevents('posts', post)
       })
 
 
@@ -78,13 +79,16 @@ export function debounce(func, wait) {
   };
 }
 
-export async function handlevents(post) {
+export async function handlevents(collection, post) {
+ 
   const likes = JSON.parse(JSON.stringify(post.likes));
   const shares = post.shares;
 
-  const btn = await dox.awaitElement(`#heart-${post.id}`);
+  const btn = await dox.awaitElement(`#heart-${post.id}`) || dox.getId(`#heart-${post.id}`)
+  
   const sharebtn = await dox.awaitElement(`#share-${post.id}`);
-  const tipElement = dox.querySelector('[data-tip]');
+   
+  const tipElement = dox.querySelector('[data-tip="Heart"]');
 
   function updateLikeStatus() {
     if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
@@ -122,13 +126,15 @@ export async function handlevents(post) {
   updateLikeStatus();
 
   const debouncedLikeHandler = debounce(() => {
+     
     if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
+      
       likes.splice(likes.indexOf(pb.authStore.model.id), 1);
     } else {
       likes.push(pb.authStore.model.id);
     }
 
-    pb.collection('posts').update(post.id, {
+    pb.collection(collection).update(post.id, {
       likes: JSON.stringify(likes),
     });
 
@@ -145,7 +151,7 @@ export async function handlevents(post) {
     const url = window.location.origin + '#/post/' + post.id;
     navigator.clipboard.writeText(url);
 
-    pb.collection('posts').update(post.id, {
+    pb.collection(collection).update(post.id, {
       shares: shares + 1,
     });
 
@@ -154,8 +160,10 @@ export async function handlevents(post) {
       updateShareStatus();
     }, 1000);
   }, 1000); // 1000ms (1 second) debounce time
-
+ if(sharebtn){
   sharebtn.onclick = debouncedShareHandler;
+ }
+   
 }
 
 
