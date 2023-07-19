@@ -1,9 +1,12 @@
 {
     "name": "Postr",
     "display": "standalone",
+    "short_name":"Postr",
+    "description":"User first orientated social media platform!",
     "start_url": "/",
-    "background_color":"#121212",
-    "theme_color": "#121212",
+    "scope": "/",
+    "background_color":"#ffffff",
+    "theme_color": "#ffffff",
     "icons": [
       {
         "src": "/public/assets/images/logo.png",
