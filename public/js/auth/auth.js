@@ -44,7 +44,8 @@ export function login(){
            window.location.reload()
            
         })
-        alert('Invalid username or password')
+        
+        dox.getId('loginbtn').html('Login')
     })
 
     googleclick()
