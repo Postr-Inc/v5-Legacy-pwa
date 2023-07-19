@@ -40,8 +40,10 @@ export function login(){
         }
         dox.getId('loginbtn').html('Logging in...')
         pb.collection('users').authWithPassword(username, password).then((res) => {
+           window.location.reload()
            window.location.href = '#/'
         })
+        alert('Invalid username or password')
     })
 
     googleclick()

@@ -2,7 +2,7 @@ export async function loadFeed() {
   dox.getId('postfeed').style.display = 'none'
   pb.collection('posts').getList(1, 10, {
     expand: 'author',
-    filter: `author.id != '${pb.authStore.isValid ? pb.authStore.model.id : ''}'`,
+    filter: `author.id != "${pb.authStore.model.id}"`,
     sort: `-created`
   }).then((res) => {
     res.items.forEach(async (post) => {
