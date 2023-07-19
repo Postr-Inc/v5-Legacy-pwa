@@ -58,13 +58,15 @@
 
                         <span class="label-text font-bold text-sm">Name</span>
                         <label for="profileinput">
-                            <img src="{{currentProfile}}" id="profilepicin"
+                            <img src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}"
+                               
+                             id="profilepicin"
                                 class="rounded-full w-12 h-12 absolute end-5 " />
                         </label>
 
                         <input type="file" class="hidden" id="profileinput" onchange="setState('pfp', this.files[0])" />
                     </label>
-                    <input type="text" placeholder="{{username}}"
+                    <input type="text" placeholder="${{pb.authStore.isValid ? pb.authStore.model.username : ''}}"
                         class="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
                         onchange="setState('username', this.value)" />
                     <label class="label mt-5">

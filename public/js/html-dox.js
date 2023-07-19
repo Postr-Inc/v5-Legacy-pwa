@@ -1402,17 +1402,7 @@ function handleScripts(html) {
     }
     
 
-    if (html.body.outerHTML.includes('${{')) {
-      let matches = html.body.outerHTML.match(/\${{([\s\S]*?)}}/g);
-      if (matches) {
-        matches.forEach(function (match) {
-          
-          let js = match.replace('${{', '').replace('}}', '');
-          js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
-           html.body.innerHTML = html.body.innerHTML.replaceAll(match, eval(js));
-        });
-      }
-    }
+    
 
     return {
       html: html,
@@ -1745,7 +1735,18 @@ Promise.all(fetchPromises)
     let scripts = updatedTemplates
     updatedTemplates.forEach(function (template) {
 
-
+      if (template.template.data.includes('${{')) {
+        let matches =  template.template.data.match(/\${{([\s\S]*?)}}/g);
+        if (matches) {
+          matches.forEach(function (match) {
+            
+            let js = match.replace('${{', '').replace('}}', '');
+            js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+            let value = eval(js);
+            template.template.data = template.template.data.replaceAll(match, value);
+          });
+        }
+      }
       window[template.template.name] = template.template.data;
       window.dox = dox;
 
@@ -1772,8 +1773,10 @@ Promise.all(fetchPromises)
             if (!document.getElementById(id)) {
 
               document.head.appendChild(script);
+              
             }
 
+             
           })
 
       }
