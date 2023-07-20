@@ -37,7 +37,16 @@
     </div>
      
         <!--ontop of nav at the bottom-->
-        <div class="flex flex-row gap-2  bg-white  fixed bottom-0 mb-[4rem] p-5 h-8   z-[9999]  w-full ">
+        <div class="flex flex-row gap-2  bg-white  fixed bottom-0 mb-[4rem] p-5    z-[9999]  w-full
+        ${{
+            if(window.screen.height > 667){
+             'h-[4rem]'
+            }else{
+               'h-[5rem]'
+            }
+          }}
+        
+        ">
             <img src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}" 
             class="rounded-full w-8 h-8" />
             <input type="text" class="input input-bordered    input-sm disabled rounded   mb-5 w-full"
