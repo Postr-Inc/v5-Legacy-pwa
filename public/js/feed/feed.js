@@ -24,16 +24,7 @@ export async function loadFeed() {
         dox.querySelector('.loading-infinity').style.display = 'none'
         handlevents('posts', post)
       })
-
-
-
-
-
-
-
-
-
-
+ 
 
     })
   })
@@ -170,5 +161,4 @@ export async function handlevents(collection, post) {
  }
    
 }
-
-
+ 
