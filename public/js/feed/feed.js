@@ -82,28 +82,31 @@ export function debounce(func, wait) {
 export async function handlevents(collection, post) {
  
   const likes = JSON.parse(JSON.stringify(post.likes));
+ 
   const shares = post.shares;
-
+  console.log(post)
   const btn = await dox.awaitElement(`#heart-${post.id}`) || dox.getId(`#heart-${post.id}`)
-  
+   
   const sharebtn = await dox.awaitElement(`#share-${post.id}`);
    
   const tipElement = dox.querySelector('[data-tip="Heart"]');
 
   function updateLikeStatus() {
+    console.log(pb.authStore.model.id, likes)
     if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
-      btn.classList.toggle('text-red-500', true);
+       
+      dox.getId(`heart-${post.id}`).classList.toggle('text-red-500', true);
       tipElement.setAttribute('data-tip', 'Unheart');
       dox.getId(`likes-${post.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
     } else {
-      btn.classList.toggle('text-red-500', false);
+      dox.getId(`heart-${post.id}`).classList.toggle('text-red-500', false);
       tipElement.setAttribute('data-tip', 'Heart');
       dox.getId(`likes-${post.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
     }
   }
 
   function updateShareStatus() {
-    dox.querySelector('[data-tip="Copied!"]').setAttribute('data-tip', 'Share');
+    dox.querySelector('[data-tip="Copied!"]').setAttribute('data-tip', 'share');
   }
   dox.getId(`reportbtn-${post.id}`).on('click', async () => {
     let report = getState(`report`)
@@ -130,8 +133,10 @@ export async function handlevents(collection, post) {
     if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
       
       likes.splice(likes.indexOf(pb.authStore.model.id), 1);
+     
     } else {
       likes.push(pb.authStore.model.id);
+     
     }
 
     pb.collection(collection).update(post.id, {
@@ -141,12 +146,10 @@ export async function handlevents(collection, post) {
     updateLikeStatus();
   }, 1000); // 1000ms (1 second) debounce time
 
-  btn.onclick = debouncedLikeHandler;
+  btn.on('click', debouncedLikeHandler)
 
   const debouncedShareHandler = debounce(() => {
-    let sharetip = dox.querySelector('[data-tip="share"]')
-    dox.querySelector('[data-tip="share"]').click();
-    sharetip.setAttribute('data-tip', 'Copied!');
+     
 
     const url = window.location.origin + '#/post/' + post.id;
     navigator.clipboard.writeText(url);
@@ -156,12 +159,14 @@ export async function handlevents(collection, post) {
     });
 
     dox.getId(`shares-${post.id}`).innerHTML = shares + 1 + (shares == 1 ? ' share' : ' shares');
+    dox.querySelector('[data-tip="share"]').setAttribute('data-tip', 'Copied!');
     setTimeout(() => {
+      
       updateShareStatus();
     }, 1000);
   }, 1000); // 1000ms (1 second) debounce time
  if(sharebtn){
-  sharebtn.onclick = debouncedShareHandler;
+  sharebtn.on('click', debouncedShareHandler)
  }
    
 }

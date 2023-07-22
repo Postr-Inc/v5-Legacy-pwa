@@ -1,6 +1,7 @@
 import { handlevents } from "/public/js/feed/feed.js"
-
+ 
 export async  function viewPost(postid){
+   
   await pb.collection('posts').getOne(postid, {
     expand: 'author'
   }).then((res) => {
@@ -18,14 +19,14 @@ export async  function viewPost(postid){
         isVerified: res.expand.author.validVerified ? true : false,
         dividercontent:'comments'
      }) 
-     
+     console.log(res)
 
     dox.getId('postcontainer').prepend(poster)
-        
+    handlevents('posts', res)
       
      comment(res)
      dox.querySelector('.loading-circle').style.display = 'none'
-     handlevents('posts', res)
+     
   })
 }
 
@@ -63,6 +64,7 @@ async function comment(data){
                   isVerified: res.expand.user.validVerified ? true : false,
               })
                
+              handlevents('comments', res)
               dox.getId('commentcontainer').prepend(comment)
               
               dox.querySelector('#commentcontainer-' + data.id).value = ''

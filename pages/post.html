@@ -22,43 +22,32 @@
          
     </div>
     <span class="loading   h-screen text-xl w-24 text-sky-500 justify-center flex mx-auto loading-circle"></span>
-     <div class="p-2 mt-8" id="postcontainer">
+     <div class="flex flex-col justify-between">
+        <div class="p-2 mt-8" id="postcontainer">
        
-    </div>
-   
-    <p class="text-slate-500 text-xl flex justify-center mx-auto
-     
-    "
-     id="nocomments"
-    >Be The First To Comment</p>
-     
-    <div class="  mb-6 w-full" id="commentcontainer">
-        
-    </div>
-     
-        <!--ontop of nav at the bottom-->
-        <div class="flex flex-row gap-2  bg-white  fixed bottom-0 mb-[4rem] p-5    z-[9999]  w-full
-        ${{
-            if(window.screen.height > 667){
-             'h-[4rem]'
-            }else{
-               'h-[5rem]'
-            }
-          }}
-        
-        ">
-            <img src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}" 
-            class="rounded-full w-8 h-8" />
-            <input type="text" class="input input-bordered    input-sm disabled rounded   mb-5 w-full"
-            placeholder="Reply to this post"
-            onclick="
-            let postid = $URL_PARAMS.id
-            let func = new  Function(`window.commentModalContainer_${postid}.showModal()`)
-            func()
-            "
-            >
         </div>
+        <p class="text-slate-500 text-xl flex justify-center mx-auto
+     
+        "
+         id="nocomments"
+        >Be The First To Comment</p>
+        <div class="  mb-6 w-full" id="commentcontainer">
+        
+        </div>
+        
+        <div class="flex flex-col justify-between fixed bottom-0 ">
+
+           
+            <nav  ></nav>
+       
+        </div>
+     </div>
+     
    
-    <nav class="absolute"></nav>
+ 
+     
+ 
+   
+</div>
  
 </post>

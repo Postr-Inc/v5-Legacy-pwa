@@ -1194,7 +1194,7 @@ function handleLogic(html) {
       processedStatement = elseStatement && !elseStatement.includes('#if') ? (elseStatement.includes('return') ? elseStatement : `<script>${elseStatement}</script>`) : '';
     }
      
-    console.log(processedStatement)
+    
 
     
     content = content.replace(fullMatch, processedStatement);
@@ -1536,10 +1536,7 @@ window.defer = async function (e, name, fn) {
 
       // split async or regular
       let async = data.includes('async');
-      let asyncRegex = /async\s+function\s+([\s\S]*?)\s*\(([\s\S]*?)\)\s*{([\s\S]*?)}/g;
-      let regularRegex = /function\s+([\s\S]*?)\s*\(([\s\S]*?)\)\s*{([\s\S]*?)}/g;
-
-      let match = async ? asyncRegex.exec(data) : regularRegex.exec(data);
+     
       if(match) {
         let [fullMatch, name, args, body] = match;
         console.log(fullMatch, name, args, body)
