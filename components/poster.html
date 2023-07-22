@@ -42,7 +42,9 @@
                     }else{
                         return `<span></span>`
                     }
+ 
                 }}
+                
 
             </p>
             <div class="flex flex-row gap-5  absolute end-6">
@@ -69,7 +71,7 @@
             <div>{{description}}</div>
              ${{
                 if(postimg != 'null'){
-                    return `<img src="${postimg}" class="rounded-lg w-full h-[50vw] object-cover mt-5"/>`
+                    `<img src="${postimg}" class="rounded-lg w-full h-[50vw] object-cover mt-5"/>` 
                 }else{
                     return `<span></span>`
                 }

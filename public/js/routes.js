@@ -14,28 +14,15 @@ app.use('/post')
 // binding root
 
 app.bindRoot('app')
-
-if(window.screen.width > 768 ||  !window.matchMedia('(display-mode: standalone)').matches){
-    console.log('desktop')
-    window.location.hash = '#/download'
-}else if( window.matchMedia('(display-mode: standalone)').matches){
-    console.log('mobile')
-    window.location.hash = '#/'
-
-}
-
-window.onresize = () => {
-    if(window.screen.width > 768){
-        console.log('desktop')
-        window.location.hash = '#/download'
-    } 
-}  
- try {
+ 
+if(pb.authStore.isValid){
+    try {
     pb.collection('users').authRefresh()
  } catch (error) {
     window.location.href = '#/login'
  }
  
+}
 app.get('/', (req, res) =>  {
  res.render('app')
  res.return()

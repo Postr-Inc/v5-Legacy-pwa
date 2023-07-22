@@ -2566,6 +2566,9 @@ html {
 .h-\[45vw\] {
   height: 45vw;
 }
+.h-\[4rem\] {
+  height: 4rem;
+}
 .h-\[50vw\] {
   height: 50vw;
 }

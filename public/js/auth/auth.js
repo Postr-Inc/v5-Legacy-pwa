@@ -39,15 +39,19 @@ export function login(){
           return
         }
         dox.getId('loginbtn').html('Logging in...')
+       try {
         pb.collection('users').authWithPassword(username, password).then((res) => {
           window.location.href = '#/'
            window.location.reload()
            
         })
+       } catch (error) {
         alert('Invalid username or password')
+       }
+        
     })
 
-    googleclick()
+ 
      
   }
 }
