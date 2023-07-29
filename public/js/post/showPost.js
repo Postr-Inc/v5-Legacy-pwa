@@ -30,7 +30,7 @@ export async  function viewPost(postid){
   })
 }
 
-async function comment(data){
+ async function comment(data){
   dox.awaitElement('#comment-' + data.id).then((res) => {
      res.on('click', () => {
          window.location.hash = `#/post/${data.id}`
@@ -69,7 +69,9 @@ async function comment(data){
               
               dox.querySelector('#commentcontainer-' + data.id).value = ''
         })
+        return 
      })
+     return
   })
 
   pb.collection('comments').getList(1, 10, {
@@ -99,7 +101,6 @@ async function comment(data){
     dox.getId('nocomments').remove()
   }
 }
- 
   
  
   
