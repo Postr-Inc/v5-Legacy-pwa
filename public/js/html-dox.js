@@ -620,7 +620,8 @@ class Router {
     }
 
 
-    callback(res)
+     callback(res)
+    
 
     const message = {
       path: path,
@@ -633,27 +634,43 @@ class Router {
 
 
 
-  listen(path, callback) {
+  async listen(path, callback) {
     if (this.listeners[path]) {
       throw new Error(`Listener already registered for route ${path}`);
     }
 
-    const listener = (event) => {
+    const listener = async  (event) => {
       const messagePath = event.data.path;
-      const data = event.data.data;
-      const headers = event.data.headers;
-
+      let data = event.data.data;
+      const headers = event.data.headers || {};
+      
+      if(headers && headers["Content-Type"] == "application/json") {
+        data = JSON.parse(data);
+      }else if(headers && headers["Content-Type"] == "text/plain") {
+        data = data;
+      }else {
+        data = null;
+      }
       if (messagePath === path) {
-        callback({
-          "data": data,
+       await callback({
+          "data":  data,
           "headers": headers,
           "method": "POST"
         })
+          
+        window.postMessage({ done: true, type: 'HTTP_POST' }, "*");
+        if(debugOn) {
+          console.log(`[HTTP_POST: ${path} DONE]`, "assert");
+        }
+        return true;
       }
     };
 
+
     window.addEventListener("message", listener);
+    
     this.listeners[path] = listener;
+
   }
 
   stopListening(path) {
@@ -662,7 +679,10 @@ class Router {
     if (listener) {
       window.removeEventListener("message", listener);
       delete this.listeners[path];
+       
+      
     }
+    
   }
   use(path) {
 
@@ -996,6 +1016,8 @@ function effect(name, callback) {
     }
   });
 }
+ 
+ 
 function setDox(html) {
   let dox = {
     querySelector: function (selector) {
@@ -1003,6 +1025,33 @@ function setDox(html) {
 
 
       return doxMethods(el);
+    },
+    search: function (input, string) {
+      // search html for value
+      let regex = new RegExp(string, 'g');
+      let matches = input.match(regex);
+      console.log(matches);
+      return matches;
+      
+    },
+    querySelectorAll: function (selector) {
+      let el = document.querySelectorAll(selector) || html.body.querySelectorAll(selector);
+      let els = [];
+      el.forEach(function (element) {
+        els.push(doxMethods(element));
+      });
+      return els;
+    },
+    
+    isOnline: navigator.onLine ? true : false,
+    OnlineState: function (callback) {
+       
+      window.ononline = function (e) {
+        callback(e)
+      }
+      window.onoffline = function () {
+        callback(e)
+      }
     },
 
     awaitElement: async function (selector) {
@@ -1165,6 +1214,7 @@ function setDox(html) {
     setVar: setVar,
 
   };
+  
 
   window.dox = dox;
   window.setState = setState;
@@ -1175,6 +1225,77 @@ window.$CURRENT_URL = window.location.hash.substring(1);
 
 
 setDox(document);
+
+ function handleForms(html) {
+  let forms = html.body.querySelectorAll('form');
+  if(debugOn) {
+    console.log('[DoxDom: Forms found] ', forms.length)
+  }
+  forms.forEach(async function (form) {
+    
+    let action = form.getAttribute('action');
+    let submitId = form.getAttribute('submit-id');
+    
+    let redirect = form.hasAttribute('redirect') ? form.getAttribute('redirect') : null;
+    if (submitId) {
+      form.setAttribute('onsubmit', 'event.preventDefault(); handleSubmit()');
+       function handleSubmit(){
+        
+        let data = {};
+        let inputs = [...document.querySelectorAll('form[action="' + form.getAttribute('action') + '"] input')]
+        inputs.forEach(function (input) {
+          data[input.name] = input.value;
+        });
+        
+        if (action) {
+          const router = new Router();
+          router.post(action, async function (res) {
+            
+            res.set('Content-Type', 'application/json');
+            await res.json(data);
+            res.return()
+             
+            router.stopListening(action)
+            window.onmessage = (event) => {
+              if(!event.origin == window.location.origin) return;
+              
+              if(event.data.done && event.data.type == 'HTTP_POST'){
+                if (document.querySelector('form[action="' + action + '"]')) {
+                  let url = document.querySelector('form[action="' + action + '"]').getAttribute('redirect');
+                  if (url) {
+                    window.location.hash = url
+                  }
+                  if(debugOn) {
+                    console.log('[DoxDom: Redirecting] ', redirect)
+                  }
+                }
+              }
+            }
+            if(debugOn) {
+              console.log('[DoxDom: Form submitted] ', action, data)
+            }
+            
+
+          });
+        }
+       }
+       window.handleSubmit = handleSubmit;
+       // handle submit either on click or on enter
+       dox.awaitElement(`form[submit-id="${submitId}"]`).then(function (element) {
+        console.log(element)
+        element.on('submit', function (e) {
+          handleSubmit()
+        })
+       })
+      
+        
+    }
+  });
+
+ 
+  return html;
+}
+
 
 function handleLogic(html) {
   let content = html.body.innerHTML;
@@ -1194,7 +1315,7 @@ function handleLogic(html) {
       processedStatement = elseStatement && !elseStatement.includes('#if') ? (elseStatement.includes('return') ? elseStatement : `<script>${elseStatement}</script>`) : '';
     }
      
-    
+ 
 
     
     content = content.replace(fullMatch, processedStatement);
@@ -1426,7 +1547,9 @@ function handleScripts(html) {
 
        
 
-      if (!script.hasAttribute('execute') && !script.hasAttribute('props') && !script.hasAttribute('defered')) {
+      if (!script.hasAttribute('execute') && !script.hasAttribute('props') && !script.hasAttribute('defered')
+      && !script.hasAttribute('data-type')
+      ) {
         var s = script.innerHTML;
         var match;
 
@@ -1461,7 +1584,31 @@ function handleScripts(html) {
       } else if (script.getAttribute('execute') === 'beforeRender') {
         var s = script.innerHTML;
         beforeRenderScripts.push(s);
-      } 
+      } else   if (script.hasAttribute('data-type') && script.getAttribute('data-type') === 'local') {
+        let s = script.innerHTML;
+        // Update the regex pattern to check for both .call() and non-.call() functions
+        let functions = s.match(/function\s+(\w+)\s*\(([\s\S]*?)\)\s*{([\s\S]*?)}/g);
+        if (functions) {
+          functions.forEach(function (f) {
+            let functionName = f.split(' ')[1].split('(')[0];
+            window[functionName] = new Function(f + '; return ' + functionName + ';')();
+          });
+
+        }
+        let scriptElement = document.createElement('script');
+        console.log(scriptElement)
+        scriptElement.innerHTML =  scriptElement.innerHTML + '\n' + s.trim();
+        scriptElement.id = 'local-script';
+
+        if(!document.getElementById('local-script')) {
+          document.head.appendChild(scriptElement);
+        }
+        else{
+          document.getElementById('local-script').innerHTML = scriptElement.innerHTML;
+        }
+      }
+      
+      
 
       else if (script.hasAttribute('props')) {
         var s = script.innerHTML;
@@ -1527,39 +1674,45 @@ const fetchedScripts = {};
 
 window.defer = async function (e, name, fn) {
   e.preventDefault(); // Prevent the default click behavior
-
+  
   let script = await dox.awaitElement('#' + name);
-
+  
   if (script && !fetchedScripts[name]) {
     try {
-      let data = await fetch(script.src).then((response) => response.text());
-
-      // split async or regular
-      let async = data.includes('async');
-     
-      if(match) {
-        let [fullMatch, name, args, body] = match;
-        console.log(fullMatch, name, args, body)
+      let data = await fetch(script.src).then(response => response.text());
+      
+      let functions = data.match(/function\s+(\w+)\s*\(([\s\S]*?)\)\s*{([\s\S]*?)}/g);
+      if (functions) {
+        functions.forEach(function (f) {
+          let functionName = f.split(' ')[1].split('(')[0];
+          window[name] = {
+            [functionName]: f
+          };
+           
+          window[functionName] = new Function(f + '; return ' + functionName + ';')();
+        });
       }
-
       fetchedScripts[name] = true;
     } catch (error) {
-      if (debugOn) {
-        console.log('[Defer Error] ', error, fn);
+
+      if(debugOn) {
+        console.log('[Defer Error] ', error, fn)
       }
       return;
     }
   }
-
+  
   try {
+    // Execute the deferred function
     fn();
   } catch (error) {
-    if (debugOn) {
-      console.log('[Defer Error] ', error, fn);
+    if(debugOn) {
+      console.log('[Defer Error] ', error, fn)
     }
     return;
   }
 };
+
 
 
 
@@ -1594,6 +1747,7 @@ function handleImports(htm) {
 
           html = handleLogic(html);
           html = handleMarkdown(html);
+          html = handleForms(html);
           html = handleState(html);
 
           // Execute the beforeRender scripts
@@ -1687,6 +1841,7 @@ function processElement(el) {
       newel = handleVariables(newel);
       newel = handleMarkdown(newel);
       newel = handleState(newel);
+      newel = handleForms(newel);
       // Find the corresponding element in the new HTML
       newel = newel.body.querySelector(tagName);
       // awaitElement
@@ -1761,7 +1916,8 @@ function observeNewElements() {
 
       if (mutation.type === 'childList') {
         window.onmessage = function (event) {
-          console.log(event.data);
+          if(!event.origin == window.location.origin) return;
+        
           if (event.data.dox == 'stateChange' && event.data.kill == '$true') {
             return;
           }
@@ -1774,7 +1930,7 @@ function observeNewElements() {
             let parent = node.parentNode;
 
              if(debugOn){
-              console.log('[Processing Engine]: New element added -> ', el, parent, {locked: window.renderLock});
+              console.log('[Processing Engine]: New element added -> ', el, parent);
              }
             if (!window.renderLock) {
               // Check if the element's tagName is not the same as the state element's tag
@@ -1784,6 +1940,7 @@ function observeNewElements() {
                   parent: parent,
                 });
                 document.body.innerHTML = handleProps(document).body.innerHTML;
+               
                 if(debugOn){
                    // magenta text
                   console.log('%c[Processing Engine]: waking up 🥱 ', 'color: #ff00ff');
@@ -1962,6 +2119,7 @@ Promise.all(fetchPromises)
             html = handleVariables(html);
             html = handleLogic(html);
             html = handleState(html);
+            html = handleForms(html);
             template.data = html.body.innerHTML;
 
             

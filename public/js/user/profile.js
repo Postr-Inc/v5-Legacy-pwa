@@ -105,20 +105,23 @@ function parseDate(data){
 }
 
 async function follow(data) {
+     console.log(data)
+    const followBtn = await dox.awaitElement('#followbtn');
      
-    const followBtn = dox.getId('followbtn');
   
     var isFollowing = data.followers.includes(pb.authStore.model.id);
   
     followBtn.html(isFollowing ? 'Unfollow' : 'Follow');
-    dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' : '#121212';
+    followBtn.style.backgroundColor = isFollowing ? '#ff0000' : '#121212';
   
-    dox.getId('followbtn').on('click', async  (e) => {
+   followBtn.on('click', async  (e) => {
+     
         if(pb.authStore.isValid){
             try {
                 const updatedFollowers = isFollowing
                   ? data.followers.filter((id) => id !== pb.authStore.model.id)
                   : [...data.followers, pb.authStore.model.id];
+                  console.log(updatedFollowers)
         
                 // Update the local data immediately
                 data.followers = updatedFollowers;

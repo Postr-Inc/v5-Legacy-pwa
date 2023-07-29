@@ -1,11 +1,10 @@
-import { login, signup, forgotPassword, verifyToken} from "./public/js/auth/auth.js"
+import {googleclick,  signup, forgotPassword, verifyToken} from "./public/js/auth/auth.js"
 import { loadProfile } from "./public/js/user/profile.js"
 import { makePost } from "./public/js/user/createPosts.js"
 import { loadFeed } from "./public/js/feed/feed.js"
 import { viewPost } from "./public/js/post/showPost.js"
 const app = new Router()
 // route defintions
- 
 app.use('/')
 app.use('/signup')
 app.use('/login')
@@ -67,10 +66,12 @@ app.on('/signup', (req, res) =>  {
     
 })
 app.get('/login', (req, res) =>  {
+    console.log(req)
     res.return()
     res.render('login')
+    googleclick()
     res.return()
-    login()
+    
     
      
 })
@@ -78,7 +79,7 @@ app.on('/login', (req, res) =>  {
     res.return()
     res.render('login')
     res.return()
-    login()
+    
    
   
 })

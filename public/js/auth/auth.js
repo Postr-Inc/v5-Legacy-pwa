@@ -1,4 +1,4 @@
-function googleclick(){
+export function googleclick(){
   
   dox.getId('googleloginbtn').on('click', async () => {
     pb.authStore.clear()
@@ -23,38 +23,8 @@ function googleclick(){
    
  })
 }
-
-export function login(){
-  if(document.getElementById('loginbtn') && document.getElementById('googleloginbtn')){
-    dox.getId('loginbtn').on('click', () => {
-        let username = getState('username')
-        let password = getState('password')
-        if(!username || !password){
-          dox.getId('loginbtn').html('Please fill out all fields')
-          dox.getId('loginbtn').css('background-color', 'red')
-          setTimeout(() => {
-            dox.getId('loginbtn').html('Login')
-            dox.getId('loginbtn').css('background-color', 'blue')
-          }, 3000)
-          return
-        }
-        dox.getId('loginbtn').html('Logging in...')
-       try {
-        pb.collection('users').authWithPassword(username, password).then((res) => {
-          window.location.href = '#/'
-           window.location.reload()
-           
-        })
-       } catch (error) {
-        alert('Invalid username or password')
-       }
-        
-    })
-
  
-     
-  }
-}
+ 
 export  async function signup(){
    if(dox.getId('signupbtn')){
     dox.getId('signupbtn').on('click', async () => {

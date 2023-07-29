@@ -24,7 +24,16 @@ export async function loadFeed() {
         dox.querySelector('.loading-infinity').style.display = 'none'
         handlevents('posts', post)
       })
- 
+
+
+
+
+
+
+
+
+
+
 
     })
   })
@@ -83,7 +92,7 @@ export async function handlevents(collection, post) {
   const tipElement = dox.querySelector('[data-tip="Heart"]');
 
   function updateLikeStatus() {
-    console.log(pb.authStore.model.id, likes)
+     
     if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
        
       dox.getId(`heart-${post.id}`).classList.toggle('text-red-500', true);
@@ -161,4 +170,5 @@ export async function handlevents(collection, post) {
  }
    
 }
- 
+
+

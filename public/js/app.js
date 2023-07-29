@@ -7,3 +7,6 @@ window.pb = pb
 if(!pb.authStore.isValid){
     localStorage.removeItem('pocketbase_auth')
 }
+
+
+ 

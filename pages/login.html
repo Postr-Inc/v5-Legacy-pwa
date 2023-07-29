@@ -1,6 +1,32 @@
 <login>
+    <script  data-type="local">
     
-    <div class="hero w-5/6 font-mono mt-16 bg-base-200 p-5 rounded mx-auto shadow-2xl border border-slate-300 ">
+      const app = new Router()
+      
+     app.listen('/', async (res)=>{
+
+        if(res.data.username == undefined || res.data.password == undefined){
+           alert('please fill in all fields')
+           return;
+        }else if (res.data.username.length < 3 || res.data.password.length < 3){
+          alert('username and password must be at least 3 characters')
+          return
+        }
+        try {
+         await pb.collection('users').authWithPassword(res.data.username, res.data.password)
+          
+        } catch (error) {
+          console.log(error)
+          
+        }
+      })
+      
+    </script>
+    <form action="/" method="post"  submit-id="login"
+     require="username, password"
+     redirect="#/"
+    >
+      <div class="hero w-5/6 font-mono mt-16 bg-base-200 p-5 rounded mx-auto shadow-2xl border border-slate-300 ">
         <div class="hero-content   max-w-screen-sm">
           <div class="max-w-md">
             <h1 class="flex justify-center mx-auto text-2xl">Welcome Back</h1>
@@ -12,14 +38,18 @@
              <img src="/public/assets/images/googleicon.png" class="w-5 h-5 inline mr-2"/> Login With Google
             </button>
             <div class="divider"></div>
-            <input type="text" class="input input-bordered mt-5 border rounded border-slate-500 w-full " placeholder="username"
-            onchange="setState('username', this.value)"
+            <input
+            name="username"
+            type="text" class="input input-bordered mt-5 border rounded border-slate-500 w-full " placeholder="username"
+           
             />
-            <input type="password" class="input input-bordered border rounded border-slate-500 mt-5 mb-5 w-full
+            <input type="password" 
+            name="password"
+            class="input input-bordered border rounded border-slate-500 mt-5 mb-5 w-full
             ring-transparent
            
             " placeholder="password"
-            onchange="setState('password', this.value)"
+            
 
             />
             <a href="#/forgot-password" class="text-slate-500 text-sm mt-8 text-start text-sky-700
@@ -33,7 +63,9 @@
                 Already Logged In
             </a>
             #else
-            return <button id="loginbtn" class="btn btn-ghost btn-sm rounded border border-slate-500 mb-2 mt-5 w-full
+            return <button type="submit"
+            id="login"
+            class="btn btn-ghost btn-sm rounded border border-slate-500 mb-2 mt-5 w-full
             hover:bg-transparent   hover:border-sky-500  hover:text-black  
             ">Login</button>
             #endif
@@ -43,5 +75,7 @@
           </div>
         </div>
       </div>
+    </form>
+   
      
 </login>
