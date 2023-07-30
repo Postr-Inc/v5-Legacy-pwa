@@ -17,9 +17,9 @@ function backgroundSync() {
 
 
 export async function handleNotifications(){
- const records = await pb.collection('notifications').getFullList({
-    sort: '-created',
-    filter: `recipient = '${pb.authStore.model.id}'`
-});
-console.log(records)
+  pb.collection('notifications').subscribe('*', (data) => {
+    if(data.record.recipient == pb.authStore.model.id){
+        console.log(data)
+    }
+  })
 }

@@ -2052,6 +2052,13 @@ html {
   min-height: 3rem;
   font-size: 0.875rem;
 }
+.btn-lg {
+  height: 4rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  min-height: 4rem;
+  font-size: 1.125rem;
+}
 .btn-square:where(.btn-sm) {
   height: 2rem;
   width: 2rem;
@@ -2060,6 +2067,11 @@ html {
 .btn-square:where(.btn-md) {
   height: 3rem;
   width: 3rem;
+  padding: 0px;
+}
+.btn-square:where(.btn-lg) {
+  height: 4rem;
+  width: 4rem;
   padding: 0px;
 }
 .btn-circle:where(.btn-xs) {
@@ -2526,6 +2538,9 @@ html {
 .table {
   display: table;
 }
+.grid {
+  display: grid;
+}
 .hidden {
   display: none;
 }
@@ -2627,6 +2642,9 @@ html {
 }
 .resize {
   resize: both;
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .flex-row {
   flex-direction: row;
@@ -2752,6 +2770,10 @@ html {
 }
 .font-bold {
   font-weight: 700;
+}
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 .text-error {
   --tw-text-opacity: 1;
