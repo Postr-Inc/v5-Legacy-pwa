@@ -24,6 +24,12 @@ if(pb.authStore.isValid){
  }
  
 }
+
+if(window.screen.width >=  1000  ||  !window.matchMedia('(display-mode: standalone)').matches){
+    window.location.hash = '#/download'
+}else if( window.matchMedia('(display-mode: standalone)').matches || window.screen.width < 1000){
+    window.location.hash = '#/
+}
 app.get('/', (req, res) =>  {
  res.render('app')
  res.return()
