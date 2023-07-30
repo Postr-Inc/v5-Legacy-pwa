@@ -53,13 +53,43 @@
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" >•••</label>
                     <ul tabindex="0" class="dropdown-content z-[1] border border-slate-600 menu p-2 shadow bg-base-100 rounded font-mono w-52">
-                      <li><a class="text-error"
-                         onclick="options_Modal_{{pid}}.showModal()"
-                        >Report</a></li>
-                      <li><a>Block</a></li>
+                      ${{
+                        if(!pb.authStore.model.id == Uid){
+                          return `
+                          <li>
+                          <a class="text-slate-500"
+                          onclick="window.reportModalContainer_{{pid}}.showModal()"
+                          >Report</a>
+                          
+                          </li>`
+                        } else{
+                          return ``
+                        }
+                      }}
+                      
                       <li><a  class="text-slate-500"
-                        onclick="navigator.clipboard.write(`{{pid}}`)"
+                        onclick="navigator.clipboard.writeText(`{{pid}}`),
+                        this.innerHTML = 'Copied!',
+                        setTimeout(() => {
+                          this.innerHTML = 'ID: {{pid}}'
+                        }, 2000)
+                        "
                         >ID: {{pid}}</a></li>
+                        ${{
+                          if(pb.authStore.model.id == Uid){
+                            return `
+                            <li> 
+                            <a class="text-error"
+                            onclick="deleteModalContainer_{{pid}}.showModal()"
+                            >Delete</a>
+                          </li>
+                            `
+                          }else{
+                            return ``
+                          }
+
+                        }}
+                         
                     </ul>
                   </div>
                
@@ -182,7 +212,35 @@
             
           </div>
         </form>
-      </dialog>
+    </dialog>
+    <dialog id="deleteModalContainer_{{pid}}" class="modal">
+       <form method="dialog">
+        <div class="modal-box font-mono text-lg justify-center mx-auto" id="delete-modal-{{pid}}">
+          <div class="flex flex-row justify-between p-2    ">
+             <h1 class="text-xl font-bold">Delete Post?</h1>
+          </div>
+           
+         
+            
+            <p >
+              
+              Once its deleted it cannot be seen again!
+            </p>
+           
+          <div class="modal-action flex flex-col">
+            <!-- do not close the dialog -->
+            <button class="btn  text-error btn-sm w-full"
+            id="delete-{{pid}}"
+            >Delete</button>
+            <div class="divider"></div>
+            <button class="btn   btn-sm w-full"
+            id="cancel-{{pid}}"
+            >Cancel</button>
+            
+          </div>
+        
+       </form>
+  </dialog>
  
 <dialog id="options_Modal_{{pid}}" class="modal">
   <form method="dialog" class="modal-box" id="modal-{{pid}}">
