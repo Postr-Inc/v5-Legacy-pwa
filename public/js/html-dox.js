@@ -896,7 +896,7 @@ function handleProps(html) {
   return html;
 }
 function doxMethods(element) {
-
+ 
  
   element.on = async function (event, callback) {
     let called = false;
@@ -913,6 +913,14 @@ function doxMethods(element) {
  
     return element;
   };
+  element.off = function (event, callback) {
+    document.removeEventListener(event, callback);
+    return element;
+  }
+  element.click = function (callback) {
+    element.addEventListener('click', callback);
+    return element;
+  }
   
   element.toggleClass = function (className) {
     if (element.classList.contains(className)) {
@@ -1245,7 +1253,7 @@ setDox(document);
     let submitId = form.getAttribute('submit-id');
     
     let redirect = form.hasAttribute('redirect') ? form.getAttribute('redirect') : null;
-    if (submitId) {
+    if (submitId && action) {
       form.setAttribute('onsubmit', 'event.preventDefault(); handleSubmit()');
        function handleSubmit(){
         
@@ -1961,6 +1969,8 @@ function observeNewElements() {
                   matches.forEach(function (match) {
                     let js = match.replace('${{', '').replace('}}', '');
                     js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+                    js = js.replaceAll('&amp;', '&');
+                     
                     // replace strings and check for null instance
                     
                     let value;
@@ -2152,6 +2162,7 @@ Promise.all(fetchPromises)
             
             let js = match.replace('${{', '').replace('}}', '');
             js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+            js = js.replaceAll('&amp;', '&');
             let value =  executeJs(js);
             template.template.data = template.template.data.replaceAll(match, value);
           });

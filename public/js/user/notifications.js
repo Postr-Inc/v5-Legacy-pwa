@@ -1,17 +1,40 @@
+let created;
 function backgroundSync() {
-    if(navigator.serviceWorker) return;
+    if(!localStorage.getItem('notify')){
+      console.log('no notify')
+      worker.terminate()
+      return;
+    }
+    if(!created) {
+        created = true;
+    let worker = new Worker('public/js/notification_worker.js');
+    let userid = pb.authStore.isValid ? pb.authStore.model.id : null;
+    
+    worker.postMessage({uuid: userid});
+    worker.postMessage({origin: window.location.origin});
+    worker.onmessage = function(e) {
+       console.log(e.data)
+    }
+    
+    if(Notification.requestPermission() == 'granted'){
+        handleNotifications()
+    }
+ 
+   
+   }
+  }
+   
+   
+  // constantly check if the user is logged in for notifications
+ let timer =  setInterval(() => {
+    if(pb.authStore.isValid){
+        backgroundSync()
+        clearInterval(timer)
+        console.log('cleared')
+    }
+  }, 1000)
 
-    navigator.serviceWorker.register('/public/js/notification_worker.js',
-    {scope: './public/js/'}
-    ).then(function(registration) {
-        console.log('Service worker successfully registered.');
-    })
-
-
-}
-  
-  backgroundSync();
-  
+ 
 
  
 

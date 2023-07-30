@@ -89,8 +89,8 @@ export async function handlevents(collection, post) {
    
   const sharebtn = await dox.awaitElement(`#share-${post.id}`);
    
-  const tipElement = dox.querySelector('[data-tip="Heart"]');
-
+  const tipElement = btn
+   
   function updateLikeStatus() {
      
     if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
@@ -111,7 +111,7 @@ export async function handlevents(collection, post) {
     window.location.reload()
   })
   function updateShareStatus() {
-    dox.querySelector('[data-tip="Copied!"]').setAttribute('data-tip', 'share');
+    sharebtn.setAttribute('data-tip', 'Share');
   }
   dox.getId(`reportbtn-${post.id}`).on('click', async () => {
     let report = getState(`report`)
@@ -164,7 +164,7 @@ export async function handlevents(collection, post) {
     });
 
     dox.getId(`shares-${post.id}`).innerHTML = shares + 1 + (shares == 1 ? ' share' : ' shares');
-    dox.querySelector('[data-tip="share"]').setAttribute('data-tip', 'Copied!');
+    dox.getId(`share-${post.id}`).setAttribute('data-tip', 'Copied!');
     setTimeout(() => {
       
       updateShareStatus();
