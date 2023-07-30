@@ -1,6 +1,10 @@
 export function googleclick(){
   
   dox.getId('googleloginbtn').on('click', async () => {
+    let btn = dox.getId('googleloginbtn')
+    btn.html(`  <img src="/public/assets/images/googleicon.png" class="w-5 h-5 inline mr-2"/>
+    <span class="text-sm">Signing in...</span>`)
+    btn.attr('disabled', true)
     pb.authStore.clear()
     const redirect = () =>{
      window.location.href = '#/'
@@ -12,6 +16,8 @@ export function googleclick(){
     redirect()
     if(data.meta.isNew){
       let url  = data.meta.avatarUrl
+      let username = data.meta.username
+      form.append('username', username)
       let form = new FormData()
       fetch(url).then((res) => res.blob()).then((blob) => {
          form.append('avatar', blob)
@@ -21,6 +27,11 @@ export function googleclick(){
       })
     }
    
+    setTimeout(() => {
+      btn.html(`  <img src="/public/assets/images/googleicon.png" class="w-5 h-5 inline mr-2"/>
+      <span class="text-sm">Login with Google</span>`)
+      btn.attr('disabled', false)
+    }, 3000)
  })
 }
  

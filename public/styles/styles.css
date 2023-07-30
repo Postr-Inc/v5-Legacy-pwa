@@ -2131,13 +2131,6 @@ html {
   --tw-translate-y: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-.input-sm {
-  height: 2rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-  line-height: 2rem;
-}
 .join.join-vertical {
   flex-direction: column;
 }
@@ -2473,9 +2466,6 @@ html {
 .z-\[1\] {
   z-index: 1;
 }
-.z-\[9999\] {
-  z-index: 9999;
-}
 .z-\[999\] {
   z-index: 999;
 }
@@ -2505,9 +2495,6 @@ html {
 }
 .mb-6 {
   margin-bottom: 1.5rem;
-}
-.mb-\[4rem\] {
-  margin-bottom: 4rem;
 }
 .mr-2 {
   margin-right: 0.5rem;
@@ -2542,6 +2529,9 @@ html {
 .hidden {
   display: none;
 }
+.h-10 {
+  height: 2.5rem;
+}
 .h-12 {
   height: 3rem;
 }
@@ -2566,14 +2556,14 @@ html {
 .h-\[45vw\] {
   height: 45vw;
 }
-.h-\[4rem\] {
-  height: 4rem;
-}
 .h-\[50vw\] {
   height: 50vw;
 }
 .h-screen {
   height: 100vh;
+}
+.w-10 {
+  width: 2.5rem;
 }
 .w-12 {
   width: 3rem;

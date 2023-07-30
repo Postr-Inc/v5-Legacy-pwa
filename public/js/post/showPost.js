@@ -19,33 +19,30 @@ export async  function viewPost(postid){
         isVerified: res.expand.author.validVerified ? true : false,
         dividercontent:'comments'
      }) 
-     console.log(res)
+      
 
     dox.getId('postcontainer').prepend(poster)
     handlevents('posts', res)
       
      comment(res)
+      
      dox.querySelector('.loading-circle').style.display = 'none'
-     
+      
   })
 }
 
 async function comment(data){
   dox.awaitElement('#comment-' + data.id).then((res) => {
+    console.log(res)
      res.on('click', () => {
-         if(!window.location.hash.includes(data.id)){
-              window.location.hash = `#/post/${data.id}`
-         }
-         
-         let comment = getState('comment-' + data.id)
-         
-         if(!comment){
+ 
+         if(!getState('comment-' + data.id)){
               alert('Please enter some content')
               return
          }
 
          const cdata = {
-            "text":  comment,
+            "text":  getState('comment-' + data.id),
             "user":  pb.authStore.model.id,
             "post":  data.id,
             likes: JSON.stringify([]),
@@ -72,7 +69,8 @@ async function comment(data){
               
               dox.querySelector('#commentcontainer-' + data.id).value = ''
               setState('comment-' + data.id, '')  
-              return 
+              alert('Comment posted')
+        
         })
        
      })
@@ -109,7 +107,6 @@ async function comment(data){
  
   
  
-  
 function parseDate(data){
     // just now - 1m - 1h - 1d - 1w - 1m - 1y
     let date = new Date(data)

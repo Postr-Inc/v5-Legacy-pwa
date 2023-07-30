@@ -3,6 +3,7 @@ import { loadProfile } from "./public/js/user/profile.js"
 import { makePost } from "./public/js/user/createPosts.js"
 import { loadFeed } from "./public/js/feed/feed.js"
 import { viewPost } from "./public/js/post/showPost.js"
+import { handleNotifications } from "./public/js/user/notifications.js"
 const app = new Router()
 // route defintions
 app.use('/')
@@ -17,6 +18,7 @@ app.bindRoot('app')
 if(pb.authStore.isValid){
     try {
     pb.collection('users').authRefresh()
+    handleNotifications()
  } catch (error) {
     window.location.href = '#/login'
  }
@@ -145,10 +147,12 @@ if(!pb.authStore.isValid && window.location.hash != '#/download'
     window.location.hash = '#/login'
 }
 
- 
+
 setInterval(() => {
     if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'){
         pb.authStore.clear()
         window.location.hash = '#/login'
+    }else{
+
     }
 }, 1000)

@@ -898,12 +898,20 @@ function handleProps(html) {
 function doxMethods(element) {
 
  
-  element.on = function (event, callback) {
-    document.addEventListener(event, function (e) {
-      if(element.id && e.target.id == element.id) {
-        callback(e);
-      } 
+  element.on = async function (event, callback) {
+    let called = false;
+    document.addEventListener(event, async  function (e) {
+     // await for window to load
+       
+      if (e.target.id == element.id && !called) {
+        called = true;
+        await callback(e);
+        called = false;
+
+      }
     })
+ 
+    return element;
   };
   
   element.toggleClass = function (className) {
@@ -1030,7 +1038,7 @@ function setDox(html) {
       // search html for value
       let regex = new RegExp(string, 'g');
       let matches = input.match(regex);
-      console.log(matches);
+      
       return matches;
       
     },
@@ -1370,7 +1378,7 @@ function handleState(html) {
             }
           });
         } else {
-          console.log('slot has no children');
+        
           slot.innerHTML = slot.innerHTML.replaceAll(m, stateValue);
           memory[stateName] = {
             element: slot,
@@ -1596,7 +1604,7 @@ function handleScripts(html) {
 
         }
         let scriptElement = document.createElement('script');
-        console.log(scriptElement)
+       
         scriptElement.innerHTML =  scriptElement.innerHTML + '\n' + s.trim();
         scriptElement.id = 'local-script';
 

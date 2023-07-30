@@ -84,7 +84,7 @@ export async function handlevents(collection, post) {
   const likes = JSON.parse(JSON.stringify(post.likes));
  
   const shares = post.shares;
-  console.log(post)
+ 
   const btn = await dox.awaitElement(`#heart-${post.id}`) || dox.getId(`#heart-${post.id}`)
    
   const sharebtn = await dox.awaitElement(`#share-${post.id}`);
@@ -105,6 +105,11 @@ export async function handlevents(collection, post) {
     }
   }
 
+   
+  dox.getId(`delete-${post.id}`).on('click', async () => {
+    await pb.collection('posts').delete(post.id)
+    window.location.reload()
+  })
   function updateShareStatus() {
     dox.querySelector('[data-tip="Copied!"]').setAttribute('data-tip', 'share');
   }
