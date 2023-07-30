@@ -1,5 +1,6 @@
 let created;
 function backgroundSync() {
+    let worker = new Worker('public/js/notification_worker.js');
     if(!localStorage.getItem('notify')){
       console.log('no notify')
       worker.terminate()
@@ -7,7 +8,7 @@ function backgroundSync() {
     }
     if(!created) {
         created = true;
-    let worker = new Worker('public/js/notification_worker.js');
+     
     let userid = pb.authStore.isValid ? pb.authStore.model.id : null;
     
     worker.postMessage({uuid: userid});
