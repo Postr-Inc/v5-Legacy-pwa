@@ -1,43 +1,108 @@
-export async function loadFeed() {
-  dox.getId('postfeed').style.display = 'none'
-  pb.collection('posts').getList(1, 10, {
-    expand: 'author',
-    filter: `author.id != "${pb.authStore.model.id}"`,
-    sort: `-created`
-  }).then((res) => {
-    res.items.forEach(async (post) => {
-      let poster = dox.add('poster', {
-        description: post.content,
-        Uname: post.expand.author.username,
-        image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
-        pid: post.id,
-        postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
-        Uid: post.expand.author.id,
-        posted: parseDate(post.created),
-        likes: JSON.parse(JSON.stringify(post.likes)).length,
-        shares: post.shares,
-        isVerified: post.expand.author.validVerified ? true : false,
-      })
-      dox.awaitElement('#postfeed').then((feed) => {
-        feed.prepend(poster)
-        feed.style.display = 'block'
-        dox.querySelector('.loading-infinity').style.display = 'none'
-        handlevents('posts', post)
-      })
+let previousPosts = [];
+let newPostsAppended = false; // Flag to track if new posts were appended
 
+export async function loadFeed(page = 1, perPage = 10) {
+   
+   
 
-
-
-
-
-
-
-
-
-
+  pb.collection('posts')
+    .getList(page, perPage, {
+      expand: 'author',
+      filter: `author.id != "${pb.authStore.model.id}"`,
+      sort: `-created`
     })
-  })
+    .then((res) => {
+      // Filter out any duplicate posts based on previousPosts
+      const newPosts = res.items.filter((post) => !previousPosts.some((prevPost) => prevPost.id === post.id));
+
+      // Create an array to store the post elements
+      const postElements = [];
+
+      newPosts.forEach(async (post) => {
+        let poster = dox.add('poster', {
+          description: post.content,
+          Uname: post.expand.author.username,
+          image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
+          id: post.id,
+          pid: post.id,
+          postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
+          Uid: post.expand.author.id,
+          posted: parseDate(post.created),
+          likes: JSON.parse(JSON.stringify(post.likes)).length,
+          shares: post.shares,
+          isVerified: post.expand.author.validVerified ? true : false,
+          id: post.id,
+       })
+
+        // Add the post element to the array
+        postElements.push(poster);
+
+        // Add the post to the previousPosts array
+        previousPosts.push(post);
+      });
+
+      // Append all post elements to the DOM at once
+      dox.awaitElement('#postfeed').then((feed) => {
+        if (feed.style.display == 'none') {
+          feed.style.display = 'block';
+        }
+
+        // Use DocumentFragment to optimize DOM manipulation
+        const fragment = document.createDocumentFragment();
+        postElements.forEach((postElement) => {
+          fragment.prepend(postElement);
+          
+        });
+
+        if (newPosts.length > 0) {
+          // New posts were appended
+          newPostsAppended = true;
+          feed.prepend(fragment);
+        } else {
+          // No new posts, re-append previous posts
+          if (!newPostsAppended && previousPosts.length > 0){
+            previousPosts.forEach((prevPost) => {
+              if(document.getElementById(prevPost.id)){
+                return
+              }
+              let poster = dox.add('poster', {
+                description: prevPost.content,
+                Uname: prevPost.expand.author.username,
+                image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${prevPost.expand.author.id}/${prevPost.expand.author.avatar}`,
+                pid: prevPost.id,
+                postimg: prevPost.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${prevPost.id}/${prevPost.file}` : null,
+                Uid: prevPost.expand.author.id,
+                posted: parseDate(prevPost.created),
+                likes: JSON.parse(JSON.stringify(prevPost.likes)).length,
+                shares: prevPost.shares,
+                isVerified: prevPost.expand.author.validVerified ? true : false,
+                id: prevPost.id,
+              });
+              fragment.prepend(poster);
+              handlevents('posts', prevPost); // Assuming the handlevents function needs a prevPost
+            });
+            feed.prepend(fragment);
+          }
+        }
+
+        // Reset the flag
+        newPostsAppended = false;
+
+        // Schedule the next load after 10-20 seconds
+        window.onscroll = debounce(async () => {
+          if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+             
+            await loadFeed(page + 1, perPage);
+             
+          }
+        }, 1000);
+      });
+
+      dox.querySelector('.loading-infinity').style.display = 'none';
+    });
 }
+
+
 
 function parseDate(data) {
   // just now - 1m - 1h - 1d - 1w - 1m - 1y

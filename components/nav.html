@@ -91,8 +91,12 @@ ${{
 <div class="modal text-mono">
   <div class="modal-box">
     <div class="flex inline">
-      <img src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}" class="rounded-full w-12 h-12" />
-      <p class="mx-5">${{pb.authStore.isValid ? pb.authStore.model.username : ''}}</p>
+      <img 
+      id="userAvatar"
+      src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}" class="rounded-full w-12 h-12" />
+      <p 
+      id="username"
+      class="mx-5">${{pb.authStore.isValid ? pb.authStore.model.username : ''}}</p>
      
       <label for="my_modal_6" class="  fixed end-5 top-5 text-lg rounded-full w-8 h-8 flex justify-center items-center">
         x

@@ -2375,6 +2375,9 @@ html {
 .absolute {
   position: absolute;
 }
+.sticky {
+  position: sticky;
+}
 .bottom-0 {
   bottom: 0px;
 }

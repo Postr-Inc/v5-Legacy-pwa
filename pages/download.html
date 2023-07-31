@@ -29,7 +29,7 @@
                     <p class=" mb-2">
                         Your platform is detected as:   <span class="font-bold text-sky-500 "> ${{
                         let plat = navigator.userAgent.toLowerCase()
-     
+                         
                         if(plat.includes('iphone') || plat.includes('ipad') || plat.includes('ipod') ){
                            let version = navigator.userAgent.match(/OS\s([0-9\_]*)/)[1].replace('_', '.')
                             version = version.replaceAll('_', '.')

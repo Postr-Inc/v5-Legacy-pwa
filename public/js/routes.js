@@ -27,7 +27,6 @@ if(pb.authStore.isValid){
 
 // check if running in a pwa or not'
 function setScreen() {
-    window.screen.orientation.lock('portrait')
     window.innerWidth > 1000 ? document.body.style.zoom = 1.5 : document.body.style.zoom = 1
     window.innerHeight > 1000 ? document.body.style.zoom = 1.5 : document.body.style.zoom = 1
     window.resizeTo(375, 812)
@@ -63,7 +62,7 @@ function setScreen() {
    }
   
 app.get('/', (req, res) =>  {
- res.render('app')
+ res.render('feed')
  res.return()
  makePost()
  loadFeed()
@@ -71,7 +70,7 @@ app.get('/', (req, res) =>  {
 })
  
 app.on('/', (req, res) =>  {
-    res.render('app')
+    res.render('feed')
     res.return()
     makePost()
     loadFeed()
@@ -79,7 +78,7 @@ app.on('/', (req, res) =>  {
       
 })
 app.root('/', (req, res) =>{
-    res.render('app')
+    res.render('feed')
     res.return()
     makePost()
    
@@ -192,7 +191,5 @@ setInterval(() => {
     ){
         pb.authStore.clear()
         window.location.hash = '#/login'
-    }else{
-
-    }
+    } 
 }, 1000)
