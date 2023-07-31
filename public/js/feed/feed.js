@@ -98,7 +98,10 @@ export async function loadFeed(page = 1, perPage = 10) {
         }, 1000);
       });
 
+       if(!dox.querySelector('.loading-infinity').style.display == 'none';){
+          
       dox.querySelector('.loading-infinity').style.display = 'none';
+       }
     });
 }
 
