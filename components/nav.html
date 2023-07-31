@@ -104,12 +104,14 @@ ${{
       </label>
     </div>
     <textarea class="textarea textarea-ghost w-full h-32 p-2 mt-5 textarea-bordered rounded" placeholder="What's on your mind?"
-      onchange="setState('postContent', this.value)"></textarea>
+      oninput="setState('postContent', this.value)"></textarea>
     </p>
     <div class="modal-action">
       <!-- do not close the dialog -->
       <button class="btn btn-ghost border border-slate-500 w-full rounded btn-sm" id="post"
-        onclick="setState('post_click', 'true')">Post</button>
+        onclick="setState('post_click', 'true'),
+        document.getElementById('my_modal_6').checked = false
+        ">Post</button>
        
      
     </div>

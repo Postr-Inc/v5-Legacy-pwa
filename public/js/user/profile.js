@@ -28,8 +28,10 @@ export function loadProfile(id){
         dox.getId('bio').html(res.bio.charAt(0).toUpperCase() + res.bio.slice(1))
         dox.getId('followers').html(`Followers: ${res.followers.length ? res.followers.length : 0}`)
         follow(res)
+        setState('currentuser', res)
      })
 
+     
      effect(('pfp'), (e) => {
         let url = URL.createObjectURL(e)
         dox.getId('profilepicin').src = url
@@ -105,7 +107,7 @@ function parseDate(data){
 }
 
 async function follow(data) {
-     console.log(data)
+      
     const followBtn = await dox.awaitElement('#followbtn');
      
   
@@ -121,7 +123,7 @@ async function follow(data) {
                 const updatedFollowers = isFollowing
                   ? data.followers.filter((id) => id !== pb.authStore.model.id)
                   : [...data.followers, pb.authStore.model.id];
-                  console.log(updatedFollowers)
+                   
         
                 // Update the local data immediately
                 data.followers = updatedFollowers;
@@ -129,6 +131,17 @@ async function follow(data) {
                 const updatedData = await pb.collection('users').update(data.id, {
                   followers: JSON.stringify(updatedFollowers),
                 });
+                pb.collection('users').authRefresh()
+                if(data.followers.includes(pb.authStore.model.id)){
+                    pb.collection('notifications').create({
+                        "author": pb.authStore.model.id,
+                        "recipient": data.id,
+                        "title": `Followed by ${pb.authStore.model.username}`,
+                        "body": `${pb.authStore.model.username} has followed you!`,
+                        "type": "follow",
+                        "url": window.location.origin + "/#/profile/" + pb.authStore.model.id,
+                    })
+                }
         
                 const newFollowersCount = updatedData.followers.length;
                 dox.getId('followers').html('Followers: ' + newFollowersCount);

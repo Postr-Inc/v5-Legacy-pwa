@@ -20,11 +20,19 @@ if(Notification.permission == 'granted'){
              
             pb.collection('notifications').subscribe('*', async (data) => {
                 if(data.action == 'create' && data.record.recipient.includes(uuid)){
+                     let user = await pb.collection('users').getOne(data.record.author)
                      let notification = new Notification(
-                       `${record.username} posted a new post`,
+                         data.record.title ? data.record.title : 'Postr',
                           {
-                        body: data.record.body,
-                        icon: self.origin + '/public/assets/images/logo.png'
+                        body: data.record.body ? data.record.body : null,
+                        icon: self.origin + '/public/assets/images/logo.png',
+                        url: data.record.url ? data.record.url : null,
+                        tag: 'Postr',
+                        renotify: true,
+                        requireInteraction: true,
+                        silent: false,
+                        sticky: false,
+                        vibrate: [200, 100, 200]
                     });
                     notification.onclick = function() {
                         open(self.origin + '/#/post/' + data.record.id)

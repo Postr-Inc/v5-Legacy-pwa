@@ -33,7 +33,7 @@ export async  function viewPost(postid){
 
 async function comment(data){
   dox.awaitElement('#comment-' + data.id).then((res) => {
-    console.log(res)
+   
      res.on('click', () => {
  
          if(!getState('comment-' + data.id)){

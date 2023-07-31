@@ -18,15 +18,15 @@ export async function makePost() {
         isCreatingPost = true; // Set the flag to true to indicate post creation process is starting
         let d = await createPost();
         let followers = d.expand.author.followers;
-
-        setState("postContent", "");
         let notificationPromises = followers.map(async (follower) => {
           await pb.collection("notifications").create({
             "author": pb.authStore.model.id,
             "post": d.id,
             "title": "New Post from " + d.expand.author.username,
             "body": d.content.substring(0, 100) + "...",
-            "recipient": follower
+            "recipient": follower,
+            "type": "post",
+            "url": window.location.origin + "/#/post/" + d.id,
           });
         });
 
@@ -36,6 +36,7 @@ export async function makePost() {
       } finally {
         isCreatingPost = false; // Reset the flag after the post creation process is complete
         res.off("click", clickHandler); // Remove the click event listener to prevent further clicks
+        setState("postContent", "");
       }
     };
 

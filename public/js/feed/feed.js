@@ -86,7 +86,7 @@ export async function handlevents(collection, post) {
   const shares = post.shares;
  
   const btn = await dox.awaitElement(`#heart-${post.id}`) || dox.getId(`#heart-${post.id}`)
-   
+ 
   const sharebtn = await dox.awaitElement(`#share-${post.id}`);
    
   const tipElement = btn
@@ -151,7 +151,7 @@ export async function handlevents(collection, post) {
     updateLikeStatus();
   }, 1000); // 1000ms (1 second) debounce time
 
-  btn.on('click', debouncedLikeHandler)
+  btn.click(debouncedLikeHandler)
 
   const debouncedShareHandler = debounce(() => {
      
@@ -171,7 +171,7 @@ export async function handlevents(collection, post) {
     }, 1000);
   }, 1000); // 1000ms (1 second) debounce time
  if(sharebtn){
-  sharebtn.on('click', debouncedShareHandler)
+  sharebtn.click(debouncedShareHandler)
  }
    
 }

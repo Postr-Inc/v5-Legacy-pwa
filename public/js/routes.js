@@ -24,6 +24,44 @@ if(pb.authStore.isValid){
  }
  
 }
+
+// check if running in a pwa or not'
+function setScreen() {
+    window.screen.orientation.lock('portrait')
+    window.innerWidth > 1000 ? document.body.style.zoom = 1.5 : document.body.style.zoom = 1
+    window.innerHeight > 1000 ? document.body.style.zoom = 1.5 : document.body.style.zoom = 1
+    window.resizeTo(375, 812)
+
+}
+  
+  function handleResize() {
+    // Reset the screen dimensions whenever the user resizes the window
+    setScreen();
+  }
+  
+   function checkplat(){
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        if (window.screen.height > 1000) {
+          window.addEventListener('resize', ()=>{
+            console.log(window.innerWidth)
+            handleResize()
+          });
+          setScreen(); // Call setScreen initially to set the dimensions
+    
+        }
+       if(window.location.hash == '#/download'){
+        window.location.href = '#/'; // Redirect the user to the home page
+       }
+      } else {
+        // If the app is not running in standalone mode, redirect the user to the download page
+        window.location.href = '#/download';
+      }
+   }
+   checkplat()
+   window.onhashchange = () => {
+    checkplat()
+   }
+  
 app.get('/', (req, res) =>  {
  res.render('app')
  res.return()
@@ -149,7 +187,9 @@ if(!pb.authStore.isValid && window.location.hash != '#/download'
 
 
 setInterval(() => {
-    if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'){
+    if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'
+    && window.location.hash != '#/download'
+    ){
         pb.authStore.clear()
         window.location.hash = '#/login'
     }else{
