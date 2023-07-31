@@ -26,10 +26,63 @@
                     <p class="py-6  ">
                         Keep posting where-ever you go with our mobile & desktop app.
                     </p>
+                    <p class=" mb-2">
+                        Your platform is detected as:   <span class="font-bold text-sky-500 "> ${{
+                        let plat = navigator.userAgent.toLowerCase()
+                        if(plat.includes('iphone') || plat.includes('ipad') || plat.includes('ipod') ){
+                           let version = navigator.userAgent.match(/OS\s([0-9\_]*)/)[1].replace('_', '.')
+                            version = version.replaceAll('_', '.')
+                            if(version.split('.')[0] >= 13){
+                                'IOS ' + 'v' + version
+                            }
+                            else{
+                                'IOS (Old)'
+                            }
+                        }
+                        else if(plat.includes('android')){
+                          let version = navigator.userAgent.match(/Android\s([0-9\.]*)/)[1]
+                            if(version >= 10){
+                                'Android ' + 'v' +  version
+                            }
+                            else{
+                                'Android (Old)'
+                            }
+                        }else if(plat.includes('mac')){
+                            let version = navigator.userAgent.match(/Mac\s([0-9\.]*)/)[1]
+                            if(version >= 10){
+                                'Mac ' + 'v' + version
+                            }
+                            else{
+                                'Mac (Old)'
+                            }
+                        }else if(plat.includes('ipad') || plat.includes('ipod')){
+                            'iPadOS'
+                        }
+                        else if(plat.includes('win')){
+                             let x = navigator.userAgent.match(/Windows\sNT\s([0-9\.]*)/)[1]
+                             x = x.split('.')[0]
+                            if(x >= 10){
+                                'Windows ' +  x
+                            }
+                            else{
+                                'Windows (Old)'
+                            }
+
+                        }
+                        else if(plat.includes('linux')){
+                            let arch = navigator.userAgent.match(/Linux\s([a-zA-Z0-9\_]*)/)[1]
+                             'Linux ' + arch.charAt(0).toUpperCase() + arch.slice(1)
+                        }
+                         
+                        }}
+
+
+                    </p>
 
                     <button class="btn hover:bg-none flex w-full" onclick="
                 let plat = navigator.userAgent.toLowerCase()
-                if(plat.includes('iphone') || plat.includes('ipad') || plat.includes('ipod') ){
+                console.log(plat)
+                if(plat.includes('iphone') || plat.includes('ipad') || plat.includes('ipod')  || plat.includes('mac')){
                     document.getElementById('iosmodal').showModal()
                 }
                 
