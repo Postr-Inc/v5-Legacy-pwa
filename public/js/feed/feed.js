@@ -98,11 +98,7 @@ export async function loadFeed(page = 1, perPage = 10) {
         }, 1000);
       });
 
-       dox.awaitElement('.loading-infinity').then((res)=>{
-          if(!res.style.display == "none"){
-             res.style.display  = 'none' 
-          }
-       })
+      dox.querySelector('.loading-infinity').style.display = 'none';
     });
 }
 
