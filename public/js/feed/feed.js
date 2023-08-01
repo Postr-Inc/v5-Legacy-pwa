@@ -64,6 +64,7 @@ export async function loadFeed() {
     if (postfeed.style.display == 'none') {
       postfeed.style.display = 'block';
     }
+    dox.querySelector('.loading-infinity').style.display = "none"
      
     postfeed.append(fragment);
     alldposts()
