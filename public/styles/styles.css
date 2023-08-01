@@ -2585,9 +2585,6 @@ html {
 .justify-evenly {
   justify-content: space-evenly;
 }
-.gap-12 {
-  gap: 3rem;
-}
 .gap-2 {
   gap: 0.5rem;
 }

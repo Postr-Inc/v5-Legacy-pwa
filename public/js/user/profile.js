@@ -1,8 +1,7 @@
 import { handlevents, debounce } from "/public/js/feed/feed.js"
-let previousPosts = []
-let currentPage = 1;
-let loadingPosts = false; // Flag to prevent multiple simultaneous requests
-let page = 1
+let previousPosts = [];
+let newPostsAppended = false; // Flag to track if new posts were appended
+let page = 1;
  
 export function loadProfile(id){
     if(pb.authStore.isValid && pb.authStore.model.id == id){
@@ -27,11 +26,13 @@ export function loadProfile(id){
         dox.getId('followbtn').style.display = 'block'
     }
     pb.collection('users').getOne(id).then((res) => {
-        dox.getId('profilepic').src =  `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.id}/${res.avatar}`
-        dox.getId('username').html(res.username.charAt(0).toUpperCase() + res.username.slice(1))
-        dox.getId('tag').html(`@${res.username.toLowerCase()}`)
-        dox.getId('bio').html(res.bio.charAt(0).toUpperCase() + res.bio.slice(1))
-        dox.getId('followers').html(`Followers: ${res.followers.length ? res.followers.length : 0}`)
+        dox.awaitElement('#username').then((el) => {
+          dox.getId('profilepic').src =  `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.id}/${res.avatar}`
+          el.html(res.username.charAt(0).toUpperCase() + res.username.slice(1))
+          dox.getId('tag').html(`@${res.username.toLowerCase()}`)
+          dox.getId('bio').html(res.bio.charAt(0).toUpperCase() + res.bio.slice(1))
+          dox.getId('followers').html(`Followers: ${res.followers.length ? res.followers.length : 0}`)
+        })
         follow(res)
         setState('currentuser', res)
      })
@@ -44,26 +45,26 @@ export function loadProfile(id){
      
 
 
-        handleUserPosts(id, 20);
-   // Event listener for scroll event
-window.addEventListener('scroll', () => {
-    const windowHeight = window.innerHeight;
-    const scrollHeight = document.body.scrollHeight;
-    const scrollPosition = window.scrollY;
-  
-    // Check if the user has scrolled to the bottom of the page
-    if (scrollHeight - windowHeight - scrollPosition < 100 && !loadingPosts) {
-      // Add a small threshold (100px) to load more posts slightly before reaching the bottom
-  
-      // Set the loadingPosts flag to true to prevent multiple simultaneous requests
-        loadingPosts = true;
-     
-          
-      // Call the function to load more posts
-        handleUserPosts(id, 20);
+         loadFeed(id)
+   
+         let loading = false; // Flag to prevent multiple simultaneous loads
+
+window.onscroll = async () => {
+  if (
+    window.location.hash === `#/profile/${id}` &&
+    !loading &&
+    window.scrollY + window.innerHeight >= document.body.offsetHeight * 0.9 // Load more when the user is 90% down the page
+  ) {
+    if (!newPostsAppended) {
+      loading = true;
+      page += 1;
+      await loadFeed(id) 
+      loading = false;
+      alldposts();
     }
-  });
-     
+  }
+};
+
 
 }
  
@@ -71,57 +72,87 @@ window.addEventListener('scroll', () => {
  
  
 
-export async function handleUserPosts(userId, perPage = 20) {
-  pb.collection('posts')
-    .getList(currentPage, perPage, {
-      filter: `author.id = '${userId}'`,
+ 
+const perPage = 10;
+ 
+ 
+let posts;
+let allposts = []
+function alldposts(){
+  console.log(allposts)
+  allposts.forEach((post) => {
+     
+    handlevents('posts', post);
+  });
+}
+export async function loadFeed(id) {
+ 
+  try {
+    posts = await pb.collection('posts').getList(page, perPage, {
       expand: 'author',
-      sort: 'created'
-    })
-    .then(async (res) => {
-        console.log(res)
-      if (res.items.length > 0) {
-        const newPosts = res.items.filter((post) => !previousPosts.includes(post.id));
-        newPosts.forEach((post) => {
-            let poster = dox.add('poster', {
-                description: post.content,
-                Uname: post.expand.author.username,
-                image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
-                id: post.id,
-                pid: post.id,
-                postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
-                Uid: post.expand.author.id,
-                posted: parseDate(post.created),
-                likes: JSON.parse(JSON.stringify(post.likes)).length,
-                shares: post.shares,
-                isVerified: post.expand.author.validVerified ? true : false,
-                id: post.id,
-             })
+      filter: `author.id = "${id}"`,
+      sort: `-created`,
+    });
+    
+    if (posts.items.length == 0) {
+      dox.getId('postcontainer').html('<div class="mx-auto flex text-2xl justify-center mt-16 font-bold">No posts yet</div>')
+      return;
+    }
 
-          dox.getId('postcontainer').prepend(poster);
+    // Create a DocumentFragment to batch DOM manipulations
+    const fragment = document.createDocumentFragment();
+
+    function postCard(post) {
+      let poster = dox.add('poster', {
+        description: post.content,
+        Uname: post.expand.author.username,
+        image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
+        pid: post.id,
+        postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
+        Uid: post.expand.author.id,
+        posted: parseDate(post.created),
+        likes: JSON.parse(JSON.stringify(post.likes)).length,
+        shares: post.shares,
+        isVerified: post.expand.author.validVerified ? true : false,
+        id: 'post-' + post.id,
+      });
+      return poster;
+    }
+
+    posts.items.forEach((post) => {
+       
+      if (document.getElementById('post-' + post.id) == null) {
           handlevents('posts', post);
-        });
-
-        // Add new post IDs to the previousPosts array
-        previousPosts.push(...newPosts.map((post) => post.id));
-
-        // Increment the current page to load the next page next time
-        currentPage++;
-
-        // Allow loading more posts after this batch is processed
-        loadingPosts = false;
-      } else {
-        // No more posts to load
-        if (currentPage === 1) {
-          dox.getId('postcontainer').html('<h1 class="justify-center mx-auto text-2xl flex mt-8">No posts yet</h1>');
-        }
+        
+        previousPosts.push(post.id);
+        fragment.append(postCard(post));
+        allposts.push(post)
       }
 
-      // Hide loading spinner after all posts are loaded
-      dox.querySelector('.loading-circle').style.display = 'none';
+      
     });
-}
 
+    const postfeed = dox.getId('postcontainer');
+    if (postfeed.style.display == 'none') {
+      postfeed.style.display = 'block';
+
+    }
+     
+    postfeed.append(fragment);
+    alldposts()
+    
+    window.onhashchange = () => {
+        allposts = []
+        previousPosts = []
+        posts = []
+        page = 1
+    }
+    dox.querySelector('.loading').style.display = 'none'
+  } catch (error) {
+    console.error('Error loading feed:', error);
+  }
+   
+}
  
 
   
