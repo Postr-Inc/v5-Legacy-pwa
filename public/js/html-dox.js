@@ -865,6 +865,8 @@ function eventAttributes(html) {
 
 
 function handleProps(html) {
+  console.log(window.props, html);
+
   Object.keys(window.props).forEach(function (prop) {
     if (Array.isArray(window.props[prop])) {
       let value = window.props[prop];
@@ -873,28 +875,25 @@ function handleProps(html) {
           let vvalue = v[vname];
           let regex = new RegExp('{{' + prop + '.' + vname + '}}', 'g');
           html.body.innerHTML = html.body.innerHTML.replaceAll(regex, vvalue);
-
         });
       });
-      return html;
-
+    } else {
+      let regex = new RegExp('{{' + prop + '}}', 'g');
+      html.querySelectorAll('*').forEach(function (element) {
+        if (element.getAttribute(prop)) {
+          window.props[prop] = element.getAttribute(prop);
+          element.innerHTML = element.innerHTML.replaceAll(regex, window.props[prop]);
+          
+        } else {
+          window.props[prop] =  'null'
+          
+        }
+      });
     }
-    let regex = new RegExp('{{' + prop + '}}', 'g');
-    html.body.querySelectorAll('*').forEach(function (element) {
-      if (element.getAttribute(prop)) {
-         
-        window[prop] = element.getAttribute(prop);
-         
-        element.outerHTML = element.outerHTML.replaceAll(regex, window[prop]);
-      }
-    });
-    if (window.props[prop] !== null || window.props[prop] !== '') {
-      html.body.innerHTML = html.body.innerHTML.replaceAll(regex, window.props[prop]);
-    }
-
   });
   return html;
 }
+
 function doxMethods(element) {
  
  
@@ -1068,6 +1067,40 @@ function setDox(html) {
       window.onoffline = function () {
         callback(e)
       }
+    },
+
+    awaitElements: async function (selector) {
+      let elements = document.querySelectorAll(selector);
+      if (elements) {
+        let els = [];
+        elements.forEach(function (element) {
+          els.push(doxMethods(element));
+        });
+        return els;
+      }
+      return new Promise((resolve, reject) => {
+        let hasResolved = false; // Flag to prevent multiple resolutions
+
+        const observer = new MutationObserver((mutations) => {
+          if (!hasResolved) {
+            elements = document.querySelectorAll(selector);
+            if (elements) {
+              hasResolved = true;
+              observer.disconnect();
+              let els = [];
+              elements.forEach(function (element) {
+                els.push(doxMethods(element));
+              });
+              resolve(els);
+            }
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+      });
     },
 
     awaitElement: async function (selector) {
@@ -1651,14 +1684,14 @@ function handleScripts(html) {
           }
 
           var elementsWithProp = html.querySelectorAll(`[${name}]`);
+           
           elementsWithProp.forEach(function (el) {
+            console.log(el)
             var propValue = el.getAttribute(name);
             el.innerHTML = el.innerHTML.replaceAll('{{' + name + '}}', propValue);
             el.removeAttribute(name);
           });
-
-
-
+          
           value =  executeJs(value);
           window.props[name] = value;
           window[name] = value;
@@ -1835,8 +1868,9 @@ function handleImports(htm) {
     return htm;
   });
 }
-
+let isProcessing = false;
 function processElement(el) {
+  isProcessing = true;
   if(debugOn){
     console.log('[Processing Engine]: Deriving values from dynamically appended element -> ', el.element);
   }
@@ -1851,15 +1885,21 @@ function processElement(el) {
 
 
     if (importedElement.name === tagName) {
-
-      let newel = handleScripts(importedElement.element).html;
-
+       
+      let newel = importedElement.element;
+       
+      
       newel = handleVariables(newel);
       newel = handleMarkdown(newel);
       newel = handleState(newel);
       newel = handleForms(newel);
+      
+      newel = handleLogic(newel);
       // Find the corresponding element in the new HTML
       newel = newel.body.querySelector(tagName);
+       
+      
+      console.log(newel)
       // awaitElement
     
       // If the new element is empty, don't replace the original element
@@ -1903,6 +1943,7 @@ function processElement(el) {
         
         try {
           e.replaceWith(duplicate);
+          isProcessing = false;
         } catch (error) {
           if(debugOn){
             console.log('[Processing Engine]: Error replacing element -> ', error);
@@ -1919,6 +1960,7 @@ function processElement(el) {
  
 
 // Create a function to handle new elements and set up MutationObserver
+ 
 function observeNewElements() {
   if (observeNewElements.observerActive) return;
   observeNewElements.observerActive = true;
@@ -1939,7 +1981,7 @@ function observeNewElements() {
           }
         };
         let addedNodes = mutation.addedNodes;
-        addedNodes.forEach(function (node) {
+        addedNodes.forEach(async function (node) {
           if (node.tagName) {
             let tagName = node.tagName.toLowerCase();
             let el = document.querySelector(tagName) || document.body.querySelectorAll(tagName);
@@ -1951,53 +1993,44 @@ function observeNewElements() {
             if (!window.renderLock) {
               // Check if the element's tagName is not the same as the state element's tag
               if(parent && !parent.hasAttribute('data-state')) {
-                processElement({
+                  processElement({
                   element: el,
                   parent: parent,
                 });
-                document.body.innerHTML = handleProps(document).body.innerHTML;
-               
+                
+                 document.body = handleProps(document.body) 
+                 if (document.body.innerHTML.includes('${{')) {
+     
+                  let matches = document.body.innerHTML.match(/\${{([\s\S]*?)}}/g);
+                  if (matches) {
+                    matches.forEach(function (match) {
+                       
+                      let js = match.replace('${{', '').replace('}}', '');
+                      js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+                      js = js.replaceAll('&amp;', '&');
+                      let value =  executeJs(js);
+                      document.body.innerHTML = document.body.innerHTML.replaceAll(match, value);
+                    });
+                  }
+                }
+              
+          
                 if(debugOn){
                    // magenta text
                   console.log('%c[Processing Engine]: waking up 🥱 ', 'color: #ff00ff');
                 }
               }
               
-              if (document.body.innerHTML.includes('${{')) {
-                let matches = document.body.innerHTML.match(/\${{([\s\S]*?)}}/gs);
-                if (matches) {
-                  matches.forEach(function (match) {
-                    let js = match.replace('${{', '').replace('}}', '');
-                    js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
-                    js = js.replaceAll('&amp;', '&');
-                     
-                    // replace strings and check for null instance
-                    
-                    let value;
-                    try {
-                    value = executeJs(js);
-                    } catch (error) {
-                      
-                      if(debugOn){
-                        console.error('%c[Js Parse Engine]: 😭 Error parsing ' + match, 'reason: ' + error, 'parent',  el)  
-                      }
-                    }
-
-                    document.body.innerHTML = document.body.innerHTML.replaceAll(match, value);
-                    if(debugOn){
-                       // dark green text
-                      console.log(`%c[Js Parse Engine]: Replacing ${match} with -> `,  'color: #006400', value);
-                    }
-                    return;
-                  });
-                }
-              }
+             
             }
           }
         });
       }
 
-      isProcessing = false;
+      setTimeout(function () {
+        console.log('[Processing Engine]: Done processing');
+        isProcessing = false;
+      }, 20);
     });
 
     observeNewElements.observerActive = false;
@@ -2124,10 +2157,13 @@ Promise.all(fetchPromises)
             });
 
 
-            Object.keys(window.props).forEach(function (variable) {
+            Object.keys(window.props).forEach(async function (variable) {
+       
               let regex = new RegExp('{{' + variable + '}}', 'g');
-
-              html.body.innerHTML = html.body.innerHTML.replaceAll(regex, window.props[variable]);
+ 
+            await setTimeout(function () {}, 0);
+              window.props[variable] = executeJs(window.props[variable]);
+             html.body.innerHTML = html.body.innerHTML.replaceAll(regex, window.props[variable]);
             });
             if(debugOn){
               console.log('[Template Parser]: Parsing template -> ', template);

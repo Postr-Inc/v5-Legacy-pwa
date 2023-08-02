@@ -12,7 +12,9 @@ function alldposts(){
      
     handlevents('posts', post);
   });
+  
 }
+window.postsWithFiles =  {}
 export async function loadFeed() {
  
   try {
@@ -30,30 +32,52 @@ export async function loadFeed() {
     // Create a DocumentFragment to batch DOM manipulations
     const fragment = document.createDocumentFragment();
 
-    function postCard(post) {
-      let poster = dox.add('poster', {
-        description: post.content,
-        Uname: post.expand.author.username,
-        image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
-        pid: post.id,
-        postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
-        Uid: post.expand.author.id,
-        posted: parseDate(post.created),
-        likes: JSON.parse(JSON.stringify(post.likes)).length,
-        shares: post.shares,
-        isVerified: post.expand.author.validVerified ? true : false,
-        id: 'post-' + post.id,
-      });
-      return poster;
-    }
+    
 
-    posts.items.forEach((post) => {
+    posts.items.forEach(async (post) => {
+      if(post.file){
        
+        window.postsWithFiles[post.id] = post.file
+       
+      
+       }
       if (document.getElementById('post-' + post.id) == null) {
+        
+        let poster = dox.add('poster', {
+          description: post.content,
+          Uname: post.expand.author.username,
+          image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
+          pid: post.id,
+          postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
+          Uid: post.expand.author.id,
+          posted: parseDate(post.created),
+          likes: JSON.parse(JSON.stringify(post.likes)).length,
+          shares: post.shares,
+          isVerified: post.expand.author.validVerified ? true : false,
+          id: 'post-' + post.id,
+        });
+        dox.awaitElement('#postimg-' + post.id).then((res) => {
+          if(post.file){
+            res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
+            res.style.display = 'block'
+          }else{
+            res.style.display = 'none'
+          }
+        })
+        dox.awaitElement('#verified-' +  post.id).then((res) => {
+          if(post.expand.author.validVerified){
+            res.style.display = 'block'
+          }else{
+            res.style.display = 'none'
+          }
+  
+        })
+         
           handlevents('posts', post);
         
         previousPosts.push(post.id);
-        fragment.append(postCard(post));
+        fragment.append(poster);
+        
         allposts.push(post)
       }
 
@@ -71,12 +95,14 @@ export async function loadFeed() {
     postfeed.append(fragment);
     alldposts()
     
+    
     window.onhashchange = () => {
         allposts = []
         previousPosts = []
         posts = []
         page = 1
     }
+    
   } catch (error) {
     console.error('Error loading feed:', error);
   }

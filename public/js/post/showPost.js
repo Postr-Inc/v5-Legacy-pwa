@@ -5,20 +5,33 @@ export async  function viewPost(postid){
   await pb.collection('posts').getOne(postid, {
     expand: 'author'
   }).then((res) => {
-     let poster = dox.add('poster', {
-        description: res.content,
-        Uname: res.expand.author.username,
-        image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.expand.author.id}/${res.expand.author.avatar}`,
-        id: res.id,
-        pid: res.id,
-        postimg: res.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}` : null,
-        Uid: res.expand.author.id,
-        posted: parseDate(res.created),
-        likes: JSON.parse(JSON.stringify(res.likes)).length,
-        shares: res.shares,
-        isVerified: res.expand.author.validVerified ? true : false,
-        dividercontent:'comments'
-     }) 
+    let poster = dox.add('poster', {
+      description: res.content,
+      Uname: res.expand.author.username,
+      image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.expand.author.id}/${res.expand.author.avatar}`,
+      id: res.id,
+      pid: res.id,
+      postimg: res.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}` : null,
+      Uid: res.expand.author.id,
+      posted: parseDate(res.created),
+      likes: JSON.parse(JSON.stringify(res.likes)).length,
+      shares: res.shares,
+      isVerified: res.expand.author.validVerified ? true : false,
+      dividercontent:'comments'
+   }) 
+   dox.awaitElement('#postimg-' + post.id).then((res) => {
+    if(post.file){
+      res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
+      res.style.display = 'block'
+    }else{
+      res.style.display = 'none'
+    }
+  })
+   if(res.type == 'image'){
+    console.log('image')
+    poster.querySelector('.post-image').src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}`
+    poster.querySelector('.post-image').style.display = 'block'
+   }
       
 
     dox.getId('postcontainer').prepend(poster)
@@ -27,6 +40,7 @@ export async  function viewPost(postid){
      comment(res)
       
      dox.querySelector('.loading-circle').style.display = 'none'
+     
       
   })
 }

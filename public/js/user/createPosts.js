@@ -8,11 +8,17 @@ export async function makePost() {
         return; // If post creation process is already running, ignore subsequent clicks
       }
 
-      if (!getState("postContent")) {
+      if (!getState("postContent") || getState("postContent").length < 1) {
         alert("Please enter some content");
         setState("postContent", "");
         return;
       }
+      if (getState("postContent").length > 1000) {
+        alert("Woah slow down sweetie, who is gonna read all that?");
+        setState("postContent", "");
+        return;
+      }
+      
 
       try {
         isCreatingPost = true; // Set the flag to true to indicate post creation process is starting
@@ -53,14 +59,17 @@ export async function makePost() {
 
 async function createPost() {
   console.log("creating post");
+  let form = new FormData();
+  getState("postImage") ? form.append("file", getState("postImage")) : null;
+  form.append('author', pb.authStore.model.id)
+  form.append('content', getState("postContent"))
+  form.append('likes', JSON.stringify([]))
+  form.append('type',  getState("postImage") ? 'image' : 'text')
+  form.append('shares', 0)
+  getState("postImage", "")
+  getState("postContent", "")
   let d = await pb.collection("posts").create(
-    {
-      author: pb.authStore.model.id,
-      content: getState("postContent"),
-      type: "text",
-      likes: JSON.stringify([]),
-      shares: 0,
-    },
+    form,
     {
       expand: "author",
     }

@@ -18,7 +18,7 @@ ${{
   
   <button>
     <a href="#/">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hover:cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
@@ -75,7 +75,7 @@ ${{
       <label for="my_modal_6" >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         alt="make post"
-        class="w-6 h-6">
+        class="w-6 h-6 hover:cursor-pointer">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
       </svg>
@@ -98,22 +98,50 @@ ${{
       id="username"
       class="mx-5">${{pb.authStore.isValid ? pb.authStore.model.username : ''}}</p>
      
-      <label for="my_modal_6" class="  fixed end-5 top-5 text-lg rounded-full w-8 h-8 flex justify-center items-center">
+      <label for="my_modal_6" class=" btn fixed end-5 top-5 text-lg rounded-full  h-8 flex justify-center items-center">
         x
       </label>
     </div>
+
     <textarea class="textarea textarea-ghost w-full h-32 p-2 mt-5 textarea-bordered rounded" placeholder="What's on your mind?"
       oninput="setState('postContent', this.value)"></textarea>
     </p>
-    <div class="modal-action">
+    
+    <div class="indicator mt-5">
+      <span id="closeimg" 
+      class="indicator-item  btn rounded-full     btn-sm hidden justify-center   items-center
+      indicator-top  
+      "
+      onclick="document.getElementById('postImage').src = ''; 
+      this.classList.add('hidden'), setState('photoImage', '')
+      , 
+      document.getElementById('postImageInput').value = '';
+      "
+      >x</span> 
+      <img src="" id="postImage" class="  max-w-md mt-5" />
+    </div>
+       
+   
+    <div class="modal-action flex flex-row justify-between ">
       <!-- do not close the dialog -->
-      <button class="btn btn-ghost border border-slate-500 w-full rounded btn-sm" id="post"
-        onclick="setState('post_click', 'true'),
-        document.getElementById('my_modal_6').checked = false
-        ">Post</button>
+     
+      <label for="postImageInput" class="hover:cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+      </label>
+      <input type="file" class="hidden" id="postImageInput" onchange="setState('postImage', this.files[0]), setState('photoUrl',  document.getElementById('postImage').src = window.URL.createObjectURL(this.files[0])),
+      document.getElementById('closeimg').classList.remove('hidden')
+      " />
+      <button class="btn btn-ghost   bg-sky-500   text-white rounded-full btn-sm" id="post"
+      onclick="setState('post_click', 'true'),
+      document.getElementById('my_modal_6').checked = false
+      ">Post</button>
+     
        
      
     </div>
+    
      
 
   </div>

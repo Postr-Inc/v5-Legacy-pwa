@@ -116,6 +116,22 @@ export async function loadFeed(id) {
         isVerified: post.expand.author.validVerified ? true : false,
         id: 'post-' + post.id,
       });
+      dox.awaitElement('#postimg-' + post.id).then((res) => {
+        if(post.file){
+          res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
+          res.style.display = 'block'
+        }else{
+          res.style.display = 'none'
+        }
+      })
+      dox.awaitElement('#verified-' +  post.id).then((res) => {
+        if(post.expand.author.validVerified){
+          res.style.display = 'block'
+        }else{
+          res.style.display = 'none'
+        }
+
+      })
       return poster;
     }
 
@@ -185,7 +201,7 @@ function parseDate(data){
 
 
 }
-
+let isFollowingbtn = false;
 async function follow(data) {
       
     const followBtn = await dox.awaitElement('#followbtn');
@@ -197,8 +213,10 @@ async function follow(data) {
     followBtn.style.backgroundColor = isFollowing ? '#ff0000' : '#121212';
   
    followBtn.on('click', async  (e) => {
-     
-        if(pb.authStore.isValid){
+        
+         console.log(isFollowingbtn)
+        if(pb.authStore.isValid && !isFollowingbtn){
+          isFollowingbtn = true
             try {
                 const updatedFollowers = isFollowing
                   ? data.followers.filter((id) => id !== pb.authStore.model.id)
@@ -231,9 +249,11 @@ async function follow(data) {
                 dox.getId('followbtn').html(isFollowing ? 'Unfollow' : 'Follow');
                 dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' :  '#121212';
                 setState('follow', null);
+                isFollowingbtn = false
               } catch (error) {
                 console.error('Error occurred:', error);
               }
+
         }else{
             window.location.href = '#/login'
         }
