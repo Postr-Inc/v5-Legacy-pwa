@@ -1,30 +1,18 @@
 let created;
 function backgroundSync() {
-    let worker = new Worker('public/js/notification_worker.js');
-    if(!localStorage.getItem('notify')){
-      console.log('no notify')
-      worker.terminate()
-      return;
-    }
-    if(!created) {
-        created = true;
-     
-    let userid = pb.authStore.isValid ? pb.authStore.model.id : null;
+  navigator.serviceWorker.register('/public/js/notification_worker.js').then((registration) => {
+    console.log('registered', registration);
     
-    worker.postMessage({uuid: userid});
-    worker.postMessage({origin: window.location.origin});
-    worker.onmessage = function(e) {
-       console.log(e.data)
-    }
-    
-    if(Notification.requestPermission() == 'granted'){
-        handleNotifications()
-    }
- 
-   
-   }
-  }
-   
+    registration.addEventListener('activate', () => {
+      registration.active.postMessage({
+        uuid: pb.authStore.model.id,
+        origin: window.location.origin,
+      });
+    });
+  });
+}
+
+
    
   // constantly check if the user is logged in for notifications
  let timer =  setInterval(() => {
@@ -41,9 +29,5 @@ function backgroundSync() {
 
 
 export async function handleNotifications(){
-  pb.collection('notifications').subscribe('*', (data) => {
-    if(data.record.recipient == pb.authStore.model.id){
-        console.log(data)
-    }
-  })
+ console.log('handling notifications')
 }

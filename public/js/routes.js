@@ -11,6 +11,7 @@ app.use('/signup')
 app.use('/login')
 app.use('/profile')
 app.use('/post')
+app.use('/search')
 // binding root
 
 app.bindRoot('app')
@@ -122,6 +123,14 @@ app.on('/login', (req, res) =>  {
    
   
 })
+app.on('/search', (req, res) =>  {
+    res.render('search')
+    res.return()
+})
+app.get('/search', (req, res) =>  {
+    res.render('search')
+    res.return()
+})
  
 app.on('/profile/:id', (req, res) =>  {
     res.render('profile')
@@ -178,7 +187,7 @@ app.get('/verify/:token', (req, res) => {
     verifyToken(req.params.token)
  
  })
- 
+
 setInterval(() => {
     if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'
     && window.location.hash != '#/download'

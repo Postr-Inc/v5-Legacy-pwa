@@ -1,15 +1,18 @@
 let uuid;
+let notify
 self.onmessage = function(e) {
-    
-   if(e.data.uuid){
+   
+    uuid = e.data.uuid;
+    self.origin = e.data.origin;
+    notify = e.data.notify;
     self.uuid = e.data.uuid;
-   }
-   if(e.data.origin){
-         self.origin = e.data.origin;
-   }
 }
-
+ 
+let registered = false;
+ 
 if(Notification.permission == 'granted'){
+    
+ 
     import('/public/js/pb.js').then(
         (module) => {
             const Pocketbase = module.default;
@@ -19,28 +22,12 @@ if(Notification.permission == 'granted'){
              
              
             pb.collection('notifications').subscribe('*', async (data) => {
-                if(data.action == 'create' && data.record.recipient.includes(uuid)){
-                     let user = await pb.collection('users').getOne(data.record.author)
-                     let notification = new Notification(
-                         data.record.title ? data.record.title : 'Postr',
-                          {
-                        body: data.record.body ? data.record.body : null,
-                        icon: self.origin + '/public/assets/images/logo.png',
-                        url: data.record.url ? data.record.url : null,
-                        tag: 'Postr',
-                        renotify: true,
-                        requireInteraction: true,
-                        silent: false,
-                        sticky: false,
-                        vibrate: [200, 100, 200]
-                    });
-                    notification.onclick = function() {
-                        open(self.origin + '/#/post/' + data.record.id)
-                        this.close();
-                    }
-                    notification.onclose = function() {
-                        self.postMessage('Notification has closed!')
-                    }
+                 
+                 
+                if(data.action == 'create' && data.record.recipient == uuid){
+                     
+                    showNotification(data.record.title, data.record.body,  self.origin + '/#/post/' + data.record.id)
+                    
                    
     
                 }
@@ -56,6 +43,14 @@ if(Notification.permission == 'granted'){
         }  
     )       
 }
+
+function showNotification(title, body, url) {
+    self.registration.showNotification(title, {
+        body: body,
+        icon: '/public/img/logo.png',
+        vibrate: [200, 100, 200, 100, 200, 100, 200],
+    });
+  }
  
   
  
