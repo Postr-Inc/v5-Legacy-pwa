@@ -5,7 +5,9 @@ export async  function viewPost(postid){
   await pb.collection('posts').getOne(postid, {
     expand: 'author'
   }).then((res) => {
-    let poster = dox.add('poster', {
+      
+    dox.querySelector('.loading-circle').style.display = 'none'
+     let poster = dox.add('poster', {
       description: res.content,
       Uname: res.expand.author.username,
       image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.expand.author.id}/${res.expand.author.avatar}`,
@@ -19,28 +21,35 @@ export async  function viewPost(postid){
       isVerified: res.expand.author.validVerified ? true : false,
       dividercontent:'comments'
    }) 
-   dox.awaitElement('#postimg-' + post.id).then((res) => {
-    if(post.file){
-      res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
-      res.style.display = 'block'
-    }else{
-      res.style.display = 'none'
-    }
-  })
-   if(res.type == 'image'){
-    console.log('image')
-    poster.querySelector('.post-image').src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}`
-    poster.querySelector('.post-image').style.display = 'block'
-   }
-      
+    
+   dox.getId('postcontainer').append(poster)
+   
+    dox.awaitElement('#postimg-' + res.id).then((res) => {
+      if(res.file){
+        res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}`
+        res.style.display = 'block'
+      }else{
+        res.style.display = 'none'
+      }
+    })
+ 
+    dox.awaitElement('#verified-' +  post.id).then((res) => {
+      if(post.expand.author.validVerified){
+        res.style.display = 'block'
+      }else{
+        res.style.display = 'none'
+      }
+    })
+  });
+    dox.getId('postcontainer').html('')
 
-    dox.getId('postcontainer').prepend(poster)
+     
     handlevents('posts', res)
       
      comment(res)
       
-     dox.querySelector('.loading-circle').style.display = 'none'
-     
+    
+    
       
   })
 }
