@@ -11,6 +11,21 @@ function alldposts(){
   allposts.forEach((post) => {
      
     handlevents('posts', post);
+    dox.awaitElement('#postimg-' + post.id).then((res) => {
+      if(post.file){
+        res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
+        res.style.display = 'block'
+      }else{
+        res.style.display = 'none'
+      }
+    })
+    dox.awaitElement('#verified-' +  post.id).then((res) => {
+      if(post.expand.author.validVerified){
+        res.style.display = 'block'
+      }else{
+        res.style.display = 'none'
+      }
+    })
   });
   
 }
@@ -79,8 +94,8 @@ export async function loadFeed() {
         fragment.append(poster);
         
         allposts.push(post)
-      }
-
+      } 
+       
       
     });
 
