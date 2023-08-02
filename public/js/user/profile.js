@@ -132,6 +132,12 @@ export async function loadFeed(id) {
         }
 
       })
+      dox.awaitElement('#deletebtn-' + post.id).then((el) => {
+        if(post.expand.author.id !== pb.authStore.model.id){
+         el.style.display = 'none'    
+         console.log('not same')
+        } 
+      })
       return poster;
     }
 
