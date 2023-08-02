@@ -43,6 +43,8 @@ export async function makePost() {
         isCreatingPost = false; // Reset the flag after the post creation process is complete
         res.off("click", clickHandler); // Remove the click event listener to prevent further clicks
         setState("postContent", "");
+        
+         
       }
     };
 

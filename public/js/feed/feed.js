@@ -26,6 +26,13 @@ function alldposts(){
         res.style.display = 'none'
       }
     })
+    dox.awaitElement('#deletebtn-' + post.id).then((res) => {
+      
+       if(post.expand.author.id !== pb.authStore.model.id){
+        res.style.display = 'none'    
+        console.log('not same')
+       } 
+    })
   });
   
 }
@@ -50,12 +57,7 @@ export async function loadFeed() {
     
 
     posts.items.forEach(async (post) => {
-      if(post.file){
        
-        window.postsWithFiles[post.id] = post.file
-       
-      
-       }
       if (document.getElementById('post-' + post.id) == null) {
         
         let poster = dox.add('poster', {
@@ -98,6 +100,7 @@ export async function loadFeed() {
        
       
     });
+    console.log(allposts)
 
     const postfeed = dox.getId('postfeed');
     if (postfeed.style.display == 'none') {
@@ -114,9 +117,29 @@ export async function loadFeed() {
     window.onhashchange = () => {
         allposts = []
         previousPosts = []
-        posts = []
+    
         page = 1
+        fragment.innerHTM  = ''
+        postfeed.innerHTML = ''
     }
+    window.onscroll = async () => {
+      
+      if (
+        window.location.hash == `#/` &&
+        !loading &&
+        window.innerHeight + window.scrollY >= document.body.offsetHeight
+      ) {
+        console.log('loading')
+          loading = true;
+          page += 1;
+          await loadFeed() 
+          
+          alldposts();
+          loading = false;
+           
+       
+      }
+    };
     
   } catch (error) {
     console.error('Error loading feed:', error);
@@ -179,6 +202,14 @@ export async function handlevents(collection, postData) {
  
     btn.onclick = debouncedLikeHandler;
 
+    dox.awaitElement('#delete-' + postData.id).then((res) => {
+      res.onclick = async () => {
+        if (confirm('Are you sure you want to delete this post?')) {
+          await pb.collection(collection).delete(postData.id);
+          window.location.reload();
+        }
+      }
+    })
     
  }
  
@@ -235,21 +266,7 @@ export function debounce(func, wait) {
 
 let loading = false; // Flag to prevent multiple simultaneous loads
 
-window.onscroll = async () => {
-  if (
-    window.location.hash === `#/` &&
-    !loading &&
-    window.scrollY + window.innerHeight >= document.body.offsetHeight * 0.9 // Load more when the user is 90% down the page
-  ) {
-    if (!newPostsAppended) {
-      loading = true;
-      page += 1;
-      await loadFeed() 
-      loading = false;
-      alldposts();
-    }
-  }
-};
+ 
 
 
  

@@ -866,7 +866,7 @@ function eventAttributes(html) {
 
 function handleProps(html) {
   console.log(window.props, html);
-
+   
   Object.keys(window.props).forEach(function (prop) {
     if (Array.isArray(window.props[prop])) {
       let value = window.props[prop];
@@ -875,25 +875,31 @@ function handleProps(html) {
           let vvalue = v[vname];
           let regex = new RegExp('{{' + prop + '.' + vname + '}}', 'g');
           html.body.innerHTML = html.body.innerHTML.replaceAll(regex, vvalue);
+
         });
       });
-    } else {
-      let regex = new RegExp('{{' + prop + '}}', 'g');
-      html.querySelectorAll('*').forEach(function (element) {
-        if (element.getAttribute(prop)) {
-          window.props[prop] = element.getAttribute(prop);
-          element.innerHTML = element.innerHTML.replaceAll(regex, window.props[prop]);
-          
-        } else {
-          window.props[prop] =  'null'
-          
-        }
-      });
+      return html;
+
     }
+    let regex = new RegExp('{{' + prop + '}}', 'g');
+    html.querySelectorAll('*').forEach(function (element) {
+      if (element.getAttribute(prop)) {
+         
+        window[prop] = element.getAttribute(prop)  
+        window[prop + 'isValid'] = element.getAttribute(prop) == 'null' ? false : true;
+       
+        element.outerHTML = element.outerHTML.replaceAll(regex, window[prop]);
+        
+      }else{
+        window[prop] = " ";
+       
+      }
+    });
+  
+
   });
   return html;
 }
-
 function doxMethods(element) {
  
  
@@ -1887,7 +1893,8 @@ function processElement(el) {
     if (importedElement.name === tagName) {
        
       let newel = importedElement.element;
-       
+   
+      newel = handleScripts(importedElement.element).html;
       
       newel = handleVariables(newel);
       newel = handleMarkdown(newel);
@@ -1897,8 +1904,7 @@ function processElement(el) {
       newel = handleLogic(newel);
       // Find the corresponding element in the new HTML
       newel = newel.body.querySelector(tagName);
-       
-      
+ 
       console.log(newel)
       // awaitElement
     
@@ -1997,31 +2003,43 @@ function observeNewElements() {
                   element: el,
                   parent: parent,
                 });
-                
-                 document.body = handleProps(document.body) 
-                 if (document.body.innerHTML.includes('${{')) {
-     
-                  let matches = document.body.innerHTML.match(/\${{([\s\S]*?)}}/g);
-                  if (matches) {
-                    matches.forEach(function (match) {
-                       
-                      let js = match.replace('${{', '').replace('}}', '');
-                      js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
-                      js = js.replaceAll('&amp;', '&');
-                      let value =  executeJs(js);
-                      document.body.innerHTML = document.body.innerHTML.replaceAll(match, value);
-                    });
-                  }
-                }
-              
-          
+                document.body = handleProps(document.body) 
+               
                 if(debugOn){
                    // magenta text
                   console.log('%c[Processing Engine]: waking up 🥱 ', 'color: #ff00ff');
                 }
               }
               
-             
+              if (document.body.innerHTML.includes('${{')) {
+                let matches = document.body.innerHTML.match(/\${{([\s\S]*?)}}/gs);
+                if (matches) {
+                  matches.forEach(function (match) {
+                    let js = match.replace('${{', '').replace('}}', '');
+                    js = js.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+                    js = js.replaceAll('&amp;', '&');
+                     
+                    // replace strings and check for null instance
+                    
+                    let value;
+                    try {
+                    value = executeJs(js);
+                    } catch (error) {
+                      
+                      if(debugOn){
+                        console.error('%c[Js Parse Engine]: 😭 Error parsing ' + match, 'reason: ' + error, 'parent',  el)  
+                      }
+                    }
+
+                    document.body.innerHTML = document.body.innerHTML.replaceAll(match, value);
+                    if(debugOn){
+                       // dark green text
+                      console.log(`%c[Js Parse Engine]: Replacing ${match} with -> `,  'color: #006400', value);
+                    }
+                    return;
+                  });
+                }
+              }
             }
           }
         });

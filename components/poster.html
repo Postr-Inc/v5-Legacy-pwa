@@ -11,6 +11,7 @@
     let isVerified = "";
     let postimg = "";
     let dividercontent = "";
+    let isUser = Uid == pb.authStore.model.id;
   </script>
 
   <div class="flex flex-col font-mono  gap-2 p-5 "
@@ -47,17 +48,10 @@
           <label tabindex="0">•••</label>
           <ul tabindex="0"
             class="dropdown-content z-[1] border border-slate-600 menu p-2 shadow bg-base-100 rounded font-mono w-52">
-            ${{
-            if(!pb.authStore.model.id == Uid){
-            return `
             <li>
-              <a class="text-slate-500" onclick="window.reportModalContainer_{{pid}}.showModal()">Report</a>
+              <a class="text-slate-500" onclick="reportModalContainer_{{pid}}.showModal()">Report</a>
 
-            </li>`
-            } else{
-            return ``
-            }
-            }}
+            </li>
 
             <li><a class="text-slate-500" onclick="navigator.clipboard.writeText(`{{pid}}`),
                         this.innerHTML = 'Copied!',
@@ -65,18 +59,11 @@
                           this.innerHTML = 'ID: {{pid}}'
                         }, 2000)
                         ">ID: {{pid}}</a></li>
-            ${{
-            if(pb.authStore.model.id == Uid){
-            return `
-            <li>
-              <a class="text-error" onclick="deleteModalContainer_{{pid}}.showModal()">Delete</a>
+             <li>
+              <a 
+              id="deletebtn-{{pid}}"
+              class="text-error" onclick="deleteModalContainer_{{pid}}.showModal()">Delete</a>
             </li>
-            `
-            }else{
-            return ``
-            }
-
-            }}
 
           </ul>
         </div>
@@ -88,16 +75,32 @@
     <a href="#/post/{{pid}}">
       <div>{{description}}</div>
       <div class="flex flex-row gap-2">
-        <img src="{{postimg}}" class="rounded-lg w-full h-96"
+        <button class="w-full" onclick="my_modal_1.showModal()">
+          <img src="{{postimg}}" class="rounded-lg w-full h-96"
          id="postimg-{{pid}}"
         />
+        </button>
+         
       </div>
       <div class="flex flex-row gap-2">
         
       
       </div>
     </a>
-
+    <dialog id="my_modal_1" class="modal w-screen shadow-none bg-transparent">
+      <form method="dialog" class="modal-box bg-transparent shadow-none">
+        
+        
+        <div class="modal-action ">
+          <div class="indicator">
+            <button class="indicator-item  btn btn-circle mt-8 text-lg mr-7  ">X</button> 
+            <img src="{{postimg}}" class="rounded-lg w-screen  " />
+          </div>
+           
+     
+        </div>
+      </form>
+    </dialog>
 
 
     <div class="flex flex-row   gap-5">
@@ -219,7 +222,9 @@
 
         <div class="modal-action flex flex-col">
           <!-- do not close the dialog -->
-          <button class="btn  text-error btn-sm w-full" id="delete-{{pid}}">Delete</button>
+          <button class="btn  text-error btn-sm w-full" id="delete-{{pid}}"
+          onclick="deleteModalContainer_{{pid}}.close()"> 
+          Delete</button>
           <div class="divider"></div>
           <button class="btn   btn-sm w-full" id="cancel-{{pid}}">Cancel</button>
 
@@ -228,7 +233,7 @@
     </form>
   </dialog>
 
-  <dialog id="options_Modal_{{pid}}" class="modal">
+  <dialog id="reportModalContainer_{{pid}}" class="modal">
     <form method="dialog" class="modal-box" id="modal-{{pid}}">
       <h3 class="font-bold text-lg">Report {{Uname}}?</h3>
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>

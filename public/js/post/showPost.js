@@ -23,17 +23,29 @@ export  async  function viewPost(postid){
 
 
 dox.getId('postcontainer').append(poster)
-if(res.file){
-  console.log('has file')
-  dox.awaitElement('#postimg-' + res.id).then((el) => {
+dox.awaitElement('#postimg-' + res.id).then((el) => {
+  if(res.file){
     el.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}`
-  })
+  }else{
+    el.style.display = 'none'
+  }
+})
+
  
-}else{
-  dox.awaitElement('#postimg-' + res.id).then((res) => {
-     res.style.display = 'none'
-  })
-}
+dox.awaitElement('#deletebtn-' + res.id).then((el) => {
+  if(res.expand.author.id !== pb.authStore.model.id){
+   el.style.display = 'none'    
+   console.log('not same')
+  } 
+})
+dox.awaitElement('#verified-' +  res.id).then((el) => {
+  if(res.expand.author.validVerified){
+    el.style.display = 'block'
+  }else{
+    el.style.display = 'none'
+  }
+
+})
  
  
 

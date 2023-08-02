@@ -178,13 +178,7 @@ app.get('/verify/:token', (req, res) => {
     verifyToken(req.params.token)
  
  })
-if(!pb.authStore.isValid && window.location.hash != '#/download'
-&& window.location.hash != '#/signup' && window.location.hash != '#/login' && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'
-){
-    window.location.hash = '#/login'
-}
-
-
+ 
 setInterval(() => {
     if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'
     && window.location.hash != '#/download'

@@ -88,9 +88,9 @@ ${{
  
 
   <input type="checkbox" id="my_modal_6" class="modal-toggle hidden" />
-<div class="modal text-mono">
+<div class="modal text-mono   w-full">
   <div class="modal-box">
-    <div class="flex inline">
+    <div class="flex ">
       <img 
       id="userAvatar"
       src="${{pb.authStore.isValid ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${pb.authStore.model.id}/${pb.authStore.model.avatar}` : ''}}" class="rounded-full w-12 h-12" />
@@ -103,11 +103,15 @@ ${{
       </label>
     </div>
 
-    <textarea class="textarea textarea-ghost w-full h-32 p-2 mt-5 textarea-bordered rounded" placeholder="What's on your mind?"
+    <textarea 
+    id="postContent"
+    class="textarea textarea-ghost border-none w-full 
+    focus:outline-none     focus:border-transparent
+    h-32 p-2 mt-5 textarea-bordered rounded" placeholder="What's on your mind?"
       oninput="setState('postContent', this.value)"></textarea>
     </p>
     
-    <div class="indicator mt-5">
+    <div class="indicator mt-5 w-fit">
       <span id="closeimg" 
       class="indicator-item  btn rounded-full     btn-sm hidden justify-center   items-center
       indicator-top  
@@ -116,9 +120,12 @@ ${{
       this.classList.add('hidden'), setState('photoImage', '')
       , 
       document.getElementById('postImageInput').value = '';
+      document.getElementById('postImage').classList.add('hidden')
       "
       >x</span> 
-      <img src="" id="postImage" class="  max-w-md mt-5" />
+      <img src="" id="postImage" class=" w-full hidden rounded-md"
+      
+      />
     </div>
        
    
@@ -132,10 +139,15 @@ ${{
       </label>
       <input type="file" class="hidden" id="postImageInput" onchange="setState('postImage', this.files[0]), setState('photoUrl',  document.getElementById('postImage').src = window.URL.createObjectURL(this.files[0])),
       document.getElementById('closeimg').classList.remove('hidden')
-      " />
+      document.getElementById('postImage').classList.remove('hidden')
+
+      "
+       />
       <button class="btn btn-ghost   bg-sky-500   text-white rounded-full btn-sm" id="post"
       onclick="setState('post_click', 'true'),
       document.getElementById('my_modal_6').checked = false
+      document.getElementById('postContent').value = ''
+
       ">Post</button>
      
        
