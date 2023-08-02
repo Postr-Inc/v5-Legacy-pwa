@@ -6,22 +6,18 @@ self.onmessage = function(e) {
     self.origin = e.data.origin;
     notify = e.data.notify;
     self.uuid = e.data.uuid;
+    self.pb = e.data.pb;
 }
  
 let registered = false;
  
 if(Notification.permission == 'granted'){
-    
  
-    import('/public/js/pb.js').then(
-        (module) => {
-            const Pocketbase = module.default;
-            const pb = new Pocketbase('https://postr.pockethost.io')
-            let uuid = self.uuid;
-            pb.autoCancellation(false)
+ 
+            let uuid = self.uuid; 
              
              
-            pb.collection('notifications').subscribe('*', async (data) => {
+            self.pb.collection('notifications').subscribe('*', async (data) => {
                  
                  
                 if(data.action == 'create' && data.record.recipient == uuid){
@@ -40,8 +36,7 @@ if(Notification.permission == 'granted'){
             
              
     
-        }  
-    )       
+      
 }
 
 function showNotification(title, body, url) {

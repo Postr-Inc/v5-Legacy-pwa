@@ -9,6 +9,7 @@ function backgroundSync() {
       registration.active.postMessage({
         uuid: pb.authStore.model.id,
         origin: window.location.origin,
+        pb: pb,
       });
     });
   });
