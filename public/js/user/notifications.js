@@ -1,6 +1,8 @@
 let created;
 function backgroundSync() {
-  navigator.serviceWorker.register('/public/js/notification_worker.js').then((registration) => {
+  navigator.serviceWorker.register('/public/js/notification_worker.js', {
+    type: 'module',
+  }).then((registration) => {
     console.log('registered', registration);
     
     registration.addEventListener('activate', () => {
