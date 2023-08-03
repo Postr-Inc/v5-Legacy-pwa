@@ -4,6 +4,7 @@ import { makePost } from "./public/js/user/createPosts.js"
 import { loadFeed } from "./public/js/feed/feed.js"
 import { viewPost } from "./public/js/post/showPost.js"
 import { handleNotifications } from "./public/js/user/notifications.js"
+import { searchQ, GetTopAccounts } from "./public/js/user/search.js"
 const app = new Router()
 // route defintions
 app.use('/')
@@ -126,10 +127,12 @@ app.on('/login', (req, res) =>  {
 app.on('/search', (req, res) =>  {
     res.render('search')
     res.return()
+    GetTopAccounts()
 })
 app.get('/search', (req, res) =>  {
     res.render('search')
     res.return()
+    GetTopAccounts()
 })
  
 app.on('/profile/:id', (req, res) =>  {
