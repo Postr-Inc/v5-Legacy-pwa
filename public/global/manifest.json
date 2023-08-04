@@ -164,11 +164,11 @@
     },
     {
       "name": "Feed",
-      "url": "/#/feed",
+      "url": "/#/",
       "description": "Show your current Feed",
       "icons": [
         {
-          "src": "/public/assets/images/logo.png",
+          "src": "public/assets/images/logo.png",
           "type": "image/png",
           "purpose": "any"
         }
