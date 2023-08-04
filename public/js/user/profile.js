@@ -59,8 +59,9 @@ window.onscroll = async () => {
       loading = true;
       page += 1;
       await loadFeed(id) 
-      loading = false;
+   
       alldposts();
+      loading = false;
     }
   }
 };
@@ -217,10 +218,10 @@ async function follow(data) {
   
     followBtn.html(isFollowing ? 'Unfollow' : 'Follow');
     followBtn.style.backgroundColor = isFollowing ? '#ff0000' : '#121212';
-  
+  let Isnotified = false;
    followBtn.on('click', async  (e) => {
         
-         console.log(isFollowingbtn)
+         
         if(pb.authStore.isValid && !isFollowingbtn){
           isFollowingbtn = true
             try {
@@ -236,8 +237,9 @@ async function follow(data) {
                   followers: JSON.stringify(updatedFollowers),
                 });
                 pb.collection('users').authRefresh()
-                if(data.followers.includes(pb.authStore.model.id)){
-                    pb.collection('notifications').create({
+                if(data.followers.includes(pb.authStore.model.id) && !Isnotified){
+                  Isnotified = true  
+                  await pb.collection('notifications').create({
                         "author": pb.authStore.model.id,
                         "recipient": data.id,
                         "title": `Followed by ${pb.authStore.model.username}`,
@@ -245,6 +247,7 @@ async function follow(data) {
                         "type": "follow",
                         "url": window.location.origin + "/#/profile/" + pb.authStore.model.id,
                     })
+                    Isnotified = false
                 }
         
                 const newFollowersCount = updatedData.followers.length;

@@ -27,17 +27,19 @@ ${{
   <button
   onclick="
     if (Notification.permission === 'granted' && localStorage.getItem('notify') === 'true') {
-      localStorage.setItem('notify', 'false');
-      setState('notify', 'false');
+      Notification.permission = 'denied';
       this.innerHTML =  bellOff;
+      localStorage.removeItem('notify')
     } else {
-      Notification.requestPermission().then(function(result) {
-        if (result === 'granted') {
-          localStorage.setItem('notify', 'true');
-          setState('notify', 'true');
+      Notification.requestPermission().then((permission) => {
+        console.log(permission)
+        if (permission === 'granted') {
+          Notification.permission = 'granted';
+          this.innerHTML =  bellOn;
+          localStorage.setItem('notify', 'true')
         }
       });
-      this.innerHTML =  bellOn;
+       
     }
   "
 >

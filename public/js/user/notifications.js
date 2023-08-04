@@ -1,20 +1,30 @@
 let created;
 function backgroundSync() {
-  navigator.serviceWorker.register('/public/js/notification_worker.js', {
-    type: 'module',
-  }).then((registration) => {
-    console.log('registered', registration);
-    
-    registration.addEventListener('activate', () => {
-      registration.active.postMessage({
-        uuid: pb.authStore.model.id,
-        origin: window.location.origin,
-        pb: pb,
-      });
+ 
+   
+    navigator.serviceWorker.register('/notification_worker.js', {
+      scope: '/',
+      type: 'module'
+    }).then((reg) => {
+      let sw = reg.installing || reg.waiting || reg.active;
+      if (sw && !created) {
+        console.log('Service worker is active');
+        
+        sw.postMessage(JSON.stringify({uuid: pb.authStore.model.id, origin: window.location.origin, notify:  localStorage.getItem('notify') ? true : false }));
+        
+       
+       window.addEventListener('message', (event) => { console.log('new event ====>', event); });
+      }
+      created = true
+    })
+    .catch((err) => {
+      console.error('Error registering service worker:', err);
     });
-  });
+  
+    
 }
 
+ 
 
    
   // constantly check if the user is logged in for notifications
