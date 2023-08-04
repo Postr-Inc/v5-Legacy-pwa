@@ -39,7 +39,26 @@ function setScreen() {
     // Reset the screen dimensions whenever the user resizes the window
     setScreen();
   }
-  
+  function appIsInstalled() {
+    if ('getInstalledRelatedApps' in navigator) {
+        navigator.getInstalledRelatedApps().then((installedApps) => {
+            console.log(installedApps);
+            if (installedApps.length > 0) {
+                console.log('PWA is installed.');
+            } else {
+                console.log('PWA is not installed.');
+            }
+        }).catch((error) => {
+            console.error('Error checking installed apps:', error);
+        });
+    } else {
+        console.log('The getInstalledRelatedApps method is not supported.');
+    }
+}
+
+appIsInstalled();
+
+ 
    function checkplat(){
     if (window.matchMedia('(display-mode: standalone)').matches) {
         if (window.screen.height > 1000) {
@@ -105,6 +124,14 @@ app.on('/signup', (req, res) =>  {
     res.return()
     signup()
     
+})
+app.get('/settings', (req, res)=>{
+    res.render('settings')
+    res.return()
+})
+app.on('/settings', (req, res)=>{
+    res.render('settings')
+    res.return()
 })
 app.get('/login', (req, res) =>  {
     console.log(req)

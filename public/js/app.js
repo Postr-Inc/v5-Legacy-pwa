@@ -10,7 +10,7 @@ if(!pb.authStore.isValid){
 }
 
 
- function appIsInstalled() {
+function appIsInstalled() {
     if ('getInstalledRelatedApps' in navigator) {
         navigator.getInstalledRelatedApps().then((installedApps) => {
             console.log(installedApps);

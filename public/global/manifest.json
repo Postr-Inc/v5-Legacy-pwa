@@ -155,7 +155,8 @@
   "lang": "en",
   "related_applications": [{
     "platform": "webapp",
-    "url": "https://postr-inc.me/public/global/manifest.json"
+    "url": "https://postr-inc.me/public/global/manifest.json",
+    "id": "com.postr.app"
   }],
   "shortcuts": [
     {

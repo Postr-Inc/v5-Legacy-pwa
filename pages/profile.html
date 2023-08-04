@@ -21,7 +21,13 @@
      </div>
      <div
      
-     onclick="window.options.showModal()"
+     onclick="
+     if(window.location.hash.split('#/profile/')[1] == pb.authStore.model.id){
+         window.location.hash = '#/settings'
+     }else{
+            window.options.showModal()
+     }
+     "
      >
         •••
      </div>
@@ -132,44 +138,23 @@
     </dialog>
     <dialog id="options" class="modal font-mono">
         <form method="dialog" class="modal-box">
-            <div class="grid grid-cols-2 gap-2 w-full">
-                <button class="btn  flex btn-lg w-full 
-                focus:outline-none focus:ring-0
-                " onclick="
-                navigator.share({
-                    title: 'Postr',
-                    text: 'Check out this profile on Postr',
-                    url: window.location.origin + '/#/profile/' + window.location.hash.split('#/profile/')[1]
-                })
-                "
-                id="sharebtn"
+            <div class="flex flex-col gap-5">
+                 <button class="btn btn-ghost border-slate-500 btn-sm w-full  "
+                    onclick="window.options.showModal()"
+                    id="reportbtn">Report</button>
+                <button class="btn btn-ghost border-slate-500 btn-sm w-full  "
+                    onclick="window.options.showModal()"
+                    id="blockbtn">Block</button>
+                <button class="btn btn-ghost border-slate-500 btn-sm w-full  "
+                    onclick="window.options.showModal()"
+                    id="mutebtn">Mute</button>
                  
-                ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
-                  </svg>
-                   Share  </button>
-                 
-                <button class="btn  text-error  w-full btn-lg 
-                focus:outline-none focus:ring-0 flex
-                " onclick="
-                pb.authStore.clear(),
-                window.location.reload()
-                "
-                id="sharebtn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                  </svg>
-                  
-                Logout
-                </button>
-                
-                
 
 
             </div>
             <div class="divider"></div>
  
-            <button class="btn  text-black  w-full btn-lg 
+            <button class="btn  text-black  w-full btn-sm 
             focus:outline-none focus:ring-0 flex
             "> 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
