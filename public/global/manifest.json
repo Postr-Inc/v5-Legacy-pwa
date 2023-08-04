@@ -146,6 +146,14 @@
     "social",
     "utilities"
   ],
+  "launch_handler": {
+    "client_mode": ["navigate-existing, auto"]
+  },
+  "handle_links": "preferred",
   "dir": "auto",
-  "lang": "en"
+  "lang": "en",
+  "related_applications": [{
+    "platform": "webapp",
+    "url": "https://postr-inc.me/manifest.json"
+  }]
 }
