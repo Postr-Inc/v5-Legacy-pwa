@@ -44,6 +44,7 @@ function init() {
               pb,
               uuid
             );
+            pb.collection("notifications").delete(data.record.id);
           }
         });
       }
