@@ -137,6 +137,7 @@
       "sizes": "1024x1024"
     }
   ],
+  "id":"com.postr.app",
   "orientation": "portrait",
   "display_override": [
     "window-controls-overlay"
@@ -155,5 +156,23 @@
   "related_applications": [{
     "platform": "webapp",
     "url": "https://postr-inc.me/public/global/manifest.json"
-  }]
+  }],
+  "shortcuts": [
+    {
+      "name": "Settings",
+      "url": "/#/settings"
+    },
+    {
+      "name": "Feed",
+      "url": "/#/feed",
+      "description": "Show your current Feed",
+      "icons": [
+        {
+          "src": "/public/assets/images/logo.png",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    }
+  ]
 }
