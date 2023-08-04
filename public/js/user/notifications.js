@@ -14,6 +14,9 @@ function backgroundSync() {
         
        
        window.addEventListener('message', (event) => { console.log('new event ====>', event); });
+       setInterval(() => {
+        sw.postMessage(JSON.stringify({action: 'ping'}));
+       }, 1000);
       }
       created = true
     })

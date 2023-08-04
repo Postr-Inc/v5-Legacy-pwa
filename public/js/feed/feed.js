@@ -2,6 +2,8 @@ let previousPosts = [];
 let newPostsAppended = false; // Flag to track if new posts were appended
 let page = 1;
 const perPage = 10;
+ 
+ 
 let posts;
 let allposts = []
 function alldposts(){
@@ -181,7 +183,7 @@ export async function handlevents(collection, postData) {
    
    updateLikeStatus();
  
-   const debouncedLikeHandler = debounce(() => {
+   const debouncedLikeHandler = debounce(  () => {
       console.log('liked')
      if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
        
@@ -189,7 +191,14 @@ export async function handlevents(collection, postData) {
       
      } else {
        likes.push(pb.authStore.model.id);
-      
+        pb.collection('notifications').create({
+          author: pb.authStore.model.id,
+          recipient: postData.author,
+          title: `${pb.authStore.model.username} liked your post`,
+          body: `${pb.authStore.model.username} liked your post`,
+          type: 'like',
+          url: window.location.origin + '/#/post/' + postData.id
+       });
      }
  
      pb.collection(collection).update(postData.id, {
@@ -264,3 +273,8 @@ export function debounce(func, wait) {
  
 
 let loading = false; // Flag to prevent multiple simultaneous loads
+
+ 
+
+
+ 

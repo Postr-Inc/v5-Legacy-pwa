@@ -263,9 +263,7 @@ async function follow(data) {
                 console.error('Error occurred:', error);
               }
 
-        }else{
-            window.location.href = '#/login'
-        }
+        } 
     });
         
   
