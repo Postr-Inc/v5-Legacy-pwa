@@ -2,8 +2,6 @@ let previousPosts = [];
 let newPostsAppended = false; // Flag to track if new posts were appended
 let page = 1;
 const perPage = 10;
- 
- 
 let posts;
 let allposts = []
 function alldposts(){
@@ -167,12 +165,13 @@ export async function handlevents(collection, postData) {
       
      if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
         
-       dox.getId(`heart-${postData.id}`).classList.toggle('text-red-500', true);
+       dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('fill', 'red');
+       dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('stroke', 'red');
        tipElement.setAttribute('data-tip', 'Unheart');
        dox.getId(`likes-${postData.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
      } else {
-       dox.getId(`heart-${postData.id}`).classList.toggle('text-red-500', false);
-       tipElement.setAttribute('data-tip', 'Heart');
+       dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('fill', 'none');
+        dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('stroke', 'black');
        dox.getId(`likes-${postData.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
      }
    }
@@ -265,8 +264,3 @@ export function debounce(func, wait) {
  
 
 let loading = false; // Flag to prevent multiple simultaneous loads
-
- 
-
-
- 
