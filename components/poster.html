@@ -116,7 +116,19 @@
       </div>
 
       <div class="tooltip gap-2 flex inline" data-tip="comment">
-        <button onclick="window.commentModalContainer_{{pid}}.showModal()">
+        <button onclick="
+          if(window.location.hash == '#/post/{{pid}}'){
+            window.commentModalContainer_{{pid}}.showModal()
+          }else{
+            window.location.href = '#/post/{{pid}}'
+           let timer = setInterval(() => {
+              if(window.location.hash == '#/post/{{pid}}'){
+                window.commentModalContainer_{{pid}}.showModal()
+                clearInterval(timer)
+              }
+            }, 100);
+          }
+          ">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -128,7 +140,7 @@
       <div class="tooltip flex  hover:cursor-pointer gap-2" data-tip="share" id="share-{{pid}}" alt="share" onclick="
               if (navigator.share) {
   navigator.share({
-    title: `{{description}}`,
+    title: `{{description.replace(/(<([^>]+)>)/gi, '')}}`,
     text: 'Check out this post on Postr!',
     url: '${{window.location.origin}}/#/post/{{pid}}'
   })
@@ -162,40 +174,24 @@
       <span id="likes-{{pid}}">{{likes}} likes</span>
     </div>
 
-
-
-
-    ${{
-    if(dividercontent != ""){
-    return `
-    <div class="divider w-full">
-      <p class="text-slate-500">${dividercontent}</p>
-    </div>
-    `
-    }
-    else{
-    return `
-    <div class="divider w-full"></div>
-    `
-    }
-    }}
-
+ 
 
   </div>
   <dialog id="commentModalContainer_{{pid}}" class="modal">
     <form method="dialog" class="modal-box font-mono text-lg" id="comment-modal-{{pid}}">
       <div class="flex flex-row justify-between p-2    ">
         <button class=" ">Cancel</button>
-        <p class="font-bold">Comment</p>
+        <p class="font-bold">Reply</p>
         <span></span>
       </div>
       <div class="divider"></div>
       <div class="flex flex-col  ">
 
         <textarea onchange="setState('comment-{{pid}}', this.value)"
+        id="commentcontainer-{{pid}}"
           class="
-            textarea textarea-ghost w-full h-32 p-2 mt-5 textarea-bordered rounded  cursor-text   focus:outline-none ring focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-          placeholder="Reply to {{Uname}}
+            textarea textarea-ghost w-full h-32 p-2 mt-5  rounded  cursor-text   focus:outline-none  focus:border-transparent"
+          placeholder="Reply to {{Uname}}....
          
             "></textarea>
 

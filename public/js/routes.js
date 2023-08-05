@@ -4,7 +4,7 @@ import { makePost } from "./public/js/user/createPosts.js"
 import { loadFeed } from "./public/js/feed/feed.js"
 import { viewPost } from "./public/js/post/showPost.js"
 import { handleNotifications } from "./public/js/user/notifications.js"
-import { searchQ, GetTopAccounts } from "./public/js/user/search.js"
+import { GetTopAccounts } from "./public/js/user/search.js"
 const app = new Router()
 // route defintions
 app.use('/')
@@ -39,24 +39,7 @@ function setScreen() {
     // Reset the screen dimensions whenever the user resizes the window
     setScreen();
   }
-  function appIsInstalled() {
-    if ('getInstalledRelatedApps' in navigator) {
-        navigator.getInstalledRelatedApps().then((installedApps) => {
-            console.log(installedApps);
-            if (installedApps.length > 0) {
-                console.log('PWA is installed.');
-            } else {
-                console.log('PWA is not installed.');
-            }
-        }).catch((error) => {
-            console.error('Error checking installed apps:', error);
-        });
-    } else {
-        console.log('The getInstalledRelatedApps method is not supported.');
-    }
-}
-
-appIsInstalled();
+  
 
  
    function checkplat(){

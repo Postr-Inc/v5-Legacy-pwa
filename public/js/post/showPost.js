@@ -79,8 +79,9 @@ async function comment(data){
         pb.collection('comments').create(cdata, {
             expand: 'user',
        
-        }).then((res) => {
+        }).then(async (res) => {
           
+              
               let comment = dox.add('comment', {
                   description: res.text,
                   Uname: res.expand.user.username,
@@ -91,13 +92,28 @@ async function comment(data){
                   likes: JSON.parse(JSON.stringify(res.likes)).length,
                   isVerified: res.expand.user.validVerified ? true : false,
               })
-               
+              if(document.getElementById('nocomments')){
+                dox.getId('nocomments').remove()
+              }
               handlevents('comments', res)
               dox.getId('commentcontainer').prepend(comment)
               
               dox.querySelector('#commentcontainer-' + data.id).value = ''
+              let el = await dox.awaitElement('#verified-' +   res.expand.user.id)
+              console.log(el)
               setState('comment-' + data.id, '')  
-              alert('Comment posted')
+               
+           
+              if(res.expand.user.id !== data.expand.author.id){
+                await  pb.collection('notifications').create({
+                  "title": "New Comment",
+                  "body": `${pb.authStore.model.username} commented on your post`,
+                  "author": pb.authStore.model.id,
+                  "recipient": data.expand.author.id,
+                  "type": "comment",
+                  "url": window.location.origin + "/#/post/" + data.id,
+                })
+              }
         
         })
        
@@ -108,8 +124,9 @@ async function comment(data){
   pb.collection('comments').getList(1, 10, {
     sort: `created`,
     filter: `post.id = '${data.id}'`,
-    expand: 'user'
+    expand: 'user, post'
   }).then((res) => {
+    
     res.items.forEach((comment) => {
       let commentt = dox.add('comment', {
         description: comment.text,
@@ -122,15 +139,21 @@ async function comment(data){
         isVerified: comment.expand.user.validVerified ? true : false,
       })
        
-       
+      dox.awaitElement('#deletebtn-' + comment.id).then((el) => {
+         if(!comment.expand.user.id == pb.authStore.model.id || !comment.expand.post.author.id == pb.authStore.model.id){
+           el.style.display = 'none'
+         }
+      })  
       
       dox.getId('commentcontainer').prepend(commentt)
       handlevents('comments', comment)
+    
     })
+    if(res.items.length > 0){
+      dox.getId('nocomments').remove()
+    }
   })
-  if(dox.getId('nocomments')){
-    dox.getId('nocomments').remove()
-  }
+   
 }
  
   

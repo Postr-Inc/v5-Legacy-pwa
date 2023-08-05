@@ -149,7 +149,7 @@ export async function loadFeed() {
 
 export async function handlevents(collection, postData) {
   
-  
+  console.log(postData)
   let likes =  JSON.parse(JSON.stringify(postData.likes))
  
 

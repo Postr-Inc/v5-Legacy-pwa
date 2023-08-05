@@ -61,6 +61,28 @@ export async function makePost() {
 
 async function createPost() {
   console.log("creating post");
+  let postContent = getState("postContent");
+  // replace @mentions with links
+  let mentions = postContent.match(/@[a-zA-Z0-9]+/g);
+  console.log(mentions);
+  if (mentions) {
+    mentions.forEach(async (mention) => {
+      let username = mention.replace("@", "").trim()
+      try {
+        let user = await pb.collection('users').getFirstListItem(`username="${username}"`)
+        postContent = postContent.replace(
+          mention,
+          `<a style="color:#00ff00" href="/#/profile/${user.id}">${mention}</a>`
+        );
+      } catch (error) {
+        console.error(error)
+      }
+      
+      setState("postContent", postContent);
+       
+    });
+  
+  }
   let form = new FormData();
   getState("postImage") ? form.append("file", getState("postImage")) : null;
   form.append('author', pb.authStore.model.id)

@@ -2510,6 +2510,9 @@ html {
 .mb-0 {
   margin-bottom: 0px;
 }
+.mb-16 {
+  margin-bottom: 4rem;
+}
 .mb-2 {
   margin-bottom: 0.5rem;
 }
