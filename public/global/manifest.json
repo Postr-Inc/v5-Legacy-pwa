@@ -155,7 +155,7 @@
   "lang": "en",
   "related_applications": [{
     "platform": "webapp",
-    "url": "http://127.0.0.1:3000/public/global/manifest.json",
+    "url": "https://postr-inc.me/public/global/manifest.json",
     "id": "com.postr.app"
   }],
   "shortcuts": [
