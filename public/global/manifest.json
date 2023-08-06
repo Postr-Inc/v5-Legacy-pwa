@@ -158,6 +158,10 @@
     "url": "https://postr-inc.me/public/global/manifest.json",
     "id": "com.postr.app"
   }],
+   "permissions": [
+    "notifications",
+    "storage"
+  ],
   "shortcuts": [
     {
       "name": "Settings",
