@@ -45,6 +45,7 @@ export async function loadFeed() {
       filter: `author.id != "${pb.authStore.model.id}"`,
       sort: `-created`,
     });
+    console.log(posts)
     
     if (posts.items.length == 0) {
       dox.getId('postfeed').html('<div class="mx-auto flex text-2xl justify-center mt-16 font-bold">No posts yet</div>')
@@ -106,8 +107,8 @@ export async function loadFeed() {
     if (postfeed.style.display == 'none') {
       postfeed.style.display = 'block';
     }
-     if(dox.querySelector('.loading-infinity').style.display !== 'none'){
-        dox.querySelector('.loading-infinity').style.display = 'none'
+     if(dox.querySelector('.loading').style.display !== 'none'){
+        dox.querySelector('.loading').style.display = 'none'
      }
      
     postfeed.append(fragment);
@@ -123,23 +124,29 @@ export async function loadFeed() {
         postfeed.innerHTML = ''
     }
     window.onscroll = async () => {
-      
-      if (
-        window.location.hash == `#/` &&
-        !loading &&
-        window.innerHeight + window.scrollY >= document.body.offsetHeight
-      ) {
-        console.log('loading')
-          loading = true;
-          page += 1;
-          await loadFeed() 
-          
-          alldposts();
-          loading = false;
-           
-       
+      const isAtBottom = () => {
+        return (
+          window.location.hash === '#/' &&
+          !loading &&
+          window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+          window.innerHeight + window.scrollY <= document.body.offsetHeight + 100
+        );
+      };
+    
+      if (isAtBottom()) {
+        dox.querySelector('.loading').style.display = 'block';
+        console.log('loading');
+        loading = true;
+        page += 1;
+        await loadFeed();
+        alldposts();
+        loading = false;
+        if (dox.querySelector('.loading').style.display !== 'none') {
+          dox.querySelector('.loading').style.display = 'none';
+        }
       }
     };
+    
     
   } catch (error) {
     console.error('Error loading feed:', error);
@@ -194,10 +201,10 @@ export async function handlevents(collection, postData) {
         pb.collection('notifications').create({
           author: pb.authStore.model.id,
           recipient: postData.author,
-          title: `${pb.authStore.model.username} liked your post`,
-          body: `${pb.authStore.model.username} liked your post`,
+          title: `${pb.authStore.model.username} liked your ${collection == 'posts' ? 'post' : 'comment'}` ,
+          body: `${pb.authStore.model.username} liked your ${collection == 'posts' ? 'post' : 'comment'}`,
           type: 'like',
-          url: window.location.origin + '/#/post/' + postData.id
+          url:  window.location.origin + "/#/post/" + postData.id,
        });
      }
  

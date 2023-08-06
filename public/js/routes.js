@@ -201,6 +201,27 @@ app.get('/verify/:token', (req, res) => {
  
  })
 
+ app.on('/terms', (req, res) => {
+    res.return()
+    res.render('terms')
+    res.return()
+ 
+ })
+    app.get('/terms', (req, res) => {
+        res.return()
+        res.render('terms')
+        res.return()
+    }) 
+    app.get('/privacy', (req, res) => {
+        res.return()
+        res.render('privacy')
+        res.return()
+    })
+    app.on('/privacy', (req, res) => {
+        res.return()
+        res.render('privacy')
+        res.return()
+    })
 setInterval(() => {
     if(!pb.authStore.isValid && window.location.hash != '#/login'  && window.location.hash != '#/signup'  && window.location.hash != '#/forgot-password' && window.location.hash.split('/')[1] != 'verify'
     && window.location.hash != '#/download'
