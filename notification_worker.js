@@ -11,7 +11,6 @@ addEventListener("message", (event) => {
   const messageData = JSON.parse(event.data);
   if (messageData.action === "ping") {
     console.log("Service worker received ping");
-    postMessage(JSON.stringify({ action: "pong" }));
   }
 });
 function init() {
