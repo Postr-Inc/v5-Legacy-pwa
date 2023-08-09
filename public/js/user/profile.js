@@ -256,7 +256,7 @@ async function follow(data) {
                 // Update the follow button text and toggle isFollowing state
                 isFollowing = !isFollowing;
                 dox.getId('followbtn').html(isFollowing ? 'Unfollow' : 'Follow');
-                dox.getId('followbtn').style.backgroundColor = isFollowing ? '#ff0000' :  '#121212';
+                dox.getId('followbtn').style.backgroundColor = isFollowing ? '#12121212' :  '#121212';
                 setState('follow', null);
                 isFollowingbtn = false
               } catch (error) {
