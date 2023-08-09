@@ -28,3 +28,10 @@ function appIsInstalled() {
 }
 
 appIsInstalled();
+
+window.onresize = (e) =>{
+  window.innerHeight = "695"
+  window.innerWidth = "500"
+}
+ window.innerHeight = "695"
+ window.innerWidth = "500"
