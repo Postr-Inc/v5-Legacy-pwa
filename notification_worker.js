@@ -52,7 +52,7 @@ function init() {
       setInterval(async () => {
         await pb.collection("notifications").unsubscribe();
         subscrive();
-      }, 20000); // every 20 seconds
+      }, 1000 * 60 * 60 * 24);
     }
   });
 }

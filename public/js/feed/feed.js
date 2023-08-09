@@ -155,8 +155,7 @@ export async function loadFeed() {
 }
 
 export async function handlevents(collection, postData) {
-  
-  console.log(postData)
+
   let likes =  JSON.parse(JSON.stringify(postData.likes))
  
 
@@ -174,14 +173,16 @@ export async function handlevents(collection, postData) {
       
      if (pb.authStore.isValid && likes.includes(pb.authStore.model.id)) {
         
-       dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('fill', 'red');
-       dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('stroke', 'red');
+       btn.querySelector('svg').setAttribute('fill', 'red');
+       btn.querySelector('svg').setAttribute('stroke', 'red');
        tipElement.setAttribute('data-tip', 'Unheart');
-       dox.getId(`likes-${postData.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
+       dox.awaitElement('#likes-' + postData.id).then((res) => {
+        res.innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
+       })
      } else {
        dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('fill', 'none');
         dox.getId(`heart-${postData.id}`).querySelector('svg').setAttribute('stroke', 'black');
-       dox.getId(`likes-${postData.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
+        dox.getId(`likes-${postData.id}`).innerHTML = likes.length + (likes.length == 1 ? ' like' : ' likes');
      }
    }
  

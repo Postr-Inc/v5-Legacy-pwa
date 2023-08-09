@@ -8,7 +8,7 @@ let parser = new DOMParser();
 window.variables = {};
 window.state = {};
 window.props = {};
-
+window.currentRenderedTemplate = null;
 // Create an array of fetch promises
 let fetchPromises = imports.map(function (imported) {
   let name = imported.split('/').pop().split('.')[0].toLowerCase();
@@ -131,7 +131,6 @@ let methods = {
     
     document.getElementById(methods.rootElement).innerHTML = window[$elName];
     window.postMessage({ render: $elName }, "*");
-
     hooked = true;
   },
   return: () => {
@@ -865,7 +864,6 @@ function eventAttributes(html) {
 
 
 function handleProps(html) {
-  console.log(window.props, html);
    
   Object.keys(window.props).forEach(function (prop) {
     if (Array.isArray(window.props[prop])) {
@@ -896,6 +894,8 @@ function handleProps(html) {
       }
     });
   
+    
+    
 
   });
   return html;
@@ -1692,7 +1692,6 @@ function handleScripts(html) {
           var elementsWithProp = html.querySelectorAll(`[${name}]`);
            
           elementsWithProp.forEach(function (el) {
-            console.log(el)
             var propValue = el.getAttribute(name);
             el.innerHTML = el.innerHTML.replaceAll('{{' + name + '}}', propValue);
             el.removeAttribute(name);
@@ -1701,7 +1700,7 @@ function handleScripts(html) {
           value =  executeJs(value);
           window.props[name] = value;
           window[name] = value;
-
+ 
 
 
 
@@ -2262,6 +2261,8 @@ Promise.all(fetchPromises)
     });
 
     observeNewElements();
+     
+    
 
   })
 
