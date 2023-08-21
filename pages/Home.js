@@ -25,10 +25,7 @@ const home = component('home', {
         handlePosts()
        }
     }, [posts, isLoggedin])
-    function increment() {
-      setCount(count + 1)
-    }
-    rf('increment', increment)
+     
     loginForm.on('submit',   (f, e) => {
       console.log(f)
       try {
