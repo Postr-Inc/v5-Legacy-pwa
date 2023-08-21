@@ -1,5 +1,5 @@
 import { vhtml, component, rf } from "../src/public/vader.js";
-import { post_rules } from "./rules.js";
+import { rules } from "./rules.js";
 
 const p = (id) => component(id, {
   render: (states, setState, useState, useEffect, useAuth, props) => {
@@ -29,8 +29,9 @@ const p = (id) => component(id, {
       rf('likes_' + props.id, likepost);
     }, []);
 
+    let auth = useAuth({rulesets:rules(props),  user: props.currentuser})
  
- 
+    
     
     return vhtml`
       <div class="flex flex-col font-mono mt-6">
@@ -65,7 +66,29 @@ const p = (id) => component(id, {
               url: 'https://postr.pockethost.io/post/${props.id}',
             })"
             >Share</a></li>
-            <li><a>Item 2</a></li>
+            ${
+              /**
+               * @Methods
+               * @description:  these check if user can edit or delete post that pertain to them!
+               */
+              ""
+            }
+             ${
+              auth.can('edit')  ? vhtml`
+              <li>
+              <a href="#/edit/${props.id}">Edit</a>
+              </li>
+              ` : ``
+            } 
+             ${
+              auth.can('delete') ? vhtml`
+              <li>
+              <a 
+              onclick="false"
+              >Delete</a>
+              </li>
+              ` : ``
+            } 
           </ul>
         </div>
           
