@@ -56,10 +56,12 @@ const home = component('home', {
       <div class="p-5">
       ${loginForm.render() }
       </div>
-      ` : vhtml`
+      ` : 
+      vhtml`
       
       ${
-        posts.length < 1 ? vhtml`
+        posts.length < 1 ? 
+        vhtml`
          <div class="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
          <img src="./src/public/assets/images/logo.png" class="w-16   mx-auto" />
          <h1 class="text-xl  mt-2 fixed bottom-5">Postr ${currentVersion}</h1>
@@ -82,17 +84,20 @@ const home = component('home', {
             `
           }).join(' ')
         }
+        ${bottomnav(api.authStore.model)}
+        ${bottomupmodal()}
+        </div>
         `
        }
-       ${bottomnav(api.authStore.model)}
-       ${bottomupmodal()}
-      </div>
-        `
-      }
+       
       
-     
+       
+      
+      `
+    }
     `
   }
+     
 })
 
 export default home;
