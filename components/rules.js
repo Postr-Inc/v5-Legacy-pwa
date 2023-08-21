@@ -1,11 +1,16 @@
-export const post_rules = (post) => {
+export const rules = (post) => {
   return [
     {
-        roles:['owner'],
-        actions: ['edit', 'delete'],
-        resource: 'post',
+        action: 'edit',
         condition:(user) =>{
-            return user.id === post.expand.author.id
+          console.log(user.id, post.author)
+            return user.id === post.author 
+        }
+    },
+    {
+        action: 'delete',
+        condition:(user) =>{
+            return user.id === post.author 
         }
     }
   ]
