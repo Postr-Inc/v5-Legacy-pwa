@@ -21,19 +21,20 @@ const home = component('home', {
         })
       }
        if(isLoggedin){
-        console.log('logged in')
         handlePosts()
        }
     }, [posts, isLoggedin])
-     
-    loginForm.on('submit',   (f, e) => {
+    function increment() {
+      setCount(count + 1)
+    }
+    rf('increment', increment)
+    loginForm.on('submit',  async   (f, e) => {
       console.log(f)
       try {
         f.submitter.disabled = true
         f.submitter.innerHTML = '<span class="loading"></span> Login'
         api.collection('users').authWithPassword(e.username, e.password).then((res) => {
-          console.log(res)
-          setLogin(true)
+           window.location.reload()
           
         })
       } catch (error) {
@@ -49,7 +50,7 @@ const home = component('home', {
     
     return vhtml` 
      ${
-      !isLoggedin ?  vhtml`
+      !isLoggedin  ?  vhtml`
       <div class="p-5">
       ${loginForm.render() }
       </div>
