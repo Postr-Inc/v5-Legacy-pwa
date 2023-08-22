@@ -1,5 +1,11 @@
-import { component } from "../src/public/vader.js";
+import { component, vhtml } from "../src/public/vader.js";
 
-export const Profile = (user) = component('profile', {
-
+const profile = (api) => component('profile', {
+    render: (states, setState, useState, useEffect, useAuth) => {
+        return vhtml`
+            <div></div>
+        `;
+    }
 })
+
+export default profile
