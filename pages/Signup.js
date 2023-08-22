@@ -26,7 +26,7 @@ export const register = component('register', {
             }, 2000),
             ""
         }
-        <span class="loading"></span>
+         
         </div>
         `}
 
