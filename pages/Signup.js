@@ -1,12 +1,44 @@
 import { component, vhtml, rf} from "vaderjs";
+import signupform from "../components/forms/signupform.js";
+import bottomupmodal from "../components/modal/bottomupmodal.js";
  
 
-export const register = component('register', {
+export const register = (api) => component('register', {
     render: (states, setState, useState, useEffect, useAuth, useSyncStore, props) => {
         let [authChoice, setAuthChoice] = useState('authChoice', '')
+        let [showAvatar, setShowAvatar] = useState('showAvatar', false)
         function setAuth(e) {
             setAuthChoice(e)
         }
+        useEffect(async () => {
+        signupform.on('submit', async (e, f) =>{
+            const data = {
+            "username": f.username,
+            "email": "",
+            "emailVisibility": true,
+            "password":  f.password,
+            "passwordConfirm": f.password,
+            "bio": "test",
+            "online": true,
+            "followers": JSON.stringify([]),
+            "validVerified": false,
+            "Isprivate":  false,
+            "role": "user",
+            };
+      
+            try {
+                await api.collection('users').create(data)
+                await api.collection('users').authWithPassword(f.username, f.password)
+                .then((res) => {
+                    window.location.reload()
+                })
+                
+            } catch (error) {
+                 alert(error.message)
+            }
+       
+          })
+        }, [])
         rf('authChoice', setAuth)
         return authChoice == '' ?
         vhtml`
@@ -26,7 +58,7 @@ export const register = component('register', {
             }, 2000),
             ""
         }
-         
+        <span class="loading"></span>
         </div>
         `}
 
@@ -68,7 +100,16 @@ export const register = component('register', {
         
         `
         :   authChoice == 'google' ?  `` : 
-        ``  
+        `
+        <div class="flex  hero mx-auto mt-16 justify-center w-full p-5">
+         
+        ${signupform.render()}
+        
+        </div>
+        `  
+        
+       
+         
     }
 })
 

@@ -15,10 +15,10 @@ app.on('/home',   (req, res) => {
    res.render('#app',  home.render())
 })
 app.get('/register',   (req, res) => {
-   res.render('#app',   register.render())
+   res.render('#app',   register(api).render())
 })
 app.on('/register', async (req, res) => {
-   res.render('#app',  register.render())
+   res.render('#app',  register(api).render())
 })
 app.start()
  

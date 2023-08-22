@@ -3,7 +3,6 @@ export const rules = (post) => {
     {
         action: 'edit',
         condition:(user) =>{
-          console.log(user.id, post.author)
             return user.id === post.author 
         }
     },

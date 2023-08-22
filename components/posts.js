@@ -2,7 +2,7 @@ import { vhtml, component, rf } from "../src/public/vader.js";
 import { rules } from "./rules.js";
 
 const p = (id) => component(id, {
-  render: (states, setState, useState, useEffect, useAuth, props) => {
+  render: (states, setState, useState, useEffect, useAuth, useSyncStore, props) => {
     let [likes, setLikes] = useState('likes_' + props.id, props.likes)
      
     let url = `https://postr.pockethost.io/api/files/_pb_users_auth_/${props.expand.author.id}/${props.expand.author.avatar}`
@@ -34,7 +34,7 @@ const p = (id) => component(id, {
     
     
     return vhtml`
-      <div class="flex flex-col font-mono mt-6">
+      <div class="flex flex-col font-mono  mb-12 mt-5">
         <div class="flex flex-row gap-2">
           <img src="${url}" class="w-12 h-12 rounded-full object-cover" alt="post image" />
           <span class="mx-3">${props.expand.author.username}</span>

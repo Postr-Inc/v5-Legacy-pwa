@@ -87,9 +87,12 @@ export function vhtml(strings, ...args) {
       if (!(key in states)) {
         states[key] = initialValue;
         window[key] = initialValue;
+        return [states[key], (newValue) => setState(key, newValue)];
+      }else{
+        return [states[key], (newValue) => setState(key, newValue)];
       }
     
-      return [states[key], (newValue) => setState(key, newValue)];
+       
     };
     /**
      * @function useEffect
@@ -113,6 +116,56 @@ export function vhtml(strings, ...args) {
      * @returns {Object} {canAccess, grantAccess, revokeAccess}
      * @description Allows you to manage access to resources through rulesets
      */
+    const useSyncStore = (storeName, initialState) => {
+      const storedState = JSON.parse(localStorage.getItem("store")) || initialState;
+      const store = createStore(storedState);
+    
+      /**
+       * Get the value of a specific field from the store's state.
+       *
+       * @param {string} fieldName - The name of the field.
+       * @returns {*} The value of the specified field.
+       */
+      const getField = (fieldName) => {
+        return store.state[fieldName];
+      };
+    
+      /**
+       * Set the value of a specific field in the store's state.
+       *
+       * @param {string} fieldName - The name of the field.
+       * @param {*} value - The new value to set for the field.
+       */
+      const setField = (fieldName, value) => {
+        const newState = { ...store.state, [fieldName]: value };
+        store.setState(newState);
+      };
+    
+      /**
+       * Subscribe a function to be notified of state changes.
+       *
+       * @param {Function} subscriber - The function to call when the state changes.
+       * @returns {Function} A function to unsubscribe the subscriber.
+       */
+      const subscribe = (subscriber) => {
+        return store.subscribe(subscriber);
+      };
+    
+      /**
+       * Clear the stored state from local storage.
+       */
+      const clear = () => {
+        localStorage.setItem("store", "");
+      };
+    
+      return {
+        getField,
+        setField,
+        subscribe,
+        clear,
+      };
+    };
+
     function useAuth(options) {
       if (!options.rulesets) {
         throw new Error("No rulesets provided");
@@ -227,7 +280,12 @@ export function vhtml(strings, ...args) {
       const componentContainer = document.querySelector(`[data-component="${name}"]`);
       if (componentContainer) {
         runEffects();
-        componentContainer.innerHTML = options.render(states, setState, useState, useEffect, useAuth,  storedProps);
+        const newContent = options.render(states, setState, useState, useEffect, useAuth, useSyncStore, storedProps);
+        
+        // Compare the new content with the previous content, update only if changed
+        if (newContent !== componentContainer.innerHTML) {
+          componentContainer.innerHTML = newContent;
+        }
       }
     };
   
@@ -236,18 +294,19 @@ export function vhtml(strings, ...args) {
       const componentContainer = document.querySelector(`[data-component="${name}"]`);
       if (componentContainer) {
         runEffects();
-        componentContainer.innerHTML = options.render(states, setState, useState, useEffect, useAuth, props);
+        componentContainer.innerHTML = options.render(states, setState, useState, useEffect, useAuth, useSyncStore,  props);
       } else {
         return vhtml`
           <div data-component="${name}">
-            ${options.render(states, setState, useState, useEffect, useAuth, props)}
+            ${options.render(states, setState, useState, useEffect, useAuth, useSyncStore,  props)}
           </div>
         `;
       }
     };
   
     return {
-      render,
+      render
+      
     };
   }
    
@@ -400,7 +459,7 @@ export function vhtml(strings, ...args) {
         }
         const submitButton = document.createElement("button");
         submitButton.type = "submit";
-        submitButton.textContent = button.text || "Submit";
+        submitButton.innerHTML = button.text || "Submit";
         if (button.styles) {
           for (const key in button.styles) {
             submitButton.style[key] = button.styles[key];

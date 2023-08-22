@@ -1,6 +1,6 @@
 import { form, vhtml } from "vaderjs"
-const loginForm = form({
-    name: 'loginForm',
+const signupform = form({
+    name: 'signupForm',
     fields: {
         username: {
             type: 'text',
@@ -21,7 +21,11 @@ const loginForm = form({
     
     },
     button:{
-        text: 'Login',
+        text: `Continue
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+        <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd" />
+      </svg>
+        `,
         styles: {
              
         },
@@ -32,7 +36,7 @@ const loginForm = form({
     inputs: {
        username:{
          attributes: {
-            class: 'input input-bordered input-md w-full'
+            class: 'input input-md w-full'
          },
          label: {
             name: 'Username',
@@ -43,7 +47,7 @@ const loginForm = form({
        },
        password:{
         attributes: {
-            class: 'input input-bordered input-md'
+            class: 'input  input-md'
         },
         label: {
             name: 'Password',
@@ -58,17 +62,15 @@ const loginForm = form({
     },
     append: {
         after: vhtml`
+        
          
-        <div class="divider text-gray-500">Or</div>
-        <button class="btn btn-ghost w-full  border-slate-200 hover:cursor-pointer hover:bg-transparent hover:border-sky-500">
-        <img src="/src/public/assets/images/googleicon.png" class="w-5 h-5 inline mr-2"/> Continue with Google
-        </button>
-        <div class="mt-5" >Dont have an account? <a href="#/register" class="text-sky-500">Signup</a></div>
         `,
         before: vhtml`
-         <h1 class="flex justify-center mx-auto text-2xl font-mono font-bold">
-              <img src="/src/public/assets/images/logo.png" class="w-10 h-10 inline mr-2"/> Postr
-            </h1>
+        <div class="justify-center flex mx-auto w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-24 h-24">
+        <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+        </svg>
+        </div>
         `
         
     },
@@ -77,4 +79,4 @@ const loginForm = form({
     
 
  })
- export default loginForm
+ export default  signupform

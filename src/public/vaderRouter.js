@@ -70,10 +70,11 @@ class VaderRouter {
         let hash = window.location.hash.substring(1).split("/")
           ? window.location.hash.substring(1).split("/")
           : window.location.hash.substring(1);
+          
         // remove '' from array
         hash = hash.filter((item) => item !== "");
-        const basePath = "/" + hash[0];
-  
+        const basePath =  hash[0] ? '/' + hash[0] :  '#/'
+        
         if (!this.routes[basePath] && !this.customerror) {
           window.location.hash = this.starturl;
         } else if (!this.routes[basePath] && this.customerror) {
@@ -82,7 +83,7 @@ class VaderRouter {
             message: "Page not found",
           };
           this.handleError("404", errBody);
-        }
+        } 
       });
     }
   
