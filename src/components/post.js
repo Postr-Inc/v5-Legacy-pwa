@@ -1,4 +1,4 @@
-let useState = React.useState
+import React, {useState, useEffect} from 'react'
 import { api } from '..'
 export const post = (props) => {
     const [likes, setLikes] = useState(props.likes)
