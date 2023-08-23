@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { api } from '..'
 import logo from '../images/logo.png'
 import googleIcon from '../images/googleicon.png'
-import { post } from '../components/post'
+import { Post } from '../components/post'
 let currentVersion = '6.0 Beta'
  
 const Home = () =>{
@@ -56,7 +56,7 @@ const Home = () =>{
                 <div
                 key={post.id}
                 >
-                    {post.content}
+                  <Post content={post.content} author={post.expand.author} file={post.file}/>
                 </div>
             )
          }).reverse()}
