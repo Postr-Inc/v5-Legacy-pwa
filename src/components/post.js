@@ -27,7 +27,7 @@ export  function Post(props){
         }
     }
     return(
-        <div className="flex flex-col font-mono  mb-12 mt-5"
+        <div className="flex flex-col font-mono  mb-[35px]  "
       
         >
           <div className="flex flex-row gap-2">
@@ -53,8 +53,19 @@ export  function Post(props){
             </div>
             <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
               <li>
-                <a>Share</a>
+                <a
+                 onClick={()=>{
+                    navigator.share({
+                        title: `View ${props.author.username}'s post on Postr!`,
+                        text: props.content,
+                        url: window.location.href
+                        })
+                 }} 
+                >Share</a>
             </li>
+                <li>
+                    <a href="#">Report</a>
+                </li>
                
             </ul>
           </div>

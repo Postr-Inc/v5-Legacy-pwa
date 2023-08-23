@@ -9,7 +9,6 @@ export const api = new Pocketbase('https://postr.pockethost.io')
 api.autoCancellation(false)
 const root = ReactDOM.createRoot(document.getElementById('root'));
 let app = new Router('/')
-app.use('/')
 app.get('/', (req, res)=>{
   root.render(<Home />)
 })

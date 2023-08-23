@@ -3,6 +3,8 @@ import { api } from '..'
 import logo from '../images/logo.png'
 import googleIcon from '../images/googleicon.png'
 import { Post } from '../components/post'
+import { Bottomnav } from '../components/bottomnav'
+import { Modal } from '../components/modal'
 let currentVersion = '6.0 Beta'
  
 const Home = () =>{
@@ -27,9 +29,10 @@ const Home = () =>{
     }
     useEffect(()=>{
         if(isLogin){
-            api.collection('posts').getList(1, 50, {
+            api.collection('posts').getList(1, 10, {
                 expand:'author',
                 sort: '-created',
+                filter: `author.id != "${api.authStore.model.id}" `
             }).then((res)=>{
                 console.log(res)
                 setPosts(res.items)
@@ -51,13 +54,16 @@ const Home = () =>{
          <div className="ring-2 ring-sky-500 rounded-full p-1">
            <img src="https://picsum.photos/200/200" className="rounded-full w-12 h-12" />
          </div>
+         <div className='flex end-0 flex-row gap-5'>
+            
+         </div>
        </div>
        <div className='divider'></div>
        <div className="flex flex-col gap-5" key="postcontainer">
        
          {posts.map((p)=>{
             return(
-                 <div key={p.id}>
+                 <div key={p.id} className='p-2'>
                     <Post  content={p.content} author={p.expand.author} file={p.file} likes={p.likes} 
                     id={p.id}
                     />
@@ -67,6 +73,8 @@ const Home = () =>{
         
               
         </div>
+         <Bottomnav />
+      
        </div>
 
        
@@ -96,7 +104,7 @@ const Home = () =>{
             </button>
             <div className="mt-5" >Dont have an account? <a href="#/register" className="text-sky-500">Signup</a></div>
             <div className='divider'>Or</div>
-            <button classeName='btn   btn-ghost border-slate-200  w-full'>
+            <button classeName='btn border-slate-400  btn-ghost border-slate-200  w-full'>
             <img src={googleIcon} width={20} height={20} className='mr-2' />
              Continue with Google
             </button>
