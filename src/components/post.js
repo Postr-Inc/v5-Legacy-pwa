@@ -9,7 +9,7 @@ export const Post = (props) => {
         >
           <div class="flex flex-row gap-2">
             <img src="{url}" class="w-12 h-12 rounded-full object-cover" alt="post image" />
-            <span class="mx-3">${props.author.username}</span>
+            <span class="mx-3">{props.author.username}</span>
              {
                props.author.validVerified ?  
                <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
