@@ -9,7 +9,7 @@ const Home = () =>{
     let [isLogin, setIsLogin] = useState(api.authStore.isValid)
     let [btnstate, setBtnState] = useState('Login')
     let [posts, setPosts] = useState([])
-    function login(e){
+    async function login(e){
         e.preventDefault()
         let username = e.target[0].value
         let password = e.target[1].value
@@ -17,13 +17,16 @@ const Home = () =>{
             alert('Please fill all fields')
             return
         }
-         setBtnState('loader')
-        api.collection('users').authWithPassword(username, password).then((res)=>{
-            console.log(res)
-            setIsLogin(true)
-        }).catch((err)=>{
-            console.log(err)
-        })
+        setBtnState('loader')
+        try {
+         await api.collection('users').authWithPassword(username, password)
+         if(api.authStore.isValid){
+           setIsLogin(true)
+         }       
+        } catch (err){
+          alert('please check credentials - if you do not know your login info then click forgotten passwor')
+        }
+       
     }
     useEffect(()=>{
         if(isLogin){
