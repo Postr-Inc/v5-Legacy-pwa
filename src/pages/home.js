@@ -9,7 +9,7 @@ const Home = () =>{
     let [isLogin, setIsLogin] = useState(api.authStore.isValid)
     let [btnstate, setBtnState] = useState('Login')
     let [posts, setPosts] = useState([])
-    async function login(e){
+    function login(e){
         e.preventDefault()
         let username = e.target[0].value
         let password = e.target[1].value
@@ -17,52 +17,53 @@ const Home = () =>{
             alert('Please fill all fields')
             return
         }
-        setBtnState('loader')
-        try {
-         await api.collection('users').authWithPassword(username, password)
-         if(api.authStore.isValid){
-           setIsLogin(true)
-         }       
-        } catch (err){
-          alert('please check credentials - if you do not know your login info then click forgotten passwor')
-        }
-       
+         setBtnState('loader')
+        api.collection('users').authWithPassword(username, password).then((res)=>{
+            console.log(res)
+            setIsLogin(true)
+        }).catch((err)=>{
+            console.log(err)
+        })
     }
     useEffect(()=>{
         if(isLogin){
-            api.collection('posts').getList(1, 50).then((res)=>{
+            api.collection('posts').getList(1, 50, {
+                expand:'author',
+                sort: '-created',
+            }).then((res)=>{
+                console.log(res)
                 setPosts(res.items)
             })
         }
-    }, [posts])
+    }, [isLogin])
     return(
        isLogin ? 
       
        posts.length == 0 ? 
-       <div class="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
-       <img src={logo} class="w-16 mx-auto" />
-       <h1 class="text-xl mt-2 fixed bottom-5">Postr {currentVersion}</h1>
+       <div className="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
+       <img src={logo} className="w-16 mx-auto" />
+       <h1 className="text-xl mt-2 fixed bottom-5">Postr {currentVersion}</h1>
       </div>
 
        : 
-       <div class="p-5">
-       <div class="flex flex-row justify-between">
-         <div class="ring-2 ring-sky-500 rounded-full p-1">
-           <img src="https://picsum.photos/200/200" class="rounded-full w-12 h-12" />
+       <div className="p-5">
+       <div className="flex flex-row justify-between">
+         <div className="ring-2 ring-sky-500 rounded-full p-1">
+           <img src="https://picsum.photos/200/200" className="rounded-full w-12 h-12" />
          </div>
        </div>
        <div className='divider'></div>
-       <div class="flex flex-col gap-5" key="postcontainer">
+       <div className="flex flex-col gap-5" key="postcontainer">
        
-         {posts.map((post)=>{
+         {posts.map((p)=>{
             return(
-                <div
-                key={post.id}
-                >
-                  <Post content={post.content} author={post.expand.author} file={post.file}/>
-                </div>
+                 <div key={p.id}>
+                    <Post  content={p.content} author={p.expand.author} file={p.file} likes={p.likes} 
+                    id={p.id}
+                    />
+                 </div>
             )
-         }).reverse()}
+         })}
         
               
         </div>
@@ -89,13 +90,13 @@ const Home = () =>{
             <button type="submit" className="btn btn-ghost mt-2 border-slate-200 hover:cursor-pointer hover:bg-transparent hover:border-sky-500"
             {...btnstate == 'loader' ? {disabled: true} : {}}
             >
-                {btnstate  == 'loader' ?   <span class="loading loading-spinner loading-sm"></span>   : ''}
+                {btnstate  == 'loader' ?   <span className="loading loading-spinner loading-sm"></span>   : ''}
                 Login
                 
             </button>
-            <div class="mt-5" >Dont have an account? <a href="#/register" class="text-sky-500">Signup</a></div>
+            <div className="mt-5" >Dont have an account? <a href="#/register" className="text-sky-500">Signup</a></div>
             <div className='divider'>Or</div>
-            <button className='btn   btn-ghost border-slate-200  w-full'>
+            <button classeName='btn   btn-ghost border-slate-200  w-full'>
             <img src={googleIcon} width={20} height={20} className='mr-2' />
              Continue with Google
             </button>
