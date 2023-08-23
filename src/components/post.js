@@ -1,4 +1,5 @@
 let useState = React.useState
+import { api } from '..'
 export const post = (props) => {
     const [likes, setLikes] = useState(props.likes)
     console.log(likes)
@@ -7,7 +8,7 @@ export const post = (props) => {
       
         >
           <div class="flex flex-row gap-2">
-            <img src="${url}" class="w-12 h-12 rounded-full object-cover" alt="post image" />
+            <img src="{url}" class="w-12 h-12 rounded-full object-cover" alt="post image" />
             <span class="mx-3">${props.expand.author.username}</span>
              {
                props.expand.author.validVerified ?  
@@ -38,7 +39,7 @@ export const post = (props) => {
           </div>
             
           </div>
-          <p class="mt-6">${props.content}</p>
+          <p class="mt-6">{props.content}</p>
            {
             props.file ?  
             <img src="https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${props.id}/${props.file}" class="w-full h-96 object-cover rounded-md mt-5" />
@@ -57,7 +58,7 @@ export const post = (props) => {
             <svg
               onclick="likes_${props.id}()"
               xmlns="http://www.w3.org/2000/svg" fill="
-              ${likes.includes(props.currentuser.id) ? '#F13B38' : 'none'}
+              {likes.includes(api.authStore.model.id) ? '#F13B38' : 'none'}
               " viewBox="0 0 24 24" stroke-width="1.5" stroke="
               ${likes.includes(props.currentuser.id) ? '#F13B38' : 'currentColor'}
               " class="w-6 h-6 cursor-pointer">
