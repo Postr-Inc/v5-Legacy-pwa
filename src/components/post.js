@@ -3,12 +3,13 @@ import { api } from '..'
 export const Post = (props) => {
     const [likes, setLikes] = useState(props.likes)
     console.log(likes)
+    let avatar = ``
     return(
         <div class="flex flex-col font-mono  mb-12 mt-5"
       
         >
           <div class="flex flex-row gap-2">
-            <img src="{url}" class="w-12 h-12 rounded-full object-cover" alt="post image" />
+            <img src={avatar} class="w-12 h-12 rounded-full object-cover" alt={props.username + ' Profile Image'} />
             <span class="mx-3">{props.author.username}</span>
              {
                props.author.validVerified ?  
