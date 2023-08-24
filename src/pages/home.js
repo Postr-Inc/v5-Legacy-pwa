@@ -4,7 +4,6 @@ import logo from "../images/logo.png";
 import googleIcon from "../images/googleicon.png";
 import { Post } from "../components/post";
 import { Bottomnav } from "../components/bottomnav";
-import { Modal } from "../components/modal";
 let currentVersion = "6.0 Beta";
 function debounce(fn, time) {
   let timeout;
@@ -28,7 +27,7 @@ const Home = () => {
      if(!google){
         let username = e.target[0].value;
         let password = e.target[1].value;
-        if (username == "" || password == "") {
+        if (username === "" || password === "") {
           alert("Please fill all fields");
           return;
         }
@@ -50,10 +49,11 @@ const Home = () => {
         }});
         data.then((res)=>{
             if(res.meta.isNew){
+                let form = new FormData()
                 let url  = res.meta.avatarUrl
                 let username = res.meta.username
                 form.append('username', username)
-                let form = new FormData()
+              
                 fetch(url).then((res) => res.blob()).then((blob) => {
                    form.append('avatar', blob)
                   api.collection('users').update(data.record.id, form)
@@ -75,7 +75,6 @@ const Home = () => {
         .getList(page, 10, {
           expand: "author",
           sort: "-created",
-         filter: `author.id != "${api.authStore.model.id}"`
         })
         .then((res) => {
           setTotalPosts(res.totalPages);
@@ -121,7 +120,7 @@ const Home = () => {
   }, [page, isLoadMore, totalPosts]);
 
   return isLogin ? (
-    posts.length == 0 ? (
+    posts.length === 0 ? (
       <div className="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
         <img src={logo} className="w-16 mx-auto" />
         <h1 className="text-xl mt-2 fixed bottom-5">Postr {currentVersion}</h1>
@@ -163,7 +162,9 @@ const Home = () => {
         className="flex mt-26 text-start flex-col   justify-center w-full p-5"
       >
         <div className="flex flex-row mx-auto gap-2">
-          <img src={logo} width={30} height={30} className="mr-2" />
+          <img src={logo} width={30} height={30} className="mr-2" 
+          alt="Postr logo"
+          />
           <h1 className="text-xl   ">Postr</h1>
         </div>
 
@@ -204,7 +205,9 @@ const Home = () => {
           className="btn btn-ghost mt-2  hover:cursor-pointer  border-slate-200"
           {...(btnstate == "loader" ? { disabled: true } : {})}
         >
-           <img src={googleIcon} width={20} height={20} className="mr-2" />
+           <img src={googleIcon} width={20} height={20} className="mr-2" 
+           alt="Google icon"
+           />
            Continue with Google
         </button>
       </form>
