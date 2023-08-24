@@ -1,10 +1,6 @@
 name: Node.js CI
 
-on:
-  push:
-    branches: [ "react" ]
-  pull_request:
-    branches: [ "react" ]
+on: workflow_dispatch
 
 jobs:
   build:
