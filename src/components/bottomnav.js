@@ -15,6 +15,8 @@ export const Bottomnav = () => {
     
   }, [pContent])
 
+  console.log(chars)
+
   function createPost() {
     const data = {
         "author": api.authStore.model.id,
