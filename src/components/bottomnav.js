@@ -7,13 +7,30 @@ export const Bottomnav = () => {
   let [image, setImage] = useState("");
   let [pContent, setPContent] = useState("");
   let [modalisOpen, setModalisOpen] = useState(false);
- 
+  let pRef = useRef();
   useEffect(()=>{
     if(pContent == ''){
       setChar(0)
     }
     
   }, [pContent])
+
+  function createPost() {
+    const data = {
+        "author": api.authStore.model.id,
+        "content":  pContent,
+        "type":  "text",
+        "likes":  JSON.stringify([]),
+        "shares": JSON.stringify([]),
+    };
+
+    api.collection('posts').create(data).then((res)=>{
+        window.location.reload()
+        pRef.current.innerHTML = ''
+        setChar(0)
+        setImage('')
+    })
+  }  
   return (
     <div className=" fixed  bottom-[-1px]  left-0 ">
       <div className="  bg-white w-screen p-5">
@@ -166,7 +183,7 @@ export const Bottomnav = () => {
         before:text-slate-300
         max-h-[5rem] overflow-y-auto`}
             placeholder="What's on your mind?"
-            
+            ref={pRef}
             onInput={(e) => {
                 let text = e.target.innerHTML;
                 let charCount = text.length;
@@ -176,10 +193,11 @@ export const Bottomnav = () => {
                     charCount = maxchar;
                 } 
                 
-                let sanitized = Sanitization(e.target.innerHTML); 
-            
-                console.log(sanitized)
-                setPContent(sanitized.replace(/<br>/g, ''));
+                let sanitized = Sanitization(e.target.innerHTML) 
+                sanitized = new DOMParser().parseFromString(sanitized, 'text/html').querySelector('body').innerText
+                setPContent(sanitized);
+               
+                 
                 setChar(charCount);
             }}
          
@@ -199,8 +217,8 @@ export const Bottomnav = () => {
                 let emojis = handleEmojis(sanatized)
                 setPContent(emojis.replace(/<br>/g, ''));
               
-              setChar(charCount);
-              e.target.innerHTML = text + "<br>";
+                setChar(charCount);
+                pRef.current.innerHTML = emojis.replace(/<br>/g, '');
             }}
            
           ></p>
@@ -276,7 +294,9 @@ export const Bottomnav = () => {
           ) : (
             <></>
           )}
-          <span className="text-sky-500 text-sm">Post</span>
+          <span className="text-sky-500 text-sm"
+          onClick={createPost}
+          >Post</span>
         </div>
       </Modal>
     </div>
@@ -286,7 +306,7 @@ export const Bottomnav = () => {
 function Sanitization(data) {
     let parser = new DOMParser();
     if (window.Sanitizer) {
-        console.log('useSanitizer is available!');
+    
        let doc = parser.parseFromString(data, 'text/html');
         
        let defaultConfig = {
@@ -320,11 +340,13 @@ function Sanitization(data) {
        let unsanitized_string = data;
        // replace &lt; and &gt; with < and >
        unsanitized_string = unsanitized_string.replaceAll(/&lt;/g, '<').replaceAll(/&gt;/g, '>');
-       console.log(unsanitized_string)
+  
+       unsanitized_string = handleEmojis(unsanitized_string);
        doc.body.setHTML(unsanitized_string, { sanitizer });
-       return doc.body.innerHTML;
+     
+       return doc.body.innerText
     } else if(!window.Sanitizer){
-       console.warn('useSanitizer is only available in Chrome, Edge, and Opera at the moment.');
+       console.warn('User does not have access to the Sanitizer API likely unsupported at this time');
        return data;
     }else{
        return data;
