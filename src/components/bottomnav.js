@@ -15,8 +15,6 @@ export const Bottomnav = () => {
     
   }, [pContent])
 
-  console.log(chars)
-
   function createPost() {
     const data = {
         "author": api.authStore.model.id,
@@ -37,7 +35,7 @@ export const Bottomnav = () => {
     <div className=" fixed  bottom-[-1px]  left-0 ">
       <div className="  bg-white w-screen p-5">
         <div className="flex flex-row gap-5 justify-between   ">
-          {window.location.hash == "#/" ? (
+          {window.location.hash === "#/" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -115,7 +113,7 @@ export const Bottomnav = () => {
               />
             </svg>
           )}
-          {window.location.hash == "#/notifications" ? (
+          {window.location.hash === "#/notifications" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -176,6 +174,7 @@ export const Bottomnav = () => {
             <img
               src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`}
               className="rounded-full w-12 h-12"
+              alt={api.authStore.model.username + "'s avatar"}
             />
             <h1>@{api.authStore.model.username}</h1>
           </div>
@@ -229,6 +228,7 @@ export const Bottomnav = () => {
             <img
               src={image}
               className="w-full h-full object-cover rounded-md  "
+              alt="post image"
             />
           ) : (
             <></>
