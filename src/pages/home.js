@@ -89,7 +89,7 @@ const Home = () => {
 
   useEffect(() => {
     loadPosts();
-  }, [isLogin == true]);
+  }, []);
 
   useEffect(() => {
     const handleScroll = debounce(() => {
@@ -181,7 +181,7 @@ const Home = () => {
         <button
           type="submit"
           className="btn btn-ghost mt-2 border-slate-200 hover:cursor-pointer hover:bg-transparent hover:border-sky-500"
-          {...(btnstate == "loader" ? { disabled: true } : {})}
+          {...(btnstate === "loader" ? { disabled: true } : {})}
         >
           {btnstate == "loader" ? (
             <span className="loading loading-spinner loading-sm"></span>
@@ -203,7 +203,7 @@ const Home = () => {
           }}
           type="submit"
           className="btn btn-ghost mt-2  hover:cursor-pointer  border-slate-200"
-          {...(btnstate == "loader" ? { disabled: true } : {})}
+          {...(btnstate === "loader" ? { disabled: true } : {})}
         >
            <img src={googleIcon} width={20} height={20} className="mr-2" 
            alt="Google icon"
