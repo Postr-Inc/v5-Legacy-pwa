@@ -65,8 +65,11 @@ class  Router {
      * Starts the router.
      */
     start() {
-      if (!this.routes[window.location.hash.substring(1)]) {
+        let currpath =  window.location.hash.substring(1).split("/")[1] ?  `/${window.location.hash.substring(1).split("/")[1]}` : window.location.hash.substring(1)
+      if (!this.routes[currpath]) {
         window.location.hash = this.starturl;
+        this.routes[this.starturl] = true;
+        console.log(this.routes)
       }
       window.addEventListener("hashchange", () => {
         let hash = window.location.hash.substring(1).split("/")
@@ -150,9 +153,15 @@ class  Router {
           return part;
         })
         .join("/");
+      
       const regex = new RegExp("^" + parsedPath + "(\\?(.*))?$");
-  
-      if (window.location.hash.substring(1).match(regex)) {
+      // only get the root path ex: /home/1 get the /home only
+      let currpath = window.location.hash.substring(1)
+ 
+      if (
+        currpath.match(regex) 
+        
+      ) {
         this.storedroutes.push(window.location.hash.substring(1));
         const matches = window.location.hash.substring(1).match(regex);
         const params = {};
@@ -276,6 +285,7 @@ class  Router {
      */
     on(path, callback) {
       window.addEventListener("hashchange", () => {
+       
         const paramNames = [];
         const queryNames = [];
         const parsedPath = path
@@ -308,12 +318,16 @@ class  Router {
         }
   
         window.$CURRENT_URL = route;
+        
         window.$URL_PARAMS = {};
+        
         if (
-          window.location.hash.substring(1).match(regex) &&
-          this.routes[$CURRENT_URL]
+          window.location.hash.substring(1).match(regex)  &&
+          this.routes[route]  
+         
         ) {
-          this.storedroutes.push(window.location.hash.substring(1));
+          this.storedroutes.push(route);
+        
           const matches = window.location.hash.substring(1).match(regex);
           const params = {};
   
@@ -373,3 +387,5 @@ class  Router {
   }
   export default Router
   
+   
+ 
