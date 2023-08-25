@@ -133,8 +133,7 @@ export const Profile = (user) => {
               window.options.showModal();
             }
           }}
-        ></div>
-        •••
+        >•••</div>
       </div>
       <div className="flex flex-col  p-5 gap-2">
         <div className="flex flex-row  justify-between gap-5">
