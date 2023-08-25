@@ -34,13 +34,21 @@ export  function Post(props){
       
         >
           <div className="flex flex-row ">
+        { props.author.avatar ? 
             <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${props.author.id}/${props.author.avatar}`} 
             className="w-8 h-8 rounded-full object-cover" alt="post image" />
+            : <div className="avatar placeholder">
+  <div className="bg-neutral-focus text-neutral-content rounded-full w-8">
+    <span>{props.author.username.slice(0,2)}</span>
+  </div>
+</div> 
+}
             <span className="mx-3 text-sm"
             onClick={()=>{
                 window.location.hash = `#/profile/${props.author.id}`
             }}
-            >{props.author.username}</span>
+            >{props.author.username}
+            </span>
              {
                props.author.validVerified ?  
                 <img src={verified}
