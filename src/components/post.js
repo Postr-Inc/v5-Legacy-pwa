@@ -1,5 +1,7 @@
 import { api } from "..";
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
+import verified from '../icons/verified.png'
+import { Modal } from "./modal";
 export  function Post(props){
     const [likes, setLikes] = useState(props.likes)
      function likepost(){
@@ -26,26 +28,32 @@ export  function Post(props){
             }, time)
         }
     }
+   
     return(
-        <div className="flex flex-col font-mono  mb-[35px]  "
+        <div className="flex flex-col text-sm font-mono  mb-[35px]  "
       
         >
-          <div className="flex flex-row gap-2">
-            <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${props.author.id}/${props.author.avatar}`} className="w-12 h-12 rounded-full object-cover" alt="post image" />
-            <span className="mx-3">{props.author.username}</span>
+          <div className="flex flex-row ">
+            <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${props.author.id}/${props.author.avatar}`} 
+            className="w-8 h-8 rounded-full object-cover" alt="post image" />
+            <span className="mx-3 text-sm"
+            onClick={()=>{
+                window.location.hash = `#/profile/${props.author.id}`
+            }}
+            >{props.author.username}</span>
              {
                props.author.validVerified ?  
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
-               viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 text-sky-500">
-                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-               </svg>
-               
+                <img src={verified}
+                className="w-5 h-5 mt-1"
+                />
                : <></>
             }
             <div className="dropdown dropdown-left absolute end-5 ">
-            <div className="flex flex-row gap-5">
-            <span>
-            
+            <div className="flex text-sm flex-row gap-5">
+            <span
+            className="text-gray-500 text-sm"
+            >
+            {parseDate(props.created)}
             </span>
             <label tabIndex="0" className="flex text-gray-500   cursor-pointer">
              •••
@@ -53,29 +61,54 @@ export  function Post(props){
             </div>
             <ul tabIndex="0" className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
               <li>
-                <a
-                 onClick={()=>{
+                <span  onClick={()=>{
                     navigator.share({
                         title: `View ${props.author.username}'s post on Postr!`,
                         text: props.content,
                         url: window.location.href
                         })
                  }} 
-                >Share</a>
+                    className="cursor-pointer"
+                >Share</span>
             </li>
                 <li>
-                    <a href="#">Report</a>
+                    <a  >Report</a>
                 </li>
                
             </ul>
           </div>
             
           </div>
-          <p className="mt-6">{props.content}</p>
+          <p className="mt-6 text-sm"
+          ref={(el)=>{
+            if(el){
+              el.innerHTML = props.content
+            }
+          }}
+          ></p>
            {
             props.file ?   
-            <img src={`https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${props.id}/${props.file}`} className="w-full h-96 object-cover rounded-md mt-5" />
+            
+            <img src={`https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${props.id}/${props.file}`} className="w-full h-96 object-cover rounded-md mt-5" 
+            alt="post image"
+            onClick={()=>{
+               document.getElementById('modal' + props.id).showModal()
+              
+            }}
+            />
             :  <></>
+          }
+          {
+            props.file ? 
+            <Modal id={'modal' + props.id}>
+            <button className="flex justify-center mx-auto focus:outline-none">
+            <div className="divider  text-slate-400  w-12   mt-0"></div>
+            </button>
+             <img src={`https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${props.id}/${props.file}`} className="w-full p-2 h-full object-cover rounded  "
+                alt="post image"
+            />
+            </Modal>
+            : ''
           }
           <div className="flex flex-row gap-5 mt-6">
             
@@ -131,3 +164,40 @@ export  function Post(props){
         </div>
     )
 };
+
+
+function parseDate(data){
+    let date = new Date(data)
+    let now = new Date()
+    let diff = now - date
+    let seconds = diff / 1000
+    let minutes = seconds / 60
+    let hours = minutes / 60
+    let days = hours / 24
+    let weeks = days / 7
+    let months = weeks / 4
+    let years = months / 12
+    if(seconds < 60){
+      return 'just now'
+    }
+    if(minutes < 60){
+      return Math.round(minutes) + 'mins'
+    }
+    if(hours < 24){
+      return Math.round(hours) + 'h'
+    }
+    if(days < 7){
+      return Math.round(days) + 'd'
+    }
+    if(weeks < 4){
+      return Math.round(weeks) + 'w'
+    }
+    if(months < 12){
+      return Math.round(months) + 'm'
+    }
+    if(years > 1){
+      return Math.round(years) + 'y'
+    }
+  
+  
+  }

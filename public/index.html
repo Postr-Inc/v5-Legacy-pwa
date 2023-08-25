@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
   <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="icon" href="%PUBLIC_URL%/logo.png" />
+    <link rel="preconnect" href="https://postr.pockethost.io" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name=”robots” content="index, follow">
+    
+    <meta name="description" content="Postr - Post Share Unite!, at Postr we are empowering a new wave of social media apps and standards!">
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
@@ -11,7 +15,12 @@
     />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Postr</title>
- 
+    <style>
+    [placeholder]:empty::before {
+  content: attr(placeholder);
+  color: hsl(var(--bc) / var(--tw-placeholder-opacity));
+} 
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
