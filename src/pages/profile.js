@@ -23,6 +23,7 @@ export const Profile = (user) => {
   let [isFollow, setIsFollow] = useState(false);
   console.log(user);
   let [followers, setFollowers] = useState([]);
+  let [hasRequested, setHasRequested] = useState(false);
 
   function profileData() {
     console.log("called");
@@ -85,7 +86,7 @@ export const Profile = (user) => {
       if (profile.Isprivate && !isFollow) {
         return;
       }
-      if (Number(page) === Number(totalPosts) && !isLoadMore) {
+      if (Number(page) === Number(totalPosts) ) {
         return;
       }
 
@@ -208,7 +209,23 @@ export const Profile = (user) => {
             ) : (
               <>
                 {profile.Isprivate && !isFollow ? (
-                  ""
+                  <>
+                  <button
+                    className={`${
+                       hasRequested
+                        ? "text-[#12121212] btn-ghost border-slate-400"
+                        : "bg-[#121212] text-white"
+                    } w-full btn btn-sm   rounded-md  `}
+                    onClick={() => {
+                        alert('Request sent!')
+                    }}
+                  >
+                    {hasRequested ? "Requested" : "Request Access"}
+                  </button>
+                  <button className="btn btn-sm btn-ghost w-full border-slate-400 text-[#121212] rounded-md ">
+                    Mention
+                  </button>
+                </>
                 ) : (
                   <>
                     <button
