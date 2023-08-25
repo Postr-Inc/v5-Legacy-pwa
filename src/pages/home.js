@@ -16,7 +16,7 @@ function debounce(fn, time) {
   };
 }
 const Home = () => {
-  let [isLogin, setIsLogin] = useState(api.authStore.isValid);
+  let [isLogin, setIsLogin] = useState(false);
   let [btnstate, setBtnState] = useState("Login");
   let [posts, setPosts] = useState([]);
   let [page, setPage] = useState(1);
@@ -41,6 +41,7 @@ const Home = () => {
         .then((res) => {
           console.log(res);
           setIsLogin(true);
+          window.location.reload();
         })
         .catch((err) => {
           console.log(err);
@@ -72,7 +73,7 @@ const Home = () => {
     }
   }
   function loadPosts() {
-    if (isLogin) {
+    if (api.authStore.isValid) {
       setIsLoadMore(true);
       api
         .collection("posts")
@@ -122,7 +123,7 @@ const Home = () => {
     };
   }, [page, isLoadMore, totalPosts]);
 
-  return isLogin ? (
+  return  api.authStore.isValid ? (
     posts.length === 0 && !hasLoaded ?   (
       <div className="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
         <img src={logo} className="w-16 mx-auto" />
