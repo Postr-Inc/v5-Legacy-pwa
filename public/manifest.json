@@ -1,8 +1,16 @@
 {
   "short_name": "Postr",
   "name": "Postr",
+  "scope": "/",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "icons":[
+    {
+      "src": "./logo.png",
+      "sizes": "238x238",
+      "type": "image/png"
+    }
+  ]
 }

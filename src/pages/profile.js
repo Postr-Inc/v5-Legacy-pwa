@@ -1,7 +1,7 @@
 import { api } from "..";
 import { Bottomnav } from "../components/bottomnav";
 import back from "../icons/backarrow.svg";
-import React, { useEffect,  useState } from "react";
+import React, { useEffect, useState } from "react";
 import verified from "../icons/verified.png";
 import { Post } from "../components/post";
 import { Modal } from "../components/modal";
@@ -21,12 +21,13 @@ export const Profile = (user) => {
   let [isLoadMore, setIsLoadMore] = useState(false);
   let [totalPosts, setTotalPosts] = useState(0);
   let [isFollow, setIsFollow] = useState(false);
-  console.log(user);
   let [followers, setFollowers] = useState([]);
   let [hasRequested, setHasRequested] = useState(false);
 
+  if (!api.authStore.isValid) {
+    window.location.hash = "#/home";
+  }
   function profileData() {
-    console.log("called");
     api
       .collection("users")
       .getOne(user.user)
@@ -64,29 +65,32 @@ export const Profile = (user) => {
         sort: "-created",
       })
       .then((res) => {
-        setPosts([...posts, ...res.items]);
+        setPosts((prevPosts) => [...prevPosts, ...res.items]);
         setTotalPosts(res.totalPages);
+
         setIsLoadMore(false);
       });
   }
+
+  // load posts on mou nt
+
+  useEffect(() => {
+    setProfile({});
+    profileData();
+  }, [user.user]);
+
   useEffect(() => {
     setPage(1);
     setPosts([]);
-    profileData();
-  }, [user]);
-  useEffect(() => {
-    if (profile.Isprivate && !isFollow) {
-      return;
-    }
     fetchPosts();
-  }, [page, isLoadMore, totalPosts, isFollow]);
+  }, [user.user]);
 
   useEffect(() => {
     const handleScroll = debounce(() => {
       if (profile.Isprivate && !isFollow) {
         return;
       }
-      if (Number(page) === Number(totalPosts) ) {
+      if (Number(page) === Number(totalPosts) && !isLoadMore) {
         return;
       }
 
@@ -110,7 +114,7 @@ export const Profile = (user) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [page, isLoadMore, totalPosts]);
-  document.title = `@${profile.username} - Postr}`;
+  document.title = `@${profile.username} - Postr`;
   return (
     <>
       <div className=" p-5 flex flex-row justify-between">
@@ -134,7 +138,9 @@ export const Profile = (user) => {
               window.options.showModal();
             }
           }}
-        >•••</div>
+        >
+          •••
+        </div>
       </div>
       <div className="flex flex-col  p-5 gap-2">
         <div className="flex flex-row  justify-between gap-5">
@@ -153,19 +159,29 @@ export const Profile = (user) => {
               {profile.bio}
             </span>
             <span className="text-gray-500 text-sm ">
-              Followed by {followers ? followers.length : 0} people
+              Followed by {followers ? followers.length : 0}{" "}
+              {followers.length === 1 ? "person" : "people"}
             </span>
           </div>
           <div className="indicator  absolute end-5">
-            <img
-              src={
-                profile.avatar
-                  ? `https://postr.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`
-                  : "https://postr.pockethost.io/api/files/eoz4bkkact5arbt/7j31bygirn32jly/default_PSGTDiWcvY.png?token="
-              }
-              alt="Avatar"
-              className="w-16 h-16 rounded-full  avatar"
-            />
+            {profile.avatar ? (
+              <img
+                src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
+                alt="Avatar"
+                className="w-16 h-16 rounded-full  avatar"
+              />
+            ) : (
+              <div className="avatar placeholder">
+                <div className="bg-neutral-focus text-neutral-content  border-slate-200 rounded-full w-16">
+                  <span className="text-lg">
+                    {profile.username
+                      ? profile.username.charAt(0).toUpperCase()
+                      : ""}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {profile.validVerified ? (
               <img
                 src={verified}
@@ -209,35 +225,51 @@ export const Profile = (user) => {
               <>
                 {profile.Isprivate && !isFollow ? (
                   <>
-                  <button
-                    className={`${
-                       hasRequested
-                        ? "text-[#12121212] btn-ghost border-slate-400"
-                        : "bg-[#121212] text-white"
-                    } w-full btn btn-sm   rounded-md  `}
-                    onClick={() => {
-                        alert('Request sent!')
-                    }}
-                  >
-                    {hasRequested ? "Requested" : "Request Access"}
-                  </button>
-                  <button className="btn btn-sm btn-ghost w-full border-slate-400 text-[#121212] rounded-md ">
-                    Mention
-                  </button>
-                </>
+                    <button
+                      className={`${
+                        hasRequested
+                          ? "text-[#12121212] btn-ghost border-slate-400"
+                          : "bg-[#121212] text-white"
+                      } w-full btn btn-sm   rounded-md  `}
+                      onClick={() => {
+                        alert("Request sent!");
+                      }}
+                    >
+                      {hasRequested ? "Requested" : "Request Access"}
+                    </button>
+                    <button
+                      className="btn btn-sm btn-ghost w-full border-slate-400 text-[#121212] rounded-md "
+                      onClick={() => {
+                        window.newpost.showModal();
+                        document.getElementById(
+                          "post"
+                        ).innerHTML = `<a class="text-sky-500" href="#/profile/${profile.id}"> @${profile.username}<a/>`;
+                      }}
+                    >
+                      Mention
+                    </button>
+                  </>
                 ) : (
                   <>
                     <button
                       className={`${
                         isFollow
-                          ? "text-[#12121212] btn-ghost border-slate-400"
+                          ? "text-[#121212] btn-ghost border-slate-400"
                           : "bg-[#121212] text-white"
                       } w-full btn btn-sm   rounded-md  `}
                       onClick={debounce(Follow, 1000)}
                     >
                       {isFollow ? "Unfollow" : "Follow"}
                     </button>
-                    <button className="btn btn-sm btn-ghost w-full border-slate-400 text-[#121212] rounded-md ">
+                    <button
+                      className="btn btn-sm btn-ghost w-full border-slate-400 text-[#121212] rounded-md "
+                      onClick={() => {
+                        window.newpost.showModal();
+                        document.getElementById(
+                          "post"
+                        ).innerHTML = `<a class="text-sky-500" href="#/profile/${profile.id}"> @${profile.username}<a/>`;
+                      }}
+                    >
                       Mention
                     </button>
                   </>
@@ -276,15 +308,15 @@ export const Profile = (user) => {
               </svg>
 
               <h1 className="text-xl mt-2">
-                {profile.Isprivate && !isFollow
+                {profile && profile.Isprivate && !isFollow
                   ? "This account is private"
-                  : `${profile.username} hasn't posted anything yet`}
+                  : "No posts yet"}
               </h1>
             </div>
           ) : (
             <div>
               {posts.map((p) => {
-                let  id = Math.random() * 100000000000000000;
+                let id = Math.random() * 100000000000000000;
 
                 return (
                   <div key={id} className="mb-16">
@@ -295,7 +327,47 @@ export const Profile = (user) => {
                       likes={p.likes}
                       id={p.id}
                       created={p.created}
+                      pinned={p.pinned}
+                      ondelete={() => {
+                        window["delete" + id].showModal();
+                      }}
                     />
+                    <Modal id={"delete" + id} height="h-96">
+                      <button className="flex justify-center mx-auto focus:outline-none">
+                        <div className="divider  text-slate-400  w-12   mt-0"></div>
+                      </button>
+                      <div className="flex-col text-sm mt-8 flex">
+                        <div className="form-control w-full ">
+                          <label className="label flex text-lg flex-row">
+                            Please confirm that you want to delete this post -
+                            this action cannot be undone.
+                          </label>
+                        </div>
+                        <div className="flex flex-row gap-5 mt-5">
+                          <a
+                            onClick={() => {
+                              document.getElementById("delete" + id).close();
+                            }}
+                            className="absolute bottom-5 text-sky-500 text-sm left-5 "
+                          >
+                            Cancel
+                          </a>
+                          <></>
+                          <a
+                            onClick={debounce(() => {
+                              api.collection("posts").delete(p.id);
+                              let index = posts.indexOf(p);
+                              posts.splice(index, 1);
+                              setPosts([...posts]);
+                              document.getElementById("delete" + id).close();
+                            }, 1000)}
+                            className="absolute bottom-5 text-sky-500 text-sm end-5 "
+                          >
+                            Delete
+                          </a>
+                        </div>
+                      </div>
+                    </Modal>
                   </div>
                 );
               })}
@@ -345,7 +417,7 @@ export const Profile = (user) => {
             </label>
             <input
               type="text"
-              placeholder="Malik"
+              placeholder={profile.username}
               className="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
               onChange={(e) => {
                 setProfile({ ...profile, username: e.target.value });
@@ -369,7 +441,7 @@ export const Profile = (user) => {
                 <input
                   type="checkbox"
                   className="toggle"
-                  checked={profile.Isprivate}
+                  checked={profile.Isprivate ? true : false}
                   onChange={(e) => {
                     setProfile({ ...profile, Isprivate: e.target.checked });
                   }}

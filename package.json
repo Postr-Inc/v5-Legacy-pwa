@@ -10,13 +10,15 @@
     "pocketbase": "^0.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-onesignal": "^3.0.0",
     "react-scripts": "5.0.1",
+    "sanitize-html": "^2.11.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start && npx tailwindcss -i ./src/input.css -o ./src/styles/output.css --watch",
     "build": "react-scripts build",
-    "build:css": "npx tailwindcss -i ./src/input.css -o ./src/styles/output.css --watch"
+    "build:css": "npx tailwindcss -i ./src/input.css -o ./src/styles/output.css --watch "
   },
   "eslintConfig": {
     "extends": [

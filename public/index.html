@@ -15,15 +15,29 @@
     />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Postr</title>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(function(OneSignal) {
+        OneSignal.init({
+          appId: "b1beca0d-bf7b-4767-9637-7e345fff7710",
+          allowLocalhostAsSecureOrigin: true,
+        });
+      });
+    </script>
+    
     <style>
     [placeholder]:empty::before {
   content: attr(placeholder);
   color: hsl(var(--bc) / var(--tw-placeholder-opacity));
 } 
     </style>
+    
+     
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    
   </body>
 </html>

@@ -1,5 +1,6 @@
 import { Modal } from "./modal";
 import React, { useState, useRef, useEffect } from "react";
+import * as sanitizeHtml from 'sanitize-html';
 import { api } from "..";
 export const Bottomnav = () => {
   let maxchar = 280;
@@ -8,7 +9,96 @@ export const Bottomnav = () => {
   let [file, setFile] = useState("");
   let [pContent, setPContent] = useState("");
   let [modalisOpen, setModalisOpen] = useState(false);
+  let [listOfMentions, setListOfMentions] = useState([]);
   let pRef = useRef();
+  
+  let [isTyping, setIsTyping] = useState(false);
+  
+
+  window.addEventListener("keydown", (e) => {
+    setIsTyping(true);
+  });
+  window.addEventListener("keyup", (e) => {
+ 
+    setIsTyping(false);
+  }); 
+ 
+  const saveCaretPosition = () => {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      return range.cloneRange();
+    }
+    return null;
+  };
+
+  const restoreCaretPositionToEnd = (element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    range.collapse(false);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  const handleContentInput = (e) => {
+    let text = e.target.innerHTML;
+    let charCount = text.length;
+    setChar(charCount);
+    
+    if (charCount > maxchar) {
+      text = text.slice(0, maxchar); // Truncate text
+      charCount = maxchar;
+    }
+    
+    // Process emojis and replace &lt; and &gt;
+    text = handleEmojis(text);
+    text = text.replaceAll(/&lt;/g, "<").replaceAll(/&gt;/g, ">");
+  
+    // Handle @mentions
+    
+    
+    if (text.includes("@")) {
+      // Only process if the last word starts with @
+      // get all @
+      let mentions = text.match(/@(\w+)/g);
+
+      if(mentions ) {
+        mentions.forEach((mention) => {
+            let username = mention.replace("@", "");
+            if(username === api.authStore.model.username){
+                return
+            }
+            api.collection('users').getFirstListItem(`username ="${username}"`)
+            .then((res) => {
+              if (res ) {
+                
+                let id = res.id;
+                if(!document.getElementById('tag'+id)){
+                    let link = `<a id="tag${id}" href="#/profile/${id}" class="text-sky-500">@${username}</a>`;
+                    text = text.replace(mention, link);
+                    pRef.current.innerHTML = text;
+                    setListOfMentions([...listOfMentions, '@' + username]);
+                    restoreCaretPositionToEnd(pRef.current);
+                }
+               
+              }
+            })
+            .catch((err) => {
+              console.log(`User ${username} does not exist`);
+            });
+          })
+      }
+
+  
+       
+    }
+    
+    setPContent(text);
+  };
+  
+
+
   useEffect(() => {
     if (pContent == "") {
       setChar(0);
@@ -16,11 +106,13 @@ export const Bottomnav = () => {
   }, [pContent]);
 
   function createPost() {
+     
+
     let form = new FormData();
     if (image) {
         form.append("file", file);
     }
-    form.append("content", pContent);
+    form.append("content", pRef.current.innerHTML);
     form.append("author", api.authStore.model.id);
     form.append("type", "text");
     form.append("likes", JSON.stringify([]));
@@ -165,34 +257,14 @@ export const Bottomnav = () => {
               window.location.href = "#/profile/" + api.authStore.model.id;
             }}
           >
-            {window.location.hash === "#/profile/" + api.authStore.model.id || window.location.hash === "#/settings" ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+            {window.location.hash === "#/profile/" + api.authStore.model.id
+            || window.location.hash === "#/settings"
+            ? (
+               <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6" alt={api.authStore.model.username + "'s avatar"} />
             ) : (
-              <svg
-                className="w-6 h-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                />
-              </svg>
+                <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6
+                opacity-50
+                " alt={api.authStore.model.username + "'s avatar"} />
             )}
           </div>
         </div>
@@ -225,39 +297,17 @@ export const Bottomnav = () => {
          mb-16
         max-h-[5rem] overflow-y-auto`}
             placeholder="What's on your mind?"
+            id="post"
             ref={pRef}
-            onInput={(e) => {
-              let text = e.target.innerHTML;
-              let charCount = text.length;
-
-              if (charCount > maxchar) {
-                e.target.innerText = text.slice(0, maxchar); // Truncate text
-                charCount = maxchar;
-              }
-
-              let sanitized = Sanitization(e.target.innerHTML);
-              sanitized = new DOMParser()
-                .parseFromString(sanitized, "text/html")
-                .querySelector("body").innerText;
-              setPContent(sanitized);
-
-              setChar(charCount);
-            }}
+            inputMode="text"
+            onInput={handleContentInput}
             onBlur={(e) => {
-              let text = e.target.innerHTML;
-              let charCount = text.length;
 
-              if (charCount > maxchar) {
-                e.target.innerText = text.slice(0, maxchar); // Truncate text
-                charCount = maxchar;
-              }
 
-              let sanatized = Sanitization(e.target.innerHTML);
+              let sanatized = e.target.innerHTML;
               let emojis = handleEmojis(sanatized);
               setPContent(emojis.replace(/<br>/g, ""));
-
-              setChar(charCount);
-              pRef.current.innerHTML = emojis.replace(/<br>/g, "");
+ 
             }}
           ></p>
 
