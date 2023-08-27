@@ -1,6 +1,6 @@
 import  Pocketbase from './pb.js'
  
-const pb = new Pocketbase('https://postr.pockethost.io')
+const pb = new Pocketbase('https://postrapi.pockethost.io')
 pb.autoCancellation(false)
 window.pb = pb
 
