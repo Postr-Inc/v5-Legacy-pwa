@@ -119,7 +119,10 @@ export const Profile = (user) => {
     <>
       <div className=" p-5 flex flex-row justify-between">
         <div
-          className="flex flex-row"
+          className="flex flex-row
+          cursor-pointer
+          "
+
           onClick={() => {
             window.history.back();
           }}

@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <link rel="icon" href="%PUBLIC_URL%/logo.png" />
-    <link rel="preconnect" href="https://postr.pockethost.io" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name=”robots” content="index, follow">
-    
-    <meta name="description" content="Postr - Post Share Unite!, at Postr we are empowering a new wave of social media apps and standards!">
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Postr is a user first social media platform, allowing users to share their thoughts and ideas with the world."
-    />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>Postr</title>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(function(OneSignal) {
-        OneSignal.init({
-          appId: "b1beca0d-bf7b-4767-9637-7e345fff7710",
-          allowLocalhostAsSecureOrigin: true,
-        });
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <link rel="icon" href="%PUBLIC_URL%/logo.png" />
+  <link rel="preconnect" href="https://postr.pockethost.io" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name=”robots” content="index, follow">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description"
+    content="Postr - Post Share Unite!, at Postr we are empowering a new wave of social media apps and standards!">
+  <meta name="theme-color" content="#000000" />
+  <meta name="keywords" content="
+  instagram, insta, login, account, free, new, followers, open, downloader, app, facebook, postr, postr-inc, google, twitter, 
+
+    ">
+  <meta name="description"
+    content="Postr is a user first social media platform, allowing users to share their thoughts and ideas with the world." />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <title>Postr</title>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(function (OneSignal) {
+      OneSignal.init({
+        appId: "b1beca0d-bf7b-4767-9637-7e345fff7710",
+        allowLocalhostAsSecureOrigin: true,
       });
-    </script>
-    
-    <style>
+    });
+  </script>
+
+  <style>
     [placeholder]:empty::before {
-  content: attr(placeholder);
-  color: hsl(var(--bc) / var(--tw-placeholder-opacity));
-} 
-    </style>
-    
-     
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    
-  </body>
+      content: attr(placeholder);
+      color: hsl(var(--bc) / var(--tw-placeholder-opacity));
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+
+</body>
+
 </html>

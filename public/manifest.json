@@ -3,14 +3,62 @@
   "name": "Postr",
   "scope": "/",
   "start_url": "/",
+  "lang": "en-US",
+  "categories": ["Social", "Productive"],
+  "description":"Unleash Your Potential: Elevate Life with Postr ", 
+  "id":"/",
+  "orientation": "portrait",
+  "display_override": ["fullscreen", "minimal-ui"],
   "display": "standalone",
   "theme_color": "#000000",
+  "handle_links":"prefered",
   "background_color": "#ffffff",
   "icons":[
     {
       "src": "./logo.png",
       "sizes": "238x238",
       "type": "image/png"
+    }
+  ],
+  "screenshots" : [
+    {
+      "src": "./loginback.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Image of Login Screen"
+    },
+    {
+      "src": "./tt.png",
+      "sizes": "374x817",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "User Profile Page"
+    } 
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+postr",
+      "url": "/launch?type=%s"
+    },
+    {
+      "protocol": "web+user",
+      "url": "/u/?type=%s"
+    }
+  ],
+  "shortcuts" : [
+    {
+      "name": "Settings",
+      "url": "/#/settings",
+      "description": "Quickly access your settings"
+    },
+    {
+      "name": "Feed",
+      "url": "/#/feed"
+    },
+    {
+      "name": "Privacy Policy",
+      "url": "/#/settings"
     }
   ]
 }

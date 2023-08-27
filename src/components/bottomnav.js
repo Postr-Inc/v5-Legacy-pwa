@@ -144,7 +144,7 @@ export const Bottomnav = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className="w-6 h-6"
+                className="w-6 h-6 cursor-pointer"
               >
                 <path
                   fillRule="evenodd"
@@ -159,7 +159,7 @@ export const Bottomnav = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6"
+                className="w-6 h-6 cursor-pointer"
               >
                 <path
                   strokeLinecap="round"
@@ -171,7 +171,7 @@ export const Bottomnav = () => {
           </div>
 
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 cursor-pointer"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -192,7 +192,7 @@ export const Bottomnav = () => {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-6 h-6"
+              className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 document.getElementById("newpost").showModal();
                 setModalisOpen(true);
@@ -207,7 +207,7 @@ export const Bottomnav = () => {
                 document.getElementById("newpost").showModal();
                 setModalisOpen(true);
               }}
-              className="w-6 h-6"
+              className="w-6 h-6 cursor-pointer"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -226,7 +226,7 @@ export const Bottomnav = () => {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-6 h-6"
+              className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 window.location.hash = "#/";
               }}
@@ -243,7 +243,7 @@ export const Bottomnav = () => {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-6 h-6 cursor-pointer"
             >
               <path
                 strokeLinecap="round"
@@ -253,6 +253,7 @@ export const Bottomnav = () => {
             </svg>
           )}
           <div
+          className="cursor-pointer"
             onClick={() => {
               window.location.href = "#/profile/" + api.authStore.model.id;
             }}

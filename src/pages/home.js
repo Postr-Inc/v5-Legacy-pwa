@@ -20,13 +20,11 @@ function debounce(fn, time) {
 const Home = () => {
   let [isLogin, setIsLogin] = useState(false);
   let [btnstate, setBtnState] = useState("Login");
-
   let [posts, setPosts] = useState([]);
   let [page, setPage] = useState(1);
   let [isLoadMore, setIsLoadMore] = useState(false);
   let [totalPosts, setTotalPosts] = useState(0);
-  let [google, setGoogle] = useState(false);
-  let [hasLoaded, setHasLoaded] = useState(false);
+  let [hasLoaded, setHasLoaded] = useState(sessionStorage.getItem('hasLoaded') || false)
 
   document.title = `Postr ${currentVersion}`;
   function login(e) {
@@ -88,7 +86,7 @@ const Home = () => {
   function loadPosts() {
     if (api.authStore.isValid) {
       setIsLoadMore(true);
-      api
+     return api
         .collection("posts")
         .getList(page, 10, {
           expand: "author, likes_2.0",
@@ -98,11 +96,11 @@ const Home = () => {
         .then((res) => {
           setTotalPosts(res.totalPages);
           setPosts((prevPosts) => [...prevPosts, ...res.items]);
-          setHasLoaded(true);
+           
         });
-      setIsLoadMore(false);
+      
 
-      return;
+      
     }
   }
 
@@ -112,7 +110,12 @@ const Home = () => {
     if (api.authStore.isValid) {
       api.collection("users").authRefresh();
 
-      loadPosts();
+      loadPosts().then(() => {
+        setIsLoadMore(false);
+        setHasLoaded(true);
+        sessionStorage.setItem('hasLoaded', true)
+      });
+      
     }
   }, [api.authStore.isValid]);
 
@@ -144,7 +147,7 @@ const Home = () => {
   }, [page, isLoadMore, totalPosts]);
 
   return api.authStore.isValid ? (
-    posts.length < 1 && !hasLoaded ? (
+      !hasLoaded ? (
       <div className="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
         <img src={logo} className="w-16 mx-auto" />
         <h1 className="text-xl mt-2 fixed bottom-5">Postr {currentVersion}</h1>

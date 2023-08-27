@@ -69,7 +69,7 @@ export function Post(props) {
         )}
 
         <span
-          className="mx-2 font-bold   "
+          className="mx-2 font-bold  cursor-pointer "
           style={{ marginLeft: ".8rem", marginRight: ".2rem" }}
           onClick={() => {
             window.location.hash = `#/profile/${props.author.id}`;
@@ -170,7 +170,7 @@ export function Post(props) {
       {props.file ? (
         <img
           src={`https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${props.id}/${props.file}`}
-          className="w-full h-96 object-cover rounded-md mt-5"
+          className="w-full h-96 object-cover rounded-md mt-5 cursor-pointer"
           alt="post image"
           onClick={() => {
             document.getElementById("modal" + props.id).showModal();
