@@ -23,7 +23,7 @@ export const Profile = (user) => {
   let [isFollow, setIsFollow] = useState(false);
   let [followers, setFollowers] = useState([]);
   let [hasRequested, setHasRequested] = useState(false);
-
+  let [pageSelected, setPageSelected] = useState("posts");
   if (!api.authStore.isValid) {
     window.location.hash = "#/home";
   }
@@ -169,7 +169,7 @@ export const Profile = (user) => {
           <div className="indicator  absolute end-5">
             {profile.avatar ? (
               <img
-                src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
+                src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
                 alt="Avatar"
                 className="w-16 h-16 rounded-full  avatar"
               />
@@ -282,9 +282,40 @@ export const Profile = (user) => {
           </div>
         </div>
         <div className=" mt-6 flex flex-row justify-evenly">
-          <a className="tab w-full tab-bordered tab-active">Postrs</a>
-          <a className="tab w-full tab-bordered  ">Replies</a>
-          <a className="tab w-full tab-bordered"> Media</a>
+          <a 
+          id="posts"
+          className={`tab w-full tab-bordered
+          ease-out  
+          ${pageSelected === "posts" ? "ease-in tab-active" : ""}
+          
+          `}
+            onClick={()=>{
+                setPageSelected("posts")
+            }}
+          
+          >Postrs</a>
+          <a className={`tab w-full tab-bordered
+           ease-out
+            ${pageSelected === "saved" ? "ease-in tab-active" : ""}
+        `  
+        }
+        onClick={()=>{
+            setPageSelected("saved")
+        }}
+          id="reposts"
+          >Saved</a>
+          <a className={`tab w-full tab-bordered
+          ease-out
+          
+            ${pageSelected === "media" ? "ease-in tab-active" : ""}
+            
+          `}
+            onClick={()=>{
+                setPageSelected("media")
+            }}
+
+          id="media"
+          > Media</a>
         </div>
 
         <div className="flex flex-col gap-5 mt-12">
@@ -331,9 +362,12 @@ export const Profile = (user) => {
                       id={p.id}
                       created={p.created}
                       pinned={p.pinned}
+                      repostedBy={p.expand.repostedBy}
+                      OriginalAuthor={p.expand.OriginalAuthor}
                       ondelete={() => {
                         window["delete" + id].showModal();
                       }}
+                      comments={p.comments}
                     />
                     <Modal id={"delete" + id} height="h-96">
                       <button className="flex justify-center mx-auto focus:outline-none">
@@ -351,7 +385,7 @@ export const Profile = (user) => {
                             onClick={() => {
                               document.getElementById("delete" + id).close();
                             }}
-                            className="absolute bottom-5 text-sky-500 text-sm left-5 "
+                            className="absolute bottom-5 cursor-pointer text-sky-500 text-sm left-5 "
                           >
                             Cancel
                           </a>
@@ -364,7 +398,7 @@ export const Profile = (user) => {
                               setPosts([...posts]);
                               document.getElementById("delete" + id).close();
                             }, 1000)}
-                            className="absolute bottom-5 text-sky-500 text-sm end-5 "
+                            className="absolute bottom-5 text-sky-500 cursor-pointer text-sm end-5 "
                           >
                             Delete
                           </a>
@@ -388,7 +422,7 @@ export const Profile = (user) => {
               <span className="label-text font-bold text-sm">Name</span>
               <label htmlFor="profileinput">
                 <img
-                  src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
+                  src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
                   id="profilepicin"
                   className="rounded-full w-12 h-12 absolute end-5 "
                   alt="Avatar"
@@ -412,7 +446,7 @@ export const Profile = (user) => {
                       .then((res) => {
                         document.getElementById(
                           "profilepicin"
-                        ).src = `https://postr.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${res.avatar}`;
+                        ).src = `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${res.avatar}`;
                       });
                   }, 1000);
                 }}
@@ -469,7 +503,9 @@ export const Profile = (user) => {
           </div>
         </div>
       </Modal>
-      <Bottomnav />
+      <div className="mt-8">
+        <Bottomnav />
+      </div>
     </>
   );
 };

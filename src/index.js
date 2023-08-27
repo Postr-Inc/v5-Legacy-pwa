@@ -8,7 +8,12 @@ import Pocketbase from 'pocketbase'
 import { Profile } from './pages/profile';
 import { Settings } from './pages/settings';
 import { Download } from './pages/download';
-export const api = new Pocketbase('https://postr.pockethost.io')
+import { Terms } from './pages/terms';
+import { Privacy } from './pages/privacy';
+import { Error } from './pages/error';
+import { Search } from './pages/search';
+ 
+export const api = new Pocketbase('https://postrapi.pockethost.io')
 api.autoCancellation(false)
 const root = ReactDOM.createRoot(document.getElementById('root'));
 let app = new Router('/home')
@@ -16,6 +21,9 @@ app.use('/profile')
 app.use('/home')
 app.use('/settings')
 app.use('/download')
+app.use('/terms')
+app.use('/privacy')
+app.use('/search')
 window.resizeTo(175, 812)
 window.onresize = ()=>{
   if(window.matchMedia('(display-mode: standalone)').matches){
@@ -58,7 +66,7 @@ app.get('/settings', (req, res)=>{
   root.render(<Settings />)
 })
 app.on('/download', (req, res)=>{
-  if( window.matchMedia('(display-mode: standalone)').matches){
+  if( window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches){
     window.location.hash = '#/home'
   }
   root.render(<Download />)
@@ -69,12 +77,35 @@ app.get('/download', (req, res)=>{
   }
   root.render(<Download />)
 })
+app.on('/terms', (req, res)=>{
+  root.render(<Terms />)
+})
+app.get('/terms', (req, res)=>{
+  root.render(<Terms />)
+})
+app.on('/privacy', (req, res)=>{
+  root.render(<Privacy />)
+})
+app.get('/privacy', (req, res)=>{
+  root.render(<Privacy />)
+})
+app.on('/search', (req, res)=>{
+  root.render(<Search />)
+})
+app.get('/search', (req, res)=>{
+  root.render(<Search />)
+})
+app.handleErrors('404', (err)=>{
+   root.render(<Error />)
+})
+ 
 app.start()
 
 
 setInterval(()=>{
-  if(window.matchMedia('(display-mode: standalone)').matches && 
-  window.location.hash == '#/download' &&
+  if(window.matchMedia('(display-mode: standalone)').matches 
+  &&
+  window.location.hash === '#/download' &&
   window.location.hash !== '#/home'){
     window.location.hash = '#/home'
   }

@@ -117,6 +117,7 @@ export const Bottomnav = () => {
     form.append("type", "text");
     form.append("likes", JSON.stringify([]));
     form.append("shares", JSON.stringify([]));
+    form.append("repostedBy", JSON.stringify([]));
     
 
     api
@@ -131,9 +132,9 @@ export const Bottomnav = () => {
       });
   }
   return (
-    <div className=" fixed  bottom-[-1px]  left-0 ">
+    <div className=" fixed  bottom-0 left-0 ">
       <div className="  bg-white w-screen p-5">
-        <div className="flex flex-row gap-5 justify-between   ">
+        <div className="flex flex-row gap-5 mb-5 justify-between   ">
           <div
             onClick={() => {
               window.location.hash = "#/home";
@@ -178,7 +179,7 @@ export const Bottomnav = () => {
             strokeWidth="1.5"
             stroke="currentColor"
             onClick={() => {
-              window.location.hash = "#/";
+              window.location.hash = "#/search";
             }}
           >
             <path
@@ -237,7 +238,7 @@ export const Bottomnav = () => {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               onClick={() => {
-                window.location.hash = "#/notifications";
+                window.location.hash = "#/search";
               }}
               fill="none"
               viewBox="0 0 24 24"
@@ -261,9 +262,9 @@ export const Bottomnav = () => {
             {window.location.hash === "#/profile/" + api.authStore.model.id
             || window.location.hash === "#/settings"
             ? (
-               <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6" alt={api.authStore.model.username + "'s avatar"} />
+               <img src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6" alt={api.authStore.model.username + "'s avatar"} />
             ) : (
-                <img src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6
+                <img src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6
                 opacity-50
                 " alt={api.authStore.model.username + "'s avatar"} />
             )}
@@ -284,7 +285,7 @@ export const Bottomnav = () => {
         <div className='flex flex-col  gap-5 mt-2 p-2'>
           <div className="flex flex-row gap-4 w-full">
             <img
-              src={`https://postr.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`}
+              src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`}
               className="rounded-full w-12 h-12"
               alt={api.authStore.model.username + "'s avatar"}
             />

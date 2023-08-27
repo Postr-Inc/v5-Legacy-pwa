@@ -4,23 +4,30 @@
   "scope": "/",
   "start_url": "/",
   "lang": "en-US",
-  "categories": ["Social", "Productive"],
-  "description":"Unleash Your Potential: Elevate Life with Postr ", 
-  "id":"/",
+  "categories": [
+    "photo",
+    "productivity",
+    "social"
+  ],
+  "description": "Unleash Your Potential: Elevate Your Life With Postr!",
+  "id": "/",
   "orientation": "portrait",
-  "display_override": ["fullscreen", "minimal-ui"],
+  "display_override": [
+    "fullscreen",
+    "window-controls-overlay"
+  ],
   "display": "standalone",
-  "theme_color": "#000000",
-  "handle_links":"prefered",
-  "background_color": "#ffffff",
-  "icons":[
+  "background_color":"#ffffff",
+  "theme_color": "#ffffff",
+  "handle_links": "prefered",
+  "icons": [
     {
       "src": "./logo.png",
       "sizes": "238x238",
       "type": "image/png"
     }
   ],
-  "screenshots" : [
+  "screenshots": [
     {
       "src": "./loginback.png",
       "sizes": "1080x1920",
@@ -34,7 +41,7 @@
       "type": "image/png",
       "form_factor": "wide",
       "label": "User Profile Page"
-    } 
+    }
   ],
   "protocol_handlers": [
     {
@@ -46,7 +53,7 @@
       "url": "/u/?type=%s"
     }
   ],
-  "shortcuts" : [
+  "shortcuts": [
     {
       "name": "Settings",
       "url": "/#/settings",
@@ -60,5 +67,7 @@
       "name": "Privacy Policy",
       "url": "/#/settings"
     }
-  ]
+  ],
+  "prefer_related_applications": false,
+  "dir": "ltr"
 }

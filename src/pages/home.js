@@ -18,18 +18,21 @@ function debounce(fn, time) {
 }
 
 const Home = () => {
-  let [isLogin, setIsLogin] = useState(false);
+  let [isLogin, setIsLogin] = useState(api.authStore.isValid);
+  
   let [btnstate, setBtnState] = useState("Login");
   let [posts, setPosts] = useState([]);
   let [page, setPage] = useState(1);
   let [isLoadMore, setIsLoadMore] = useState(false);
   let [totalPosts, setTotalPosts] = useState(0);
-  let [hasLoaded, setHasLoaded] = useState(sessionStorage.getItem('hasLoaded') || false)
+  let [hasLoaded, setHasLoaded] = useState(
+    sessionStorage.getItem("hasLoaded") || false
+  );
 
   document.title = `Postr ${currentVersion}`;
   function login(e) {
     e.preventDefault();
-
+    let w = window.open()
     const data = api
       .collection("users")
       .authWithOAuth2({
@@ -40,8 +43,7 @@ const Home = () => {
         },
         urlCallback: (url) => {
           if (window.matchMedia("(display-mode: standalone)")) {
-            let w = window.open();
-            w.location.href = url;
+             w.location.href = url
           } else {
             window.open(
               url,
@@ -86,21 +88,17 @@ const Home = () => {
   function loadPosts() {
     if (api.authStore.isValid) {
       setIsLoadMore(true);
-     return api
+      return api
         .collection("posts")
         .getList(page, 10, {
           expand: "author, likes_2.0",
           sort: "likes",
-          filter: `author.followers ~ "${api.authStore.model.id}" || author.id  != "${api.authStore.model.id}"`,
+          filter: `author.followers ~ "${api.authStore.model.id}" && author.id  != "${api.authStore.model.id}"`,
         })
         .then((res) => {
           setTotalPosts(res.totalPages);
           setPosts((prevPosts) => [...prevPosts, ...res.items]);
-           
         });
-      
-
-      
     }
   }
 
@@ -113,9 +111,8 @@ const Home = () => {
       loadPosts().then(() => {
         setIsLoadMore(false);
         setHasLoaded(true);
-        sessionStorage.setItem('hasLoaded', true)
+        sessionStorage.setItem("hasLoaded", true);
       });
-      
     }
   }, [api.authStore.isValid]);
 
@@ -147,7 +144,7 @@ const Home = () => {
   }, [page, isLoadMore, totalPosts]);
 
   return api.authStore.isValid ? (
-      !hasLoaded ? (
+    !hasLoaded ? (
       <div className="h-screen p-5 flex cursor-wait flex-col justify-center font-mono items-center">
         <img src={logo} className="w-16 mx-auto" />
         <h1 className="text-xl mt-2 fixed bottom-5">Postr {currentVersion}</h1>
@@ -165,13 +162,16 @@ const Home = () => {
                   likes={p.likes}
                   id={p.id}
                   created={p.created}
+                  comments={p.comments}
                 />
               </div>
             );
           })}
         </div>
 
+        <div className="mt-8 ">
         <Bottomnav />
+        </div>
       </div>
     )
   ) : (

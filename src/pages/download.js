@@ -45,11 +45,14 @@ export const Download = () => {
          
  
         </span>
-        <button className='btn btn-ghost rounded-full border-slate-200 hover:ring-2 hover:ring-rose-500 hover:bg-rose-500 hover:textwhite' onClick={()=>{
-                document.getElementById('installed').close()
-                window.open('web+postr://launch')
-            }}>Or Launch App
-        </button>
+        {
+          isWindows || isLinux ? 
+         <button className='btn btn-ghost rounded-full border-slate-200 hover:ring-2 hover:ring-rose-500 hover:bg-rose-500 hover:textwhite' onClick={()=>{
+            document.getElementById('installed').close()
+            window.open('web+postr://launch')
+        }}>Or Launch App
+    </button> : <></>
+        }
         </div>
       </Modal>
 
@@ -85,9 +88,9 @@ export const Download = () => {
                 />
               </svg>
             </li>
-            <li className="flex rounded bg-slate-300">2. Click Add to Home Screen</li>
-            <li className="flex rounded bg-slate-300">3. Click Add</li>
-            <li className="flex rounded bg-slate-300">4. Launch the app 🚀</li>
+            <li className="flex rounded ">2. Click Add to Home Screen</li>
+            <li className="flex rounded  ">3. Click Add</li>
+            <li className="flex rounded ">4. Launch the app 🚀</li>
           </ol>
         </div>
       </Modal>
@@ -136,6 +139,9 @@ export const Download = () => {
                   ? 'Linux'
                   : 'Other'}
               </span>
+            </span>
+            <span className='mt-2'>
+              By downloading Postr, you agree to our {' '} <a href="#/terms" className="text-blue-500">Terms of Service</a> and <a href="#/privacy" className="text-blue-500">Privacy Policy</a>. 
             </span>
           </div>
         </div>
