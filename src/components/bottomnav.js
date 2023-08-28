@@ -54,6 +54,16 @@ export const Bottomnav = () => {
     // Process emojis and replace &lt; and &gt;
     text = handleEmojis(text);
     text = text.replaceAll(/&lt;/g, "<").replaceAll(/&gt;/g, ">");
+    let sanitized = sanitizeHtml(text, {
+      allowedTags: ["b", "i", "em", "strong", "a", "p", "br"],
+      allowedAttributes: {
+        a: ["href"],
+      },
+    });
+    text = sanitized;
+    pRef.current.innerHTML = text;
+
+ 
   
     // Handle @mentions
     
@@ -90,11 +100,12 @@ export const Bottomnav = () => {
           })
       }
 
-  
+      
        
     }
     
     setPContent(text);
+    restoreCaretPositionToEnd(pRef.current);
   };
   
 
@@ -124,7 +135,7 @@ export const Bottomnav = () => {
       .collection("posts")
       .create(form)
       .then((res) => {
-        window.location.reload();
+        window.location.href === "#/profile/" + api.authStore.model.id ? window.location.reload() : window.location.hash = "#/profile/" + api.authStore.model.id;
         pRef.current.innerHTML = "";
         setChar(0);
         setImage("");
@@ -261,10 +272,15 @@ export const Bottomnav = () => {
           >
             {window.location.hash === "#/profile/" + api.authStore.model.id
             || window.location.hash === "#/settings"
-            ? (
-               <img src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6" alt={api.authStore.model.username + "'s avatar"} />
-            ) : (
-                <img src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`} className="rounded-full w-6 h-6
+            ?  
+            <img src={
+              `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`
+            } className="rounded-full w-6 h-6" alt={api.authStore.model.username + "'s avatar"} />
+            
+            : (
+                <img src={
+              `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`
+                } className="rounded-full w-6 h-6
                 opacity-50
                 " alt={api.authStore.model.username + "'s avatar"} />
             )}
@@ -282,7 +298,7 @@ export const Bottomnav = () => {
           <div className="divider  text-slate-400  w-12   mt-0"></div>
         </button>
 
-        <div className='flex flex-col  gap-5 mt-2 p-2'>
+        <div className='flex flex-col  gap-5 mt-2 p-5'>
           <div className="flex flex-row gap-4 w-full">
             <img
               src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${api.authStore.model.id}/${api.authStore.model.avatar}`}
@@ -293,7 +309,7 @@ export const Bottomnav = () => {
           </div>
           <p
             contentEditable
-            className={`w-full font-mono focus:outline-none resize-none
+            className={`w-full    focus:outline-none resize-none
              overflow-hidden text-slate-900 placeholder-slate-300
         before:text-slate-300
          mb-16
@@ -396,42 +412,7 @@ export const Bottomnav = () => {
   );
 };
 
-function Sanitization(data) {
-  let parser = new DOMParser();
-  if (window.Sanitizer) {
-    let doc = parser.parseFromString(data, "text/html");
-
-    let defaultConfig = {
-      allowElements: ["div", "span", "p", "em", "b", "strong", "i", "h1"],
-      blockElements: ["script", "style", "iframe", "embed", "a", "img"],
-      dropElements: [],
-      allowAttributes: {},
-      dropAttributes: {},
-      allowCustomElements: true,
-      allowComments: true,
-    };
-    let combinedConfig = defaultConfig;
-
-    let sanitizer = new window.Sanitizer(combinedConfig);
-    let unsanitized_string = data;
-    // replace &lt; and &gt; with < and >
-    unsanitized_string = unsanitized_string
-      .replaceAll(/&lt;/g, "<")
-      .replaceAll(/&gt;/g, ">");
-
-    unsanitized_string = handleEmojis(unsanitized_string);
-    doc.body.setHTML(unsanitized_string, { sanitizer });
-
-    return doc.body.innerText;
-  } else if (!window.Sanitizer) {
-    console.warn(
-      "User does not have access to the Sanitizer API likely unsupported at this time"
-    );
-    return data;
-  } else {
-    return data;
-  }
-}
+ 
 function handleEmojis(html) {
   let parser = new DOMParser();
   let defaults = {

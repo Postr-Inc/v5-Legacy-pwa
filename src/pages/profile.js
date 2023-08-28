@@ -1,7 +1,7 @@
 import { api } from "..";
 import { Bottomnav } from "../components/bottomnav";
 import back from "../icons/backarrow.svg";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import verified from "../icons/verified.png";
 import { Post } from "../components/post";
 import { Modal } from "../components/modal";
@@ -24,6 +24,7 @@ export const Profile = (user) => {
   let [followers, setFollowers] = useState([]);
   let [hasRequested, setHasRequested] = useState(false);
   let [pageSelected, setPageSelected] = useState("posts");
+  let profileimgref = useRef(null);
   if (!api.authStore.isValid) {
     window.location.hash = "#/home";
   }
@@ -38,6 +39,18 @@ export const Profile = (user) => {
         );
         setFollowers(res.followers ? res.followers : []);
       });
+  }
+
+  function editprofile(){
+    let form = new FormData();
+    form.append("avatar", profile.avatar);
+    form.append("username", profile.username);
+    form.append("bio", profile.bio);
+    form.append("Isprivate", profile.Isprivate);
+    alert('Your profile has been updated note: it may take a few seconds to update your profile!')
+    api.collection("users").update(profile.id, form).then((res) => {
+      window.location.reload();
+    })
   }
   function Follow() {
     if (isFollow) {
@@ -73,18 +86,20 @@ export const Profile = (user) => {
   }
 
   // load posts on mou nt
-
+  
   useEffect(() => {
+    setPosts([]);
     setProfile({});
     profileData();
   }, [user.user]);
 
   useEffect(() => {
+    
     setPage(1);
-    setPosts([]);
     fetchPosts();
-  }, [user.user]);
+  }, [ user.user, pageSelected]);
 
+ 
   useEffect(() => {
     const handleScroll = debounce(() => {
       if (profile.Isprivate && !isFollow) {
@@ -169,7 +184,10 @@ export const Profile = (user) => {
           <div className="indicator  absolute end-5">
             {profile.avatar ? (
               <img
-                src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
+                src={
+                  // check if image can be converted to blob else use url
+                  profile.avatar ?  profile.avatar instanceof Blob ? URL.createObjectURL(profile.avatar) : `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}` : ""
+                }
                 alt="Avatar"
                 className="w-16 h-16 rounded-full  avatar"
               />
@@ -218,6 +236,8 @@ export const Profile = (user) => {
                       title: `Follow ${profile.username} on Postr!`,
                       text: profile.bio,
                       url: window.location.href,
+                    }).catch((err) => {
+                      console.log(`request failed or user denied`)
                     });
                   }}
                 >
@@ -397,7 +417,7 @@ export const Profile = (user) => {
                               posts.splice(index, 1);
                               setPosts([...posts]);
                               document.getElementById("delete" + id).close();
-                            }, 1000)}
+                            }, 800)}
                             className="absolute bottom-5 text-sky-500 cursor-pointer text-sm end-5 "
                           >
                             Delete
@@ -422,8 +442,11 @@ export const Profile = (user) => {
               <span className="label-text font-bold text-sm">Name</span>
               <label htmlFor="profileinput">
                 <img
-                  src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`}
-                  id="profilepicin"
+                  src={
+                    // check if image can be converted to blob else use url
+                    profile.avatar instanceof Blob ? URL.createObjectURL(profile.avatar) : `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${profile.avatar}`
+                  }
+                   ref={profileimgref}
                   className="rounded-full w-12 h-12 absolute end-5 "
                   alt="Avatar"
                 />
@@ -435,20 +458,17 @@ export const Profile = (user) => {
                 id="profileinput"
                 accept="image/*"
                 onChange={(e) => {
-                  debounce(() => {
-                    let file = e.target.files[0];
-                    let form = new FormData();
+                  let file = e.target.files[0];
+                  let form = new FormData();
+                  form.append("avatar", file);
+                  let reader = new FileReader();
+                  reader.readAsDataURL(file);
+                  reader.onload = function () {
+                    
 
-                    form.append("avatar", file);
-                    api
-                      .collection("users")
-                      .update(profile.id, form)
-                      .then((res) => {
-                        document.getElementById(
-                          "profilepicin"
-                        ).src = `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${profile.id}/${res.avatar}`;
-                      });
-                  }, 1000);
+                    setProfile({ ...profile, avatar: file });
+                  };
+                  e.target.value = "";
                 }}
               />
             </label>
@@ -457,7 +477,7 @@ export const Profile = (user) => {
               placeholder={profile.username}
               className="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
               onChange={(e) => {
-                setProfile({ ...profile, username: e.target.value });
+                 setProfile({ ...profile, username: e.target.value });
               }}
               name="username"
             />
@@ -466,10 +486,10 @@ export const Profile = (user) => {
             </label>
             <input
               type="text"
-              placeholder="Owner of this app :}"
+              placeholder={profile.bio}
               className="border-t-0 p-2 border-r-0 border-l-0 border-b-2 border-slate-300   focus:outline-none focus:ring-0"
               onChange={(e) => {
-                setProfile({ ...profile, bio: e.target.value });
+                 setProfile({ ...profile, bio: e.target.value });
               }}
             />
             <div className="form-control   mt-5">
@@ -488,15 +508,11 @@ export const Profile = (user) => {
           </div>
           <div className="flex flex-row gap-5 mt-5">
             <a
-              onClick={debounce(() => {
-                api.collection("users").update(profile.id, {
-                  username: profile.username,
-                  bio: profile.bio,
-                  Isprivate: profile.Isprivate,
-                });
+              onClick={ () => {
                 document.getElementById("editprofile").close();
-              }, 1000)}
-              className="absolute bottom-5 text-sky-500 text-sm end-5 "
+                editprofile();
+              }}
+              className="absolute bottom-10 btn btn-ghost text-sky-500 text-lg   end-5 "
             >
               Done
             </a>
@@ -504,7 +520,9 @@ export const Profile = (user) => {
         </div>
       </Modal>
       <div className="mt-8">
-        <Bottomnav />
+        <Bottomnav 
+        
+        />
       </div>
     </>
   );

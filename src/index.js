@@ -26,34 +26,38 @@ app.use('/privacy')
 app.use('/search')
 window.resizeTo(175, 812)
 window.onresize = ()=>{
-  if(window.matchMedia('(display-mode: standalone)').matches){
+  if(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone ||  matchMedia("(display-mode: browser)").matches &&  JSON.parse(localStorage.getItem('installed'))){
     window.innerWidth > 1000 ? document.body.style.zoom = 1.5 : document.body.style.zoom = 1
    window.innerHeight > 1000 ? document.body.style.zoom = 1.5 : document.body.style.zoom = 1
     window.resizeTo(275, 812)
   }
 }
+function isnPwa() {
+  return   matchMedia("(display-mode: browser)").matches
+}
+ 
 app.get('/home', (req, res)=>{
-  if(!window.navigator.standalone || !window.matchMedia('(display-mode: standalone)').matches){
+  if( isnPwa()) {
     window.location.hash = '#/download'
   }
   root.render(<Home />)
 })
 app.on('/home', (req, res)=>{
-  if( !window.matchMedia('(display-mode: standalone)').matches){
+  if(isnPwa() ){
     window.location.hash = '#/download'
   }
   console.log('home')
   root.render(<Home />)
 })
 app.on('/profile/:id', (req, res)=>{
-  if(!window.matchMedia('(display-mode: standalone)').matches){
+  if( isnPwa() ){
     window.location.hash = '#/download'
   }
   console.log('profile')
   root.render(<Profile user={req.params.id} />)
 })
 app.get('/profile/:id', (req, res)=>{
-  if( !window.matchMedia('(display-mode: standalone)').matches){
+  if(isnPwa()){
     window.location.hash = '#/download'
   }
   document.getElementById('root').innerHTML = ''
@@ -66,13 +70,13 @@ app.get('/settings', (req, res)=>{
   root.render(<Settings />)
 })
 app.on('/download', (req, res)=>{
-  if( window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches){
+  if(isnPwa()  === true){
     window.location.hash = '#/home'
   }
   root.render(<Download />)
 })
 app.get('/download', (req, res)=>{
-  if(window.matchMedia('(display-mode: standalone)').matches){
+  if(  isnPwa() === true){
     window.location.hash = '#/home'
   }
   root.render(<Download />)
@@ -100,16 +104,8 @@ app.handleErrors('404', (err)=>{
 })
  
 app.start()
-
-
-setInterval(()=>{
-  if(window.matchMedia('(display-mode: standalone)').matches 
-  &&
-  window.location.hash === '#/download' &&
-  window.location.hash !== '#/home'){
-    window.location.hash = '#/home'
-  }
-}, 1000)
+ 
+ 
 
 window.onbeforeunload = function() {
   sessionStorage.clear()

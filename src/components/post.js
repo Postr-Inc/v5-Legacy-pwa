@@ -180,13 +180,13 @@ export function Post(props) {
         <></>
       )}
       {props.file ? (
-        <Modal id={"modal" + props.id} height="h-screen">
+        <Modal id={"modal" + props.id}  >
           <button className="flex justify-center mx-auto focus:outline-none">
             <div className="divider  text-slate-400  w-12   mt-0"></div>
           </button>
           <img
             src={`https://postrapi.pockethost.io/api/files/w5qr8xrcpxalcx6/${props.id}/${props.file}`}
-            className="w-full p-2 h-full object-cover rounded  "
+            className="w-full p-2 h-full object-cover rounded-[5px]  "
             alt="post image"
           />
         </Modal>

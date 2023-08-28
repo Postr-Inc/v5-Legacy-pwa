@@ -53,6 +53,10 @@
       "url": "/u/?type=%s"
     }
   ],
+  "related_applications": [{
+    "platform": "webapp",
+    "url": "https://postr-7jq.pages.dev/manifest.json"
+  }],
   "shortcuts": [
     {
       "name": "Settings",

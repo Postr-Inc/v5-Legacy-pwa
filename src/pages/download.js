@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 
 export const Download = () => {
   let device = navigator.userAgent.toLowerCase();
-  let isAndroid = device.indexOf("android") > -1;
-  let isIOS = device.indexOf("iphone") > -1 || device.indexOf("ipad") > -1;
+  let isAndroid = device.indexOf('android') || device.indexOf('android') > -1;
+  let isIOS = device.indexOf("iphone") > -1 || device.indexOf("ipad") > -1 || device.indexOf("ipod") > -1;
   let isMac = device.indexOf("macintosh") > -1;
   let isWindows = device.indexOf("windows") > -1;
   let isLinux = device.indexOf("linux") > -1;
-  let isChrome = device.indexOf("chrome") > -1;
-  let isFirefox = device.indexOf("firefox") > -1;
   let isSafari = device.indexOf("safari") > -1;
+ 
+  localStorage.setItem('platform', isAndroid ? 'Android' : isIOS ? 'iOS' : isMac ? 'Mac' : isWindows ? 'Windows' : isLinux ? 'Linux' : 'Other')
   let [deferredPrompt, setDeferredPrompt] = useState(null);
   let [download, setDownload] = useState(
     localStorage.getItem('installed') ? 'Open Postr' : 'Download Postr'
@@ -23,6 +23,13 @@ export const Download = () => {
     e.preventDefault();
     // Stash the event so it can be triggered later.
     setDeferredPrompt(e);
+  });
+
+  window.addEventListener('appinstalled', (evt) => {
+    console.log('appinstalled fired', evt);
+    document.getElementById('installed').showModal();
+    localStorage.setItem('installed', true);
+    setDownload('Open Postr');
   });
 
   return (
@@ -46,10 +53,13 @@ export const Download = () => {
  
         </span>
         {
-          isWindows || isLinux ? 
+          !isAndroid && !isIOS && isMac || isWindows || isLinux ?  
          <button className='btn btn-ghost rounded-full border-slate-200 hover:ring-2 hover:ring-rose-500 hover:bg-rose-500 hover:textwhite' onClick={()=>{
             document.getElementById('installed').close()
-            window.open('web+postr://launch')
+             
+            if(isWindows || isLinux || isMac){
+              window.open('web+postr://launch')
+            } 
         }}>Or Launch App
     </button> : <></>
         }
@@ -95,7 +105,7 @@ export const Download = () => {
         </div>
       </Modal>
 
-      <div className="h-screen">
+      <div className="h-[40vw] hero">
         <div className="hero-content text-center flex flex-col lg:flex-row">
           <img src={downloadback} className="max-w-sm rounded-lg" />
           <div className="max-w-md flex flex-col">
@@ -107,15 +117,9 @@ export const Download = () => {
               onClick={() => {
                 if (isIOS && isSafari) {
                   document.getElementById('ios').showModal();
-                } else if (download !== 'Open Postr' && (isAndroid || isMac || isWindows || isLinux)) {
-                  deferredPrompt.prompt();
-                  deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                      document.getElementById('installed').showModal();
-                      localStorage.setItem('installed', true);
-                      setDownload('Open Postr');
-                    }
-                  });
+                } else if (download !== 'Open Postr' && (isAndroid || isMac || isWindows || isLinux) || !JSON.parse(localStorage.getItem('installed'))) {
+                  deferredPrompt.prompt() 
+                   
                 } else {
                   console.log('already installed');
                   document.getElementById('installed').showModal();
