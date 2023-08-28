@@ -9,16 +9,50 @@ export const Search = () => {
   let [searchUsers, setSearchUsers] = useState([]);
   let [isSearching, setIsSearching] = useState(false);
   let inputref = useRef(null)
+  let [page, setPage] = useState(1);
+  let [isLoadMore, setIsLoadMore] = useState(false);
+  let [totalUsers, setTotalUsers] = useState(0);
   function loadUsers() {
+    setIsLoadMore(true);
     api
       .collection("users")
-      .getList(1, 10, {
+      .getList(page, 10, {
         filter: `id != "${api.authStore.model.id}"`,
       })
       .then((res) => {
-        setUsers(res.items);
+        setUsers((users) => [...users, ...res.items]);
+        setTotalUsers(res.totalPages);
+        setIsLoadMore(false);
+        console.log(res.totalPages)
       });
   }
+  useEffect(() => {
+    const handleScroll = debounce(() => {
+      if (Number(page) === Number(totalUsers) && !isLoadMore) {
+        return;
+      }
+
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.offsetHeight - 5 &&
+        !isLoadMore
+      ) {
+        // Increment the page in a callback to ensure proper state update
+        setPage(++page);
+        console.log(page);
+
+        loadUsers();
+      }
+    }, 1000);
+
+    // Attach the scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [page, isLoadMore, users]);
 
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
@@ -96,7 +130,15 @@ export const Search = () => {
                       className="w-8  h-8 rounded-full"
                     />
                   ) : (
-                    <img src="https://postrapi.pockethost.io/api/files/_pb_users_auth_/default/default.png" />
+                    <div className="avatar placeholder">
+                      <div className="bg-neutral-focus text-neutral-content  border-slate-200 rounded-full w-8 h-8">
+                        <span className="text-lg">
+                          {u.username
+                            ? u.username.charAt(0).toUpperCase()
+                            : ""}
+                        </span>
+                      </div>
+                    </div>
                   )}
                   <div className="flex flex-col">
                     <span className="mx-2 text-sm cursor-pointer"
@@ -109,7 +151,7 @@ export const Search = () => {
                   </div>
                   <button
                     className="btn-ghost rounded btn-sm w-24 end-5 absolute border-slate-200 hover:text-white focus:ring-0 hover:ring-0 hover:bg-transparent focus:bg-transparent"
-                    onClick={() => {
+                    onClick={debounce(() => {
                       const updatedFollowers = u.followers.includes(api.authStore.model.id)
                         ? u.followers.filter(id => id !== api.authStore.model.id)
                         : [...u.followers, api.authStore.model.id];
@@ -125,7 +167,7 @@ export const Search = () => {
                         .catch(error => {
                           console.error("Error updating followers:", error);
                         });
-                    }}
+                    })}
                   >
                     {u.followers.includes(api.authStore.model.id) ? "Unfollow" : "Follow"}
                   </button>
@@ -218,23 +260,23 @@ export const Search = () => {
                     <span
                       className="btn btn-ghost rounded btn-sm w-24 end-5 absolute border-slate-200 hover:text-white focus:ring-0 hover:ring-0 hover:bg-transparent focus:bg-transparent"
                       onClick={debounce(() => {
-                         
-                          const updatedFollowers = u.followers.includes(api.authStore.model.id)
-                            ? u.followers.filter(id => id !== api.authStore.model.id)
-                            : [...u.followers, api.authStore.model.id];
-  
-                          api.collection("users")
-                            .update(u.id, {
-                              followers: updatedFollowers,
-                            })
-                            .then(() => {
-                              u.followers = updatedFollowers;
-                              setIsFollow(!isFollow); // Toggle the isFollow state
-                            })
-                            .catch(error => {
-                              console.error("Error updating followers:", error);
-                            });
-                         
+
+                        const updatedFollowers = u.followers.includes(api.authStore.model.id)
+                          ? u.followers.filter(id => id !== api.authStore.model.id)
+                          : [...u.followers, api.authStore.model.id];
+
+                        api.collection("users")
+                          .update(u.id, {
+                            followers: updatedFollowers,
+                          })
+                          .then(() => {
+                            u.followers = updatedFollowers;
+                            setIsFollow(!isFollow); // Toggle the isFollow state
+                          })
+                          .catch(error => {
+                            console.error("Error updating followers:", error);
+                          });
+
                       })}
                     >
                       {u.followers.includes(api.authStore.model.id) ? "Unfollow" : "Follow"}
@@ -260,7 +302,7 @@ export const Search = () => {
 };
 function debounce(fn, time) {
   let timeout;
-  if(!time){
+  if (!time) {
     time = 1000
   }
   // make sure it only goes once at a time
@@ -270,5 +312,5 @@ function debounce(fn, time) {
     clearTimeout(timeout);
     timeout = setTimeout(functionCall, time);
   };
-  
+
 }
