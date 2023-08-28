@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { api } from "..";
-import back from "../icons/backarrow.svg";
 import { Bottomnav } from "../components/bottomnav";
-
+import { Modal } from "../components/modal";
 export const Search = () => {
   let [search, setSearch] = useState("");
   let [users, setUsers] = useState([]);
   let [isFollow, setIsFollow] = useState(false);
-  
+  let [searchUsers, setSearchUsers] = useState([]);
+  let [isSearching, setIsSearching] = useState(false);
+  let inputref = useRef(null)
   function loadUsers() {
     api
       .collection("users")
@@ -18,16 +19,30 @@ export const Search = () => {
         setUsers(res.items);
       });
   }
- 
+
   useEffect(() => {
-    if (search) {
-        console.log(search)
-      api.collection('users').getFirstListItem(`username ~ "${search}"`).then((res)=>{
-        setUsers([res])
-      }).catch((err)=>{
-        setUsers([])
-      })
-    }
+    const debounceTimeout = setTimeout(() => {
+      if (search.trim() !== '') {
+        api.collection('users')
+          .getFullList('*', {
+            filter: `username ~ "${search}"`,
+          })
+          .then((res) => {
+            setIsSearching(false)
+            setSearchUsers(res)
+          })
+          .catch(() => {
+            setSearchUsers([]);
+          });
+      } else {
+        setSearchUsers([]); // Clear results when search is empty
+      }
+    }, 1000);
+
+    // Cleanup: Clear the timeout if the component unmounts or if the input changes
+    return () => {
+      clearTimeout(debounceTimeout);
+    };
   }, [search]);
   useEffect(() => {
     loadUsers();
@@ -36,7 +51,7 @@ export const Search = () => {
     <div className=" p-5 flex flex-col ">
       <span className="text-2xl font-bold">Search</span>
       <div class="form-control mt-2">
-        <div class="input-group aliggn-">
+        <div class="input-group">
           <button class=" border-r-0 input-group-xs border  focus:bg-transparent hover:bg-transparent">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -55,8 +70,9 @@ export const Search = () => {
           </button>
           <input
             type="text"
-            onChange={(e) => {
-                setSearch(e.target.value);
+            onClick={() => {
+              document.getElementById("search").showModal();
+              inputref.current.focus()
             }}
             placeholder="Search…"
             class="
@@ -69,7 +85,7 @@ export const Search = () => {
         </div>
 
         {users.map((u) => {
-            
+
           return (
             <div className="flex flex-col mt-6 gap-2">
               <div className="flex flex-row justify-between">
@@ -84,34 +100,35 @@ export const Search = () => {
                   )}
                   <div className="flex flex-col">
                     <span className="mx-2 text-sm cursor-pointer"
-                    onClick={ ()=>{
+                      onClick={() => {
                         window.location.href = `#/profile/${u.id}`
-                    }}
+                      }}
                     >{u.username}</span>
-                    <span className="mx-2 text-sm text-slate-400">{u.bio}</span>
+                    <span className="mx-2 text-sm text-slate-400">{u.bio.substring(0, 20)}...</span>
+                    <span className="mx-2 text-sm ">{u.followers.length} Followers</span>
                   </div>
                   <button
-  className="btn-ghost rounded btn-sm w-24 end-5 absolute border-slate-200 hover:text-white focus:ring-0 hover:ring-0 hover:bg-transparent focus:bg-transparent"
-  onClick={() => {
-    const updatedFollowers = u.followers.includes(api.authStore.model.id)
-      ? u.followers.filter(id => id !== api.authStore.model.id)
-      : [...u.followers, api.authStore.model.id];
+                    className="btn-ghost rounded btn-sm w-24 end-5 absolute border-slate-200 hover:text-white focus:ring-0 hover:ring-0 hover:bg-transparent focus:bg-transparent"
+                    onClick={() => {
+                      const updatedFollowers = u.followers.includes(api.authStore.model.id)
+                        ? u.followers.filter(id => id !== api.authStore.model.id)
+                        : [...u.followers, api.authStore.model.id];
 
-    api.collection("users")
-      .update(u.id, {
-        followers: updatedFollowers,
-      })
-      .then(() => {
-        u.followers = updatedFollowers;
-        setIsFollow(!isFollow); // Toggle the isFollow state
-      })
-      .catch(error => {
-        console.error("Error updating followers:", error);
-      });
-  }}
->
-  {u.followers.includes(api.authStore.model.id) ? "Unfollow" : "Follow"}
-</button>
+                      api.collection("users")
+                        .update(u.id, {
+                          followers: updatedFollowers,
+                        })
+                        .then(() => {
+                          u.followers = updatedFollowers;
+                          setIsFollow(!isFollow); // Toggle the isFollow state
+                        })
+                        .catch(error => {
+                          console.error("Error updating followers:", error);
+                        });
+                    }}
+                  >
+                    {u.followers.includes(api.authStore.model.id) ? "Unfollow" : "Follow"}
+                  </button>
 
                 </div>
               </div>
@@ -124,6 +141,134 @@ export const Search = () => {
       <div className="mt-12">
         <Bottomnav />
       </div>
+      <Modal id="search" height="h-screen">
+        <button className="flex justify-center mx-auto focus:outline-none">
+          <div className="divider  text-slate-400 w-12 mt-0"></div>
+        </button>
+
+        <div class="form-control mt-2">
+          <div class="input-group">
+            <button class=" border-r-0 input-group-xs border  focus:bg-transparent hover:bg-transparent">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mx-2 h-4 w-4 border-l-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+            <input
+              type="text"
+              ref={inputref}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (!isSearching) {
+                  setIsSearching(true)
+                }
+                setSearchUsers([])
+              }}
+              placeholder="Search…"
+              class="
+    w-screen
+    input
+     border-l-0
+     focus:outline-none
+    border-slate-200 input-sm  "
+            />
+          </div>
+
+          {searchUsers.length > 0 ? searchUsers.map((u) => {
+
+            return (
+              <div className="flex flex-col mt-6 gap-2">
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-row">
+                    {u.avatar ? (
+                      <img
+                        src={`https://postrapi.pockethost.io/api/files/_pb_users_auth_/${u.id}/${u.avatar}`}
+                        className="w-8  h-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="avatar placeholder">
+                        <div className="bg-neutral-focus text-neutral-content  border-slate-200 rounded-full w-8 h-8">
+                          <span className="text-lg">
+                            {u.username
+                              ? u.username.charAt(0).toUpperCase()
+                              : ""}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-col">
+                      <span className="mx-2 text-sm cursor-pointer"
+                        onClick={() => {
+                          window.location.href = `#/profile/${u.id}`
+                        }}
+                      >{u.username}</span>
+                      <span className="mx-2 text-sm text-slate-400">{u.bio.substring(0, 20)}...</span>
+                      <span className="mx-2 text-sm ">{u.followers.length} Followers</span>
+                    </div>
+                    <span
+                      className="btn btn-ghost rounded btn-sm w-24 end-5 absolute border-slate-200 hover:text-white focus:ring-0 hover:ring-0 hover:bg-transparent focus:bg-transparent"
+                      onClick={debounce(() => {
+                         
+                          const updatedFollowers = u.followers.includes(api.authStore.model.id)
+                            ? u.followers.filter(id => id !== api.authStore.model.id)
+                            : [...u.followers, api.authStore.model.id];
+  
+                          api.collection("users")
+                            .update(u.id, {
+                              followers: updatedFollowers,
+                            })
+                            .then(() => {
+                              u.followers = updatedFollowers;
+                              setIsFollow(!isFollow); // Toggle the isFollow state
+                            })
+                            .catch(error => {
+                              console.error("Error updating followers:", error);
+                            });
+                         
+                      })}
+                    >
+                      {u.followers.includes(api.authStore.model.id) ? "Unfollow" : "Follow"}
+                    </span>
+
+                  </div>
+                </div>
+
+                <div className="divider  rounded h-1"></div>
+              </div>
+            );
+          })
+            : isSearching ? <div className='flex flex-col gap-2 mx-auto mt-16 justify-center '
+              style={{ marginTop: '50%' }}
+            >
+              <span className="loading w-6  flex mx-auto mt-16"></span>
+            </div> : <></>
+          }
+        </div>
+      </Modal>
     </div>
   );
 };
+function debounce(fn, time) {
+  let timeout;
+  if(!time){
+    time = 1000
+  }
+  // make sure it only goes once at a time
+  return function () {
+    const functionCall = () => fn.apply(this, arguments);
+
+    clearTimeout(timeout);
+    timeout = setTimeout(functionCall, time);
+  };
+  
+}
