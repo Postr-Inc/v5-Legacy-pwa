@@ -9,10 +9,10 @@ export  async  function viewPost(postid){
   let poster = dox.add('poster', {
    description: res.content,
    Uname: res.expand.author.username,
-   image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.expand.author.id}/${res.expand.author.avatar}`,
+   image: `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${res.expand.author.id}/${res.expand.author.avatar}`,
    id: res.id,
    pid: res.id,
-   postimg: res.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}` : null,
+   postimg: res.file ? `https://postrapi.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}` : null,
    Uid: res.expand.author.id,
    posted: parseDate(res.created),
    likes: JSON.parse(JSON.stringify(res.likes)).length,
@@ -25,7 +25,7 @@ export  async  function viewPost(postid){
 dox.getId('postcontainer').append(poster)
 dox.awaitElement('#postimg-' + res.id).then((el) => {
   if(res.file){
-    el.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}`
+    el.src = `https://postrapi.pockethost.io/api/files/w5qr8xrcpxalcx6/${res.id}/${res.file}`
   }else{
     el.style.display = 'none'
   }
@@ -85,7 +85,7 @@ async function comment(data){
               let comment = dox.add('comment', {
                   description: res.text,
                   Uname: res.expand.user.username,
-                  image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${res.expand.user.id}/${res.expand.user.avatar}`,
+                  image: `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${res.expand.user.id}/${res.expand.user.avatar}`,
                   cid: res.id,
                   Uid: res.expand.user.id,
                   posted: parseDate(res.created),
@@ -131,7 +131,7 @@ async function comment(data){
       let commentt = dox.add('comment', {
         description: comment.text,
         Uname: comment.expand.user.username,
-        image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${comment.expand.user.id}/${comment.expand.user.avatar}`,
+        image: `https://postrapi.pockethost.io/api/files/_pb_users_auth_/${comment.expand.user.id}/${comment.expand.user.avatar}`,
         cid: comment.id,
         Uid: comment.expand.user.id,
         posted: parseDate(comment.created),
