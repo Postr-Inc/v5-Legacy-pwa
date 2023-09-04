@@ -13,7 +13,7 @@ function alldposts(){
     handlevents('posts', post);
     dox.awaitElement('#postimg-' + post.id).then((res) => {
       if(post.file){
-        res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
+        res.src = `https://postrapi.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
         res.style.display = 'block'
       }else{
         res.style.display = 'none'
@@ -66,7 +66,7 @@ export async function loadFeed() {
           Uname: post.expand.author.username,
           image: `https://postr.pockethost.io/api/files/_pb_users_auth_/${post.expand.author.id}/${post.expand.author.avatar}`,
           pid: post.id,
-          postimg: post.file ? `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
+          postimg: post.file ? `https://postrapi.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}` : null,
           Uid: post.expand.author.id,
           posted: parseDate(post.created),
           likes: JSON.parse(JSON.stringify(post.likes)).length,
@@ -76,7 +76,7 @@ export async function loadFeed() {
         });
         dox.awaitElement('#postimg-' + post.id).then((res) => {
           if(post.file){
-            res.src = `https://postr.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
+            res.src = `https://postrapi.pockethost.io/api/files/w5qr8xrcpxalcx6/${post.id}/${post.file}`
             res.style.display = 'block'
           }else{
             res.style.display = 'none'
