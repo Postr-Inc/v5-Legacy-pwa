@@ -74,7 +74,7 @@
 
 
     <a href="#/post/{{pid}}">
-      <div>{{description}}</div>
+      ${{description ? description : ''}}
       <div class="flex flex-row gap-2">
         <button class="w-full" onclick="my_modal_1.showModal()">
           <img src="{{postimg}}" 
