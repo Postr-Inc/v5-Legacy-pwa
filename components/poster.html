@@ -11,7 +11,7 @@
     let isVerified = "";
     let postimg = "";
     let dividercontent = "";
-    let isUser = Uid == pb.authStore.model.id;
+    let isUser = Uid == JSON.parse(JSON.stringify(localStorage.getItem('pocketbase_auth')).model.id ? JSON.parse(JSON.stringify(localStorage.getItem('pocketbase_auth')).model.id : null
   </script>
  
 
